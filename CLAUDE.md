@@ -15,6 +15,7 @@ There is no build, no lint, no test suite.
 - Run: open the HTML file directly in a browser, or serve the directory (`python3 -m http.server`) and load it.
 - For UI changes, exercise the affected feature in a real browser — that is the only feedback loop available.
 - Reset app state: `localStorage.clear()` in DevTools on the file's origin, or use the in-app reset actions.
+- **Smoke test for script-region edits:** after any change to the main `<script>` block, run: `node -e "new Function(require('fs').readFileSync('Macro_Tracker_Interactive-32.html','utf8').match(/<script>[\s\S]*?<\/script>/g)[1].slice(8,-9))" && echo OK`. Takes ~3 seconds. Catches syntax errors and orphaned content before commit.
 
 ## Code organization inside the HTML
 
@@ -146,6 +147,7 @@ This repo uses three local-only files (gitignored via `*.local.*`) as an asynchr
 - Cross-link aggressively: a task that resolves `F-ae19bb4-03` says so; a question about `T-002` says so. This is what lets either model jump in cold.
 - When a finding flips to `[x]` done, the executor cites the commit SHA that fixed it in the finding line.
 - Files are gitignored — they hold collaboration state, not shipped artifacts. Never commit them; never `git add -A` without checking that the `.local.` pattern is excluded.
+- **Commit attribution:** use the user's name and email (`git -c user.name="abdullah-3337" -c user.email="abdullah.ayoub2000@gmail.com" commit ...`). Never add `Co-Authored-By:` or other trailers crediting Claude/Haiku/Opus. Commits are authored by the user; AI assistance is documented in the PR/MR, not in git history.
 
 ### What NOT to do
 

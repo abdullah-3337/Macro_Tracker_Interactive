@@ -3390,6 +3390,24 @@ function lsGet(key, fallback) {
   }
 }
 
+// Safe localStorage write: alerts user if quota exceeded so data loss is visible, not silent.
+function lsSet(key, value) {
+  try {
+    lsSet(key, value);
+  } catch (e) {
+    const isQuota = e.name === 'QuotaExceededError' || e.code === 22;
+    const msg = isQuota
+      ? (lang === 'ar'
+          ? 'تخزين ممتلئ: لا يمكن حفظ البيانات. اختبر تصدير نسخة احتياطية وحذف البيانات القديمة.'
+          : 'Storage full: cannot save data. Consider exporting a backup and clearing old data.')
+      : (lang === 'ar'
+          ? 'خطأ في الحفظ: ' + e.message
+          : 'Save error: ' + e.message);
+    alert(msg);
+    console.error('localStorage write failed for "' + key + '":', e);
+  }
+}
+
 let lang = localStorage.getItem('mt-lang') || 'en';
 const MT_API_KEY = 'mt-gemini-key';
 let goals = lsGet('mt-goals', {kcal:1900, protein:145, fat:65, carbs:215});
@@ -3455,7 +3473,7 @@ function modeForCat(catFilter) {
   return (m === 'base' || m === 'easy') ? m : 'g100';
 }
 function persistDisplayModes() {
-  localStorage.setItem('mt-display-modes', JSON.stringify(displayModes));
+  lsSet('mt-display-modes', JSON.stringify(displayModes));
 }
 // Cycle order: g100 → base → easy → g100 ...
 function nextDisplayMode(cur) {
@@ -3483,7 +3501,7 @@ try {
 } catch (e) { smartSortState = {}; }
 
 function persistSmartSort() {
-  localStorage.setItem('mt-smart-sort', JSON.stringify(smartSortState));
+  lsSet('mt-smart-sort', JSON.stringify(smartSortState));
 }
 
 // Returns the (grams, label) of the portion shown in the row for a given food
@@ -3990,7 +4008,7 @@ function handleRowDelete(btn) {
     const idx = DB.findIndex(x => x.id === id);
     if (idx >= 0) {
       DB.splice(idx, 1);
-      localStorage.setItem('mt-db', JSON.stringify(DB));
+      lsSet('mt-db', JSON.stringify(DB));
       renderTables();
       applyFilters();
       renderTotals();
@@ -4469,7 +4487,7 @@ function removeItem(idx) {
 })();
 
 function saveDayState() {
-  localStorage.setItem('mt-day', JSON.stringify(dayItems));
+  lsSet('mt-day', JSON.stringify(dayItems));
   document.getElementById('dayInfo').textContent = `📅 ${todayStr()} · ${dayItems.length} ${lang === 'ar' ? 'صنف' : 'items'}`;
 }
 
@@ -4500,7 +4518,7 @@ document.getElementById('saveDayBtn').addEventListener('click', () => {
     goals: JSON.parse(JSON.stringify(goals))
   });
   if (savedDays.length > 60) savedDays = savedDays.slice(0, 60);
-  localStorage.setItem('mt-saved', JSON.stringify(savedDays));
+  lsSet('mt-saved', JSON.stringify(savedDays));
   alert(lang === 'ar' ? `تم حفظ اليوم! (${savedDays.length} يوم محفوظ)` : `Day saved! (${savedDays.length} total saved)`);
 });
 
@@ -4550,7 +4568,7 @@ window.loadSaved = function(idx) {
 window.deleteSaved = function(idx) {
   if (!confirm(lang === 'ar' ? 'حذف اليوم ده؟' : 'Delete this saved day?')) return;
   savedDays.splice(idx, 1);
-  localStorage.setItem('mt-saved', JSON.stringify(savedDays));
+  lsSet('mt-saved', JSON.stringify(savedDays));
   document.getElementById('loadDayBtn').click();
 };
 
@@ -4583,7 +4601,7 @@ document.getElementById('saveGoalsBtn').addEventListener('click', () => {
   goals.protein = parseFloat(document.getElementById('editProtein').value) || 145;
   goals.fat = parseFloat(document.getElementById('editFat').value) || 65;
   goals.carbs = parseFloat(document.getElementById('editCarbs').value) || 215;
-  localStorage.setItem('mt-goals', JSON.stringify(goals));
+  lsSet('mt-goals', JSON.stringify(goals));
   renderGoals();
   renderTotals();
   document.getElementById('goalsOverlay').classList.remove('active');
@@ -4848,7 +4866,7 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
       if (!confirm(confirmMsg)) return;
 
       DB = newDb;
-      localStorage.setItem('mt-db', JSON.stringify(DB));
+      lsSet('mt-db', JSON.stringify(DB));
       renderTables();
       applyFilters();
       alert((lang === 'ar' ? 'تم الاستيراد بنجاح! ' : 'Imported successfully! ') + DB.length + (lang === 'ar' ? ' صنف' : ' items'));
@@ -5504,7 +5522,7 @@ document.getElementById('afSaveBtn').addEventListener('click', () => {
   } else {
     DB.push(newItem);
   }
-  localStorage.setItem('mt-db', JSON.stringify(DB));
+  lsSet('mt-db', JSON.stringify(DB));
 
   renderTables();
   applyFilters();
@@ -5570,7 +5588,7 @@ function applyTheme() {
 // Quick header toggle: light <-> dark (drops 'system' once tapped)
 document.getElementById('themeToggle').addEventListener('click', () => {
   currentTheme = resolvedTheme() === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('mt-theme', currentTheme);
+  lsSet('mt-theme', currentTheme);
   applyTheme();
   syncSchemeModalUI();
 });
@@ -5596,7 +5614,7 @@ function buildSchemeCards() {
     card.innerHTML = `<div class="sc-name">${s[lang]}</div><div class="scheme-swatches">${sw}</div>`;
     card.addEventListener('click', () => {
       currentScheme = s.id;
-      localStorage.setItem('mt-scheme', currentScheme);
+      lsSet('mt-scheme', currentScheme);
       applyTheme();
       syncSchemeModalUI();
     });
@@ -5627,7 +5645,7 @@ document.getElementById('schemeOverlay').addEventListener('click', e => {
 document.querySelectorAll('#themeSeg button').forEach(btn => {
   btn.addEventListener('click', () => {
     currentTheme = btn.dataset.themeChoice;
-    localStorage.setItem('mt-theme', currentTheme);
+    lsSet('mt-theme', currentTheme);
     applyTheme();
     syncSchemeModalUI();
   });
@@ -5726,31 +5744,31 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
 
       if (Array.isArray(payload.db) && payload.db.length) {
         DB = payload.db;
-        localStorage.setItem('mt-db', JSON.stringify(DB));
+        lsSet('mt-db', JSON.stringify(DB));
       }
       if (Array.isArray(payload.day)) {
         dayItems = payload.day;
-        localStorage.setItem('mt-day', JSON.stringify(dayItems));
+        lsSet('mt-day', JSON.stringify(dayItems));
       }
       if (Array.isArray(payload.saved)) {
         savedDays = payload.saved;
-        localStorage.setItem('mt-saved', JSON.stringify(savedDays));
+        lsSet('mt-saved', JSON.stringify(savedDays));
       }
       if (payload.goals && typeof payload.goals === 'object') {
         goals = payload.goals;
-        localStorage.setItem('mt-goals', JSON.stringify(goals));
+        lsSet('mt-goals', JSON.stringify(goals));
       }
       if (payload.lang === 'en' || payload.lang === 'ar') {
         lang = payload.lang;
-        localStorage.setItem('mt-lang', lang);
+        lsSet('mt-lang', lang);
       }
       if (payload.scheme && VALID_SCHEMES.indexOf(payload.scheme) !== -1) {
         currentScheme = payload.scheme;
-        localStorage.setItem('mt-scheme', currentScheme);
+        lsSet('mt-scheme', currentScheme);
       }
       if (['light','dark','system'].indexOf(payload.theme) !== -1) {
         currentTheme = payload.theme;
-        localStorage.setItem('mt-theme', currentTheme);
+        lsSet('mt-theme', currentTheme);
       }
 
       applyTheme();
@@ -5818,7 +5836,7 @@ document.getElementById('langToggle').addEventListener('click', () => {
   closePanel();
 
   lang = lang === 'en' ? 'ar' : 'en';
-  localStorage.setItem('mt-lang', lang);
+  lsSet('mt-lang', lang);
   applyLanguage();
 
   // Re-enable transitions on the next frame, after the direction change is painted
@@ -5883,7 +5901,7 @@ document.addEventListener('keydown', e => {
 
   header.addEventListener('click', () => {
     section.classList.toggle('open');
-    localStorage.setItem('mt-settings-open', section.classList.contains('open') ? '1' : '0');
+    lsSet('mt-settings-open', section.classList.contains('open') ? '1' : '0');
   });
 })();
 
@@ -5928,7 +5946,7 @@ document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
       : 'Key does not look like a typical Gemini key (usually starts with AIzaSy). Save anyway?');
     if (!ok) return;
   }
-  localStorage.setItem(MT_API_KEY, key);
+  lsSet(MT_API_KEY, key);
   refreshApiKeyStatus();
   alert(lang === 'ar' ? '✓ تم حفظ المفتاح' : '✓ Key saved');
 });
@@ -6007,7 +6025,7 @@ function openOcrModal() {
       : 'You need to set a Gemini API key first. Opening Settings for you.');
     const section = document.getElementById('settingsSection');
     section.classList.add('open');
-    localStorage.setItem('mt-settings-open', '1');
+    lsSet('mt-settings-open', '1');
     document.getElementById('apiKeyInput').focus();
     section.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;

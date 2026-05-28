@@ -5090,17 +5090,19 @@ function recipeRenderPicked() {
       <button type="button" class="af-remove" title="${lang === 'ar' ? 'حذف' : 'Remove'}">×</button>
     </div>`;
   }).join('');
-  // Wire each row's qty input + unit select + remove button
+  // Wire each row's qty input + unit select + remove button.
+  // Read idx from data-idx at event time (not closed-over) so changes survive re-renders.
   box.querySelectorAll('.af-picked-row').forEach(row => {
-    const idx = parseInt(row.dataset.idx, 10);
     const qInp = row.querySelector('.af-picked-qty');
     const uSel = row.querySelector('.af-picked-unit');
     qInp.addEventListener('input', () => {
+      const idx = parseInt(row.dataset.idx, 10);
       const q = parseFloat(qInp.value) || 0;
       if (recipePicked[idx]) recipePicked[idx].qty = q >= 0 ? q : 0;
       recipeRenderTotals();
     });
     uSel.addEventListener('change', () => {
+      const idx = parseInt(row.dataset.idx, 10);
       const g = parseFloat(uSel.value) || 0;
       if (recipePicked[idx]) {
         recipePicked[idx].unitG = g;
@@ -5109,6 +5111,7 @@ function recipeRenderPicked() {
       recipeRenderTotals();
     });
     row.querySelector('.af-remove').addEventListener('click', () => {
+      const idx = parseInt(row.dataset.idx, 10);
       recipePicked.splice(idx, 1);
       recipeRenderPicked();
       recipeRenderTotals();

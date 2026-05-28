@@ -1,0 +1,6988 @@
+[
+ {
+  "id": "chick-breast",
+  "cat": "protein-meat",
+  "en": "Chicken breast, skinless",
+  "ar": "صدور فراخ، بدون جلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~½ medium fillet",
+   "ar": "~نصف فيليه متوسط"
+  },
+  "p": 23.2,
+  "f": 1.7,
+  "c": 0.0,
+  "kcal": 114,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 fillet (200 g)",
+    "ar": "فيليه واحد (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "1 small fillet (150 g)",
+    "ar": "فيليه صغير (150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "½ fillet (100 g)",
+    "ar": "نصف فيليه (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "chick-thigh",
+  "cat": "protein-meat",
+  "en": "Chicken thigh, skinless",
+  "ar": "ورك فراخ، بدون جلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~1 small thigh",
+   "ar": "~ورك صغير"
+  },
+  "p": 19.7,
+  "f": 7.4,
+  "c": 0.0,
+  "kcal": 149,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 thigh (~120 g)",
+    "ar": "ورك (~120 جم)",
+    "g": 120.0
+   },
+   {
+    "en": "2 thighs",
+    "ar": "2 ورك",
+    "g": 240.0
+   }
+  ]
+ },
+ {
+  "id": "chick-thigh-skin",
+  "cat": "protein-meat",
+  "en": "Chicken thigh, with skin",
+  "ar": "ورك فراخ بالجلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "1 small thigh",
+   "ar": "ورك صغير"
+  },
+  "p": 17.0,
+  "f": 15.3,
+  "c": 0.0,
+  "kcal": 211,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 thigh (~130 g)",
+    "ar": "ورك (~130 جم)",
+    "g": 130.0
+   }
+  ]
+ },
+ {
+  "id": "chick-drum",
+  "cat": "protein-meat",
+  "en": "Chicken drumstick, skinless",
+  "ar": "دبوس فراخ، بدون جلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~1 drumstick",
+   "ar": "~دبوس واحد"
+  },
+  "p": 20.0,
+  "f": 3.4,
+  "c": 0.0,
+  "kcal": 119,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 drumstick (~80 g)",
+    "ar": "دبوس (~80 جم)",
+    "g": 80.0
+   },
+   {
+    "en": "2 drumsticks",
+    "ar": "2 دبوس",
+    "g": 160.0
+   }
+  ]
+ },
+ {
+  "id": "chick-wing",
+  "cat": "protein-meat",
+  "en": "Chicken wing, with skin",
+  "ar": "جوانح فراخ بالجلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~3 wings",
+   "ar": "~3 جوانح"
+  },
+  "p": 18.3,
+  "f": 16.9,
+  "c": 0.0,
+  "kcal": 222,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 wing (~35 g)",
+    "ar": "جناح (~35 جم)",
+    "g": 35.0
+   },
+   {
+    "en": "3 wings",
+    "ar": "3 جوانح",
+    "g": 105.0
+   }
+  ]
+ },
+ {
+  "id": "chick-liver",
+  "cat": "protein-meat",
+  "en": "Chicken liver",
+  "ar": "كبدة فراخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~2 medium livers",
+   "ar": "~2 كبدة متوسطة"
+  },
+  "p": 16.9,
+  "f": 4.8,
+  "c": 0.7,
+  "kcal": 119,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "1 liver (~50 g)",
+    "ar": "كبدة واحدة (~50 جم)",
+    "g": 50.0
+   },
+   {
+    "en": "Plate (150 g)",
+    "ar": "طبق (150 جم)",
+    "g": 150.0
+   }
+  ]
+ },
+ {
+  "id": "chick-mince",
+  "cat": "protein-meat",
+  "en": "Chicken mince, lean",
+  "ar": "فراخ مفرومة قليلة الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "heaped ⅓ cup",
+   "ar": "~ثلث كوب مكدوس"
+  },
+  "p": 17.4,
+  "f": 8.1,
+  "c": 0.0,
+  "kcal": 143,
+  "badges": [],
+  "units": [
+   {
+    "en": "⅓ cup (~100 g)",
+    "ar": "ثلث كوب (~100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "chick-breast-grilled",
+  "cat": "protein-meat",
+  "en": "Chicken breast, grilled, skinless",
+  "ar": "صدر فراخ مشوي، بدون جلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~⅔ grilled fillet",
+   "ar": "~ثلثي فيليه مشوي"
+  },
+  "p": 31.0,
+  "f": 3.6,
+  "c": 0.0,
+  "kcal": 165,
+  "badges": [],
+  "units": [
+   {
+    "en": "Small piece (120 g)",
+    "ar": "قطعة صغيرة (120 جم)",
+    "g": 120.0
+   },
+   {
+    "en": "Medium piece (150 g)",
+    "ar": "قطعة متوسطة (150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "Large piece (200 g)",
+    "ar": "قطعة كبيرة (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "chick-whole-grilled",
+  "cat": "protein-meat",
+  "en": "Chicken, grilled, mixed (breast skinless + thigh with skin, as eaten)",
+  "ar": "فراخ مشوية مخلوطة (صدر بدون جلد + ورك بجلده، كما تؤكل)",
+  "base": 320.0,
+  "basis": {
+   "en": "per ½ chicken (~320 g cooked meat)",
+   "ar": "لكل نصف فرخة (~320 جم لحم مطبوخ)"
+  },
+  "easy": {
+   "en": "½ grilled chicken",
+   "ar": "نصف فرخة مشوية"
+  },
+  "p": 87.7,
+  "f": 29.4,
+  "c": 0.0,
+  "kcal": 624,
+  "badges": [],
+  "units": [
+   {
+    "en": "Half chicken (~320 g meat)",
+    "ar": "نصف فرخة (~320 جم لحم)",
+    "g": 320.0
+   },
+   {
+    "en": "Quarter chicken (~160 g meat)",
+    "ar": "ربع فرخة (~160 جم لحم)",
+    "g": 160.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "turkey-breast",
+  "cat": "protein-meat",
+  "en": "Turkey breast, skinless",
+  "ar": "صدر حبش، بدون جلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~½ small fillet",
+   "ar": "~نصف فيليه صغير"
+  },
+  "p": 22.0,
+  "f": 1.0,
+  "c": 0.0,
+  "kcal": 104,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 fillet (180 g)",
+    "ar": "فيليه (180 جم)",
+    "g": 180.0
+   }
+  ]
+ },
+ {
+  "id": "turkey-mince",
+  "cat": "protein-meat",
+  "en": "Turkey mince, lean",
+  "ar": "حبش مفروم قليل الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "heaped ⅓ cup",
+   "ar": "ثلث كوب مكدوس"
+  },
+  "p": 20.4,
+  "f": 8.3,
+  "c": 0.0,
+  "kcal": 158,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "duck-breast",
+  "cat": "protein-meat",
+  "en": "Duck breast, skinless",
+  "ar": "صدر بط، بدون جلد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~½ breast",
+   "ar": "~نصف صدر"
+  },
+  "p": 19.8,
+  "f": 4.3,
+  "c": 0.0,
+  "kcal": 123,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "beef-95",
+  "cat": "protein-meat",
+  "en": "Beef mince, 95% lean",
+  "ar": "لحم بقري مفروم 95% خالي دهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "heaped ⅓ cup",
+   "ar": "ثلث كوب مكدوس"
+  },
+  "p": 21.4,
+  "f": 5.0,
+  "c": 0.0,
+  "kcal": 137,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "⅓ cup (100 g)",
+    "ar": "ثلث كوب (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "Portion (150 g)",
+    "ar": "حصة (150 جم)",
+    "g": 150.0
+   }
+  ]
+ },
+ {
+  "id": "beef-90",
+  "cat": "protein-meat",
+  "en": "Beef mince, 90% lean",
+  "ar": "لحم بقري مفروم 90% خالي دهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "heaped ⅓ cup",
+   "ar": "ثلث كوب مكدوس"
+  },
+  "p": 20.0,
+  "f": 10.0,
+  "c": 0.0,
+  "kcal": 176,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "⅓ cup (100 g)",
+    "ar": "ثلث كوب (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "Portion (150 g)",
+    "ar": "حصة (150 جم)",
+    "g": 150.0
+   }
+  ]
+ },
+ {
+  "id": "beef-85",
+  "cat": "protein-meat",
+  "en": "Beef mince, 85% lean",
+  "ar": "لحم بقري مفروم 85% خالي دهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "heaped ⅓ cup",
+   "ar": "ثلث كوب مكدوس"
+  },
+  "p": 18.6,
+  "f": 15.0,
+  "c": 0.0,
+  "kcal": 215,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "beef-sirloin",
+  "cat": "protein-meat",
+  "en": "Beef sirloin steak, trimmed",
+  "ar": "شريحة بقري سيرلوين، منزوع الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~⅔ small steak",
+   "ar": "~ثلثين شريحة صغيرة"
+  },
+  "p": 21.0,
+  "f": 5.7,
+  "c": 0.0,
+  "kcal": 141,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "1 small steak (150 g)",
+    "ar": "شريحة صغيرة (150 جم)",
+    "g": 150.0
+   }
+  ]
+ },
+ {
+  "id": "beef-tenderloin",
+  "cat": "protein-meat",
+  "en": "Beef tenderloin, trimmed",
+  "ar": "فيليه بقري، منزوع الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "small steak",
+   "ar": "شريحة صغيرة"
+  },
+  "p": 20.8,
+  "f": 7.9,
+  "c": 0.0,
+  "kcal": 162,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "beef-ribeye",
+  "cat": "protein-meat",
+  "en": "Beef ribeye, trimmed",
+  "ar": "ريب آي بقري، منزوع الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "small steak",
+   "ar": "شريحة صغيرة"
+  },
+  "p": 19.8,
+  "f": 14.0,
+  "c": 0.0,
+  "kcal": 213,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "beef-shawarma",
+  "cat": "protein-meat",
+  "en": "Beef shawarma/kebab strips",
+  "ar": "شرائح بقري شاورما/كباب",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~5 thin slices",
+   "ar": "~5 شرائح رفيعة"
+  },
+  "p": 19.5,
+  "f": 10.5,
+  "c": 0.0,
+  "kcal": 175,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "beef-liver",
+  "cat": "protein-meat",
+  "en": "Beef liver",
+  "ar": "كبدة بقري",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "1 small slice",
+   "ar": "شريحة صغيرة"
+  },
+  "p": 20.4,
+  "f": 3.6,
+  "c": 3.9,
+  "kcal": 135,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "lamb-leg",
+  "cat": "protein-meat",
+  "en": "Lamb leg, trimmed",
+  "ar": "فخدة ضاني، منزوع الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~½ medium chop",
+   "ar": "~نصف شريحة متوسطة"
+  },
+  "p": 20.6,
+  "f": 6.5,
+  "c": 0.0,
+  "kcal": 142,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "lamb-shoulder",
+  "cat": "protein-meat",
+  "en": "Lamb shoulder, trimmed",
+  "ar": "كتف ضاني، منزوع الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~½ small chop",
+   "ar": "~نصف شريحة صغيرة"
+  },
+  "p": 19.1,
+  "f": 10.5,
+  "c": 0.0,
+  "kcal": 175,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "lamb-mince",
+  "cat": "protein-meat",
+  "en": "Lamb mince, lean",
+  "ar": "لحم ضاني مفروم قليل الدهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "heaped ⅓ cup",
+   "ar": "ثلث كوب مكدوس"
+  },
+  "p": 18.0,
+  "f": 15.0,
+  "c": 0.0,
+  "kcal": 211,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "veal",
+  "cat": "protein-meat",
+  "en": "Veal escalope, trimmed",
+  "ar": "إسكالوب بتلو",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "1 small escalope",
+   "ar": "إسكالوب صغير"
+  },
+  "p": 20.0,
+  "f": 2.4,
+  "c": 0.0,
+  "kcal": 109,
+  "badges": [
+   "iron"
+  ],
+  "units": []
+ },
+ {
+  "id": "salmon",
+  "cat": "protein-fish",
+  "en": "Salmon, Atlantic, raw",
+  "ar": "سلمون أطلسي، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "small fillet",
+   "ar": "فيليه صغير"
+  },
+  "p": 20.4,
+  "f": 13.4,
+  "c": 0.0,
+  "kcal": 208,
+  "badges": [
+   "omega"
+  ],
+  "units": [
+   {
+    "en": "1 fillet (140 g)",
+    "ar": "فيليه (140 جم)",
+    "g": 140.0
+   },
+   {
+    "en": "½ fillet (70 g)",
+    "ar": "نصف فيليه (70 جم)",
+    "g": 70.0
+   }
+  ]
+ },
+ {
+  "id": "salmon-smoked",
+  "cat": "protein-fish",
+  "en": "Salmon, smoked",
+  "ar": "سلمون مدخن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~6 thin slices",
+   "ar": "~6 شرائح رفيعة"
+  },
+  "p": 18.3,
+  "f": 4.3,
+  "c": 0.0,
+  "kcal": 117,
+  "badges": [],
+  "units": [
+   {
+    "en": "6 thin slices (100 g)",
+    "ar": "6 شرائح (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "3 slices (50 g)",
+    "ar": "3 شرائح (50 جم)",
+    "g": 50.0
+   }
+  ]
+ },
+ {
+  "id": "tuna-fresh",
+  "cat": "protein-fish",
+  "en": "Tuna, fresh, yellowfin",
+  "ar": "تونة طازة، صفراء",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "small steak",
+   "ar": "شريحة صغيرة"
+  },
+  "p": 24.4,
+  "f": 0.5,
+  "c": 0.0,
+  "kcal": 109,
+  "badges": [],
+  "units": [
+   {
+    "en": "Steak (150 g)",
+    "ar": "شريحة (150 جم)",
+    "g": 150.0
+   }
+  ]
+ },
+ {
+  "id": "tuna-bluefin",
+  "cat": "protein-fish",
+  "en": "Tuna, fresh, bluefin",
+  "ar": "تونة طازة، زرقاء",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "small steak",
+   "ar": "شريحة صغيرة"
+  },
+  "p": 23.3,
+  "f": 4.9,
+  "c": 0.0,
+  "kcal": 144,
+  "badges": [
+   "omega"
+  ],
+  "units": []
+ },
+ {
+  "id": "tuna-can-water",
+  "cat": "protein-fish",
+  "en": "Tuna, canned in water, drained",
+  "ar": "تونة معلبة في ماء، مصفاة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ standard can",
+   "ar": "~ثلثين علبة عادية"
+  },
+  "p": 25.5,
+  "f": 0.8,
+  "c": 0.0,
+  "kcal": 116,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 standard can (140 g)",
+    "ar": "علبة عادية (140 جم)",
+    "g": 140.0
+   },
+   {
+    "en": "½ can (70 g)",
+    "ar": "نصف علبة (70 جم)",
+    "g": 70.0
+   }
+  ]
+ },
+ {
+  "id": "tuna-can-oil",
+  "cat": "protein-fish",
+  "en": "Tuna, canned in oil, drained",
+  "ar": "تونة معلبة في زيت، مصفاة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ standard can",
+   "ar": "~ثلثين علبة"
+  },
+  "p": 26.5,
+  "f": 8.0,
+  "c": 0.0,
+  "kcal": 186,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 can (140 g)",
+    "ar": "علبة (140 جم)",
+    "g": 140.0
+   }
+  ]
+ },
+ {
+  "id": "tilapia",
+  "cat": "protein-fish",
+  "en": "Tilapia / Bolti, raw",
+  "ar": "بلطي، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~⅔ fillet",
+   "ar": "~ثلثين فيليه"
+  },
+  "p": 20.1,
+  "f": 1.7,
+  "c": 0.0,
+  "kcal": 96,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 fillet (150 g)",
+    "ar": "فيليه (150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "Small fillet (100 g)",
+    "ar": "فيليه صغير (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "sea-bass",
+  "cat": "protein-fish",
+  "en": "Sea bass, raw",
+  "ar": "قاروص، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~⅔ small fillet",
+   "ar": "~ثلثين فيليه صغير"
+  },
+  "p": 18.4,
+  "f": 2.0,
+  "c": 0.0,
+  "kcal": 97,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "mackerel",
+  "cat": "protein-fish",
+  "en": "Mackerel, raw",
+  "ar": "ماكريل، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "small fillet",
+   "ar": "فيليه صغير"
+  },
+  "p": 18.6,
+  "f": 13.9,
+  "c": 0.0,
+  "kcal": 205,
+  "badges": [
+   "omega"
+  ],
+  "units": []
+ },
+ {
+  "id": "sardines-oil",
+  "cat": "protein-fish",
+  "en": "Sardines, canned in oil, drained",
+  "ar": "سردين معلب في زيت، مصفى",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~1 standard can",
+   "ar": "~علبة عادية"
+  },
+  "p": 24.6,
+  "f": 11.5,
+  "c": 0.0,
+  "kcal": 208,
+  "badges": [
+   "omega",
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "1 can (120 g)",
+    "ar": "علبة (120 جم)",
+    "g": 120.0
+   }
+  ]
+ },
+ {
+  "id": "sardines-water",
+  "cat": "protein-fish",
+  "en": "Sardines, canned in water",
+  "ar": "سردين معلب في ماء",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~1 standard can",
+   "ar": "~علبة عادية"
+  },
+  "p": 22.0,
+  "f": 5.5,
+  "c": 0.0,
+  "kcal": 135,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "cod",
+  "cat": "protein-fish",
+  "en": "Cod, raw",
+  "ar": "سمك القد، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "small fillet",
+   "ar": "فيليه صغير"
+  },
+  "p": 17.8,
+  "f": 0.7,
+  "c": 0.0,
+  "kcal": 82,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "hake",
+  "cat": "protein-fish",
+  "en": "Hake, raw",
+  "ar": "سمك النازلي، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "small fillet",
+   "ar": "فيليه صغير"
+  },
+  "p": 18.3,
+  "f": 0.9,
+  "c": 0.0,
+  "kcal": 88,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "mullet",
+  "cat": "protein-fish",
+  "en": "Mullet (bouri), raw",
+  "ar": "بوري، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~⅔ small fillet",
+   "ar": "~ثلثين فيليه صغير"
+  },
+  "p": 19.4,
+  "f": 4.4,
+  "c": 0.0,
+  "kcal": 117,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "shrimp",
+  "cat": "protein-fish",
+  "en": "Shrimp, raw, peeled",
+  "ar": "جمبري، ني، مقشر",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~10 medium",
+   "ar": "~10 متوسطة"
+  },
+  "p": 20.3,
+  "f": 0.5,
+  "c": 0.0,
+  "kcal": 85,
+  "badges": [],
+  "units": [
+   {
+    "en": "10 medium (100 g)",
+    "ar": "10 متوسطة (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "20 medium (200 g)",
+    "ar": "20 متوسطة (200 جم)",
+    "g": 200.0
+   }
+  ]
+ },
+ {
+  "id": "squid",
+  "cat": "protein-fish",
+  "en": "Squid / Calamari, raw",
+  "ar": "كاليماري، ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~1 tube",
+   "ar": "~أنبوب واحد"
+  },
+  "p": 15.6,
+  "f": 1.4,
+  "c": 3.1,
+  "kcal": 92,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "white-fish-frozen",
+  "cat": "protein-fish",
+  "en": "Frozen white fish fillet (generic)",
+  "ar": "فيليه سمك أبيض مجمد (عام)",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "1 fillet",
+   "ar": "فيليه واحد"
+  },
+  "p": 18.0,
+  "f": 1.5,
+  "c": 0.0,
+  "kcal": 88,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "egg-whole",
+  "cat": "protein-dairy",
+  "en": "Whole egg, raw",
+  "ar": "بيضة كاملة، نية",
+  "base": 50.0,
+  "basis": {
+   "en": "per 1 large egg (50 g)",
+   "ar": "لكل بيضة كبيرة (50 جم)"
+  },
+  "easy": {
+   "en": "1 large egg",
+   "ar": "بيضة كبيرة"
+  },
+  "p": 6.3,
+  "f": 4.8,
+  "c": 0.35,
+  "kcal": 72,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 large egg (50 g)",
+    "ar": "بيضة كبيرة (50 جم)",
+    "g": 50.0
+   },
+   {
+    "en": "2 eggs",
+    "ar": "بيضتين",
+    "g": 100.0
+   },
+   {
+    "en": "3 eggs",
+    "ar": "3 بيضات",
+    "g": 150.0
+   },
+   {
+    "en": "4 eggs",
+    "ar": "4 بيضات",
+    "g": 200.0
+   },
+   {
+    "en": "6 eggs",
+    "ar": "6 بيضات",
+    "g": 300.0
+   }
+  ]
+ },
+ {
+  "id": "egg-white",
+  "cat": "protein-dairy",
+  "en": "Egg white, raw",
+  "ar": "بياض بيض، ني",
+  "base": 33.0,
+  "basis": {
+   "en": "per 1 egg white (33 g)",
+   "ar": "لكل بياضة (33 جم)"
+  },
+  "easy": {
+   "en": "1 white",
+   "ar": "بياضة واحدة"
+  },
+  "p": 3.6,
+  "f": 0.07,
+  "c": 0.23,
+  "kcal": 17,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 white",
+    "ar": "بياضة",
+    "g": 33.0
+   },
+   {
+    "en": "3 whites",
+    "ar": "3 بياضات",
+    "g": 99.0
+   },
+   {
+    "en": "5 whites",
+    "ar": "5 بياضات",
+    "g": 165.0
+   }
+  ]
+ },
+ {
+  "id": "egg-yolk",
+  "cat": "protein-dairy",
+  "en": "Egg yolk, raw",
+  "ar": "صفار بيض، ني",
+  "base": 17.0,
+  "basis": {
+   "en": "per 1 yolk (17 g)",
+   "ar": "لكل صفار (17 جم)"
+  },
+  "easy": {
+   "en": "1 yolk",
+   "ar": "صفار واحد"
+  },
+  "p": 2.7,
+  "f": 4.5,
+  "c": 0.6,
+  "kcal": 55,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 yolk",
+    "ar": "صفار واحد",
+    "g": 17.0
+   },
+   {
+    "en": "2 yolks",
+    "ar": "صفارين",
+    "g": 34.0
+   }
+  ]
+ },
+ {
+  "id": "greek-0",
+  "cat": "protein-dairy",
+  "en": "Greek yogurt, plain, 0% fat",
+  "ar": "زبادي يوناني، سادة، 0% دهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "½ small tub",
+   "ar": "~نصف عبوة صغيرة"
+  },
+  "p": 10.2,
+  "f": 0.4,
+  "c": 3.6,
+  "kcal": 59,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tub (200 g)",
+    "ar": "عبوة (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "Tub (170 g)",
+    "ar": "عبوة (170 جم)",
+    "g": 170.0
+   },
+   {
+    "en": "½ tub (100 g)",
+    "ar": "نصف عبوة (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "greek-2",
+  "cat": "protein-dairy",
+  "en": "Greek yogurt, plain, 2% fat",
+  "ar": "زبادي يوناني، سادة، 2% دهن",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "½ small tub",
+   "ar": "~نصف عبوة صغيرة"
+  },
+  "p": 9.9,
+  "f": 1.7,
+  "c": 3.9,
+  "kcal": 73,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tub (200 g)",
+    "ar": "عبوة (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "Tub (170 g)",
+    "ar": "عبوة (170 جم)",
+    "g": 170.0
+   }
+  ]
+ },
+ {
+  "id": "greek-full",
+  "cat": "protein-dairy",
+  "en": "Greek yogurt, plain, full-fat",
+  "ar": "زبادي يوناني، سادة، كامل الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "½ small tub",
+   "ar": "~نصف عبوة"
+  },
+  "p": 8.7,
+  "f": 5.0,
+  "c": 3.6,
+  "kcal": 97,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tub (200 g)",
+    "ar": "عبوة (200 جم)",
+    "g": 200.0
+   }
+  ]
+ },
+ {
+  "id": "regular-yogurt",
+  "cat": "protein-dairy",
+  "en": "Regular yogurt, plain, low-fat",
+  "ar": "زبادي عادي، سادة، قليل الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "½ small tub",
+   "ar": "~نصف عبوة"
+  },
+  "p": 5.3,
+  "f": 1.6,
+  "c": 7.0,
+  "kcal": 63,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tub (170 g)",
+    "ar": "عبوة (170 جم)",
+    "g": 170.0
+   }
+  ]
+ },
+ {
+  "id": "cottage-low",
+  "cat": "protein-dairy",
+  "en": "Cottage cheese / Areesh, low-fat",
+  "ar": "جبنة قريش قليلة الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 11.0,
+  "f": 1.0,
+  "c": 3.4,
+  "kcal": 72,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (110 g)",
+    "ar": "نصف كوب (110 جم)",
+    "g": 110.0
+   },
+   {
+    "en": "1 cup (220 g)",
+    "ar": "كوب (220 جم)",
+    "g": 220.0
+   }
+  ]
+ },
+ {
+  "id": "cottage-reg",
+  "cat": "protein-dairy",
+  "en": "Cottage cheese / Areesh, regular",
+  "ar": "جبنة قريش عادية",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 17.3,
+  "f": 3.5,
+  "c": 2.7,
+  "kcal": 103,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "labneh",
+  "cat": "protein-dairy",
+  "en": "Labneh, low-fat",
+  "ar": "لبنة قليلة الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅓ cup",
+   "ar": "~ثلث كوب"
+  },
+  "p": 10.0,
+  "f": 5.0,
+  "c": 5.0,
+  "kcal": 115,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (15 g)",
+    "ar": "ملعقة كبيرة (15 جم)",
+    "g": 15.0
+   },
+   {
+    "en": "⅓ cup (75 g)",
+    "ar": "ثلث كوب (75 جم)",
+    "g": 75.0
+   }
+  ]
+ },
+ {
+  "id": "feta",
+  "cat": "protein-dairy",
+  "en": "Feta cheese, low-fat",
+  "ar": "جبنة فيتا قليلة الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~½ cup crumbled",
+   "ar": "~نصف كوب مفتت"
+  },
+  "p": 17.0,
+  "f": 11.0,
+  "c": 3.0,
+  "kcal": 185,
+  "badges": [],
+  "units": [
+   {
+    "en": "Slice (30 g)",
+    "ar": "شريحة (30 جم)",
+    "g": 30.0
+   },
+   {
+    "en": "½ cup (75 g)",
+    "ar": "نصف كوب (75 جم)",
+    "g": 75.0
+   }
+  ]
+ },
+ {
+  "id": "halloumi",
+  "cat": "protein-dairy",
+  "en": "Halloumi cheese",
+  "ar": "جبنة حلوم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~4 thick slices",
+   "ar": "~4 شرائح سميكة"
+  },
+  "p": 22.0,
+  "f": 25.0,
+  "c": 2.2,
+  "kcal": 321,
+  "badges": [],
+  "units": [
+   {
+    "en": "Slice (30 g)",
+    "ar": "شريحة (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "mozzarella",
+  "cat": "protein-dairy",
+  "en": "Mozzarella, low-moisture, part-skim",
+  "ar": "موتزاريلا، قليلة الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~1 cup shredded",
+   "ar": "~كوب مبشور"
+  },
+  "p": 24.3,
+  "f": 15.9,
+  "c": 2.8,
+  "kcal": 254,
+  "badges": [],
+  "units": [
+   {
+    "en": "Slice (30 g)",
+    "ar": "شريحة (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "ricotta",
+  "cat": "protein-dairy",
+  "en": "Ricotta, part-skim",
+  "ar": "ريكوتا، قليلة الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅓ cup",
+   "ar": "~ثلث كوب"
+  },
+  "p": 11.4,
+  "f": 8.0,
+  "c": 5.1,
+  "kcal": 138,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "parmesan",
+  "cat": "protein-dairy",
+  "en": "Parmesan, hard",
+  "ar": "بارميزان، صلبة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~1 cup grated",
+   "ar": "~كوب مبشور"
+  },
+  "p": 38.5,
+  "f": 28.6,
+  "c": 3.2,
+  "kcal": 431,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (5 g)",
+    "ar": "ملعقة (5 جم)",
+    "g": 5.0
+   },
+   {
+    "en": "Sprinkle (15 g)",
+    "ar": "رشة (15 جم)",
+    "g": 15.0
+   }
+  ]
+ },
+ {
+  "id": "cheddar",
+  "cat": "protein-dairy",
+  "en": "Cheddar, regular",
+  "ar": "شيدر، عادية",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~1 cup shredded",
+   "ar": "~كوب مبشورة"
+  },
+  "p": 24.9,
+  "f": 33.1,
+  "c": 1.3,
+  "kcal": 404,
+  "badges": [],
+  "units": [
+   {
+    "en": "Slice (28 g)",
+    "ar": "شريحة (28 جم)",
+    "g": 28.0
+   }
+  ]
+ },
+ {
+  "id": "milk-whole",
+  "cat": "protein-dairy",
+  "en": "Milk, whole (3.25%)",
+  "ar": "حليب كامل الدسم (3.25%)",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 ml",
+   "ar": "لكل 100 مل"
+  },
+  "easy": {
+   "en": "1 cup = 240 ml",
+   "ar": "كوب = 240 مل"
+  },
+  "p": 3.2,
+  "f": 3.3,
+  "c": 4.7,
+  "kcal": 61,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (240 ml)",
+    "ar": "كوب (240 مل)",
+    "g": 240.0
+   },
+   {
+    "en": "½ cup (120 ml)",
+    "ar": "نصف كوب (120 مل)",
+    "g": 120.0
+   }
+  ]
+ },
+ {
+  "id": "milk-low",
+  "cat": "protein-dairy",
+  "en": "Milk, low-fat (1%)",
+  "ar": "حليب قليل الدسم (1%)",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 ml",
+   "ar": "لكل 100 مل"
+  },
+  "easy": {
+   "en": "1 cup = 240 ml",
+   "ar": "كوب = 240 مل"
+  },
+  "p": 3.4,
+  "f": 1.0,
+  "c": 5.0,
+  "kcal": 42,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (240 ml)",
+    "ar": "كوب (240 مل)",
+    "g": 240.0
+   },
+   {
+    "en": "½ cup (120 ml)",
+    "ar": "نصف كوب (120 مل)",
+    "g": 120.0
+   }
+  ]
+ },
+ {
+  "id": "milk-skim",
+  "cat": "protein-dairy",
+  "en": "Milk, skim",
+  "ar": "حليب خالي الدسم",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 ml",
+   "ar": "لكل 100 مل"
+  },
+  "easy": {
+   "en": "1 cup = 240 ml",
+   "ar": "كوب = 240 مل"
+  },
+  "p": 3.4,
+  "f": 0.2,
+  "c": 5.0,
+  "kcal": 34,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (240 ml)",
+    "ar": "كوب (240 مل)",
+    "g": 240.0
+   }
+  ]
+ },
+ {
+  "id": "lentils-dry",
+  "cat": "protein-veg",
+  "en": "Lentils, dry",
+  "ar": "عدس جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "½ cup dry",
+   "ar": "نصف كوب جاف"
+  },
+  "p": 25.8,
+  "f": 1.1,
+  "c": 63.4,
+  "kcal": 353,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "½ cup dry (~95 g)",
+    "ar": "نصف كوب جاف (~95 جم)",
+    "g": 95.0
+   }
+  ]
+ },
+ {
+  "id": "lentils-cooked",
+  "cat": "protein-veg",
+  "en": "Lentils, cooked",
+  "ar": "عدس مطبوخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup cooked",
+   "ar": "~نصف كوب مطبوخ"
+  },
+  "p": 9.0,
+  "f": 0.4,
+  "c": 20.1,
+  "kcal": 116,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "½ cup (100 g)",
+    "ar": "نصف كوب (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "1 cup (200 g)",
+    "ar": "كوب (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "1½ cup (300 g)",
+    "ar": "كوب ونصف (300 جم)",
+    "g": 300.0
+   }
+  ]
+ },
+ {
+  "id": "chickpeas-dry",
+  "cat": "protein-veg",
+  "en": "Chickpeas, dry",
+  "ar": "حمص جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "½ cup dry",
+   "ar": "نصف كوب جاف"
+  },
+  "p": 19.3,
+  "f": 6.0,
+  "c": 61.0,
+  "kcal": 364,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "chickpeas-can",
+  "cat": "protein-veg",
+  "en": "Chickpeas, canned, drained",
+  "ar": "حمص معلب، مصفى",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 7.0,
+  "f": 2.6,
+  "c": 22.5,
+  "kcal": 139,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (80 g)",
+    "ar": "نصف كوب (80 جم)",
+    "g": 80.0
+   },
+   {
+    "en": "1 cup (160 g)",
+    "ar": "كوب (160 جم)",
+    "g": 160.0
+   },
+   {
+    "en": "1 can (240 g)",
+    "ar": "علبة (240 جم)",
+    "g": 240.0
+   }
+  ]
+ },
+ {
+  "id": "foul-cooked",
+  "cat": "protein-veg",
+  "en": "Fava beans (foul) cooked",
+  "ar": "فول مدمس مطبوخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 7.6,
+  "f": 0.4,
+  "c": 19.7,
+  "kcal": 110,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (130 g)",
+    "ar": "نصف كوب (130 جم)",
+    "g": 130.0
+   },
+   {
+    "en": "1 cup (260 g)",
+    "ar": "كوب (260 جم)",
+    "g": 260.0
+   }
+  ]
+ },
+ {
+  "id": "foul-can",
+  "cat": "protein-veg",
+  "en": "Foul medames (canned)",
+  "ar": "فول مدمس معلب",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 7.5,
+  "f": 0.5,
+  "c": 17.5,
+  "kcal": 102,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ can (200 g)",
+    "ar": "نصف علبة (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "1 can (400 g)",
+    "ar": "علبة (400 جم)",
+    "g": 400.0
+   }
+  ]
+ },
+ {
+  "id": "white-beans",
+  "cat": "protein-veg",
+  "en": "White beans (cannellini), cooked",
+  "ar": "فاصوليا بيضا مطبوخة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 9.7,
+  "f": 0.6,
+  "c": 25.1,
+  "kcal": 139,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (180 g)",
+    "ar": "كوب (180 جم)",
+    "g": 180.0
+   }
+  ]
+ },
+ {
+  "id": "kidney-beans",
+  "cat": "protein-veg",
+  "en": "Red kidney beans, cooked",
+  "ar": "فاصوليا حمراء مطبوخة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 8.7,
+  "f": 0.5,
+  "c": 22.8,
+  "kcal": 127,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (175 g)",
+    "ar": "كوب (175 جم)",
+    "g": 175.0
+   }
+  ]
+ },
+ {
+  "id": "black-beans",
+  "cat": "protein-veg",
+  "en": "Black beans, cooked",
+  "ar": "فاصوليا سوداء مطبوخة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 8.9,
+  "f": 0.5,
+  "c": 23.7,
+  "kcal": 132,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "lobya",
+  "cat": "protein-veg",
+  "en": "Black-eyed peas (lobya), cooked",
+  "ar": "لوبيا مطبوخة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 7.7,
+  "f": 0.5,
+  "c": 20.8,
+  "kcal": 116,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "edamame",
+  "cat": "protein-veg",
+  "en": "Edamame, shelled, cooked",
+  "ar": "إيدامامي مقشر، مطبوخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 11.9,
+  "f": 5.2,
+  "c": 8.9,
+  "kcal": 122,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "tofu-firm",
+  "cat": "protein-veg",
+  "en": "Tofu, firm",
+  "ar": "توفو، قوي",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~½ cup cubed",
+   "ar": "~نصف كوب مكعبات"
+  },
+  "p": 17.3,
+  "f": 11.0,
+  "c": 2.8,
+  "kcal": 189,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ block (100 g)",
+    "ar": "نصف بلوك (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "Block (200 g)",
+    "ar": "بلوك (200 جم)",
+    "g": 200.0
+   }
+  ]
+ },
+ {
+  "id": "tofu-soft",
+  "cat": "protein-veg",
+  "en": "Tofu, soft / silken",
+  "ar": "توفو، طري",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~½ cup",
+   "ar": "~نصف كوب"
+  },
+  "p": 8.1,
+  "f": 4.2,
+  "c": 1.2,
+  "kcal": 76,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "hummus",
+  "cat": "protein-veg",
+  "en": "Hummus",
+  "ar": "حمص (دبس)",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅓ cup",
+   "ar": "~ثلث كوب"
+  },
+  "p": 7.9,
+  "f": 14.3,
+  "c": 14.3,
+  "kcal": 216,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (15 g)",
+    "ar": "ملعقة (15 جم)",
+    "g": 15.0
+   },
+   {
+    "en": "⅓ cup (60 g)",
+    "ar": "ثلث كوب (60 جم)",
+    "g": 60.0
+   }
+  ]
+ },
+ {
+  "id": "white-rice-dry",
+  "cat": "carbs",
+  "en": "White rice, basmati, dry",
+  "ar": "أرز بسمتي أبيض جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "½ cup dry",
+   "ar": "نصف كوب جاف"
+  },
+  "p": 7.1,
+  "f": 0.7,
+  "c": 79.0,
+  "kcal": 360,
+  "badges": [],
+  "units": [
+   {
+    "en": "¼ cup dry (50 g)",
+    "ar": "ربع كوب جاف (50 جم)",
+    "g": 50.0
+   },
+   {
+    "en": "½ cup dry (95 g)",
+    "ar": "نصف كوب جاف (95 جم)",
+    "g": 95.0
+   }
+  ]
+ },
+ {
+  "id": "white-rice-cooked",
+  "cat": "carbs",
+  "en": "White rice, cooked",
+  "ar": "أرز أبيض مطبوخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup cooked",
+   "ar": "~نصف كوب مطبوخ"
+  },
+  "p": 2.7,
+  "f": 0.3,
+  "c": 28.2,
+  "kcal": 130,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (90 g)",
+    "ar": "نصف كوب (90 جم)",
+    "g": 90.0
+   },
+   {
+    "en": "1 cup (180 g)",
+    "ar": "كوب (180 جم)",
+    "g": 180.0
+   },
+   {
+    "en": "1½ cup (270 g)",
+    "ar": "كوب ونصف (270 جم)",
+    "g": 270.0
+   }
+  ]
+ },
+ {
+  "id": "brown-rice-dry",
+  "cat": "carbs",
+  "en": "Brown rice, dry",
+  "ar": "أرز بني جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "½ cup dry",
+   "ar": "نصف كوب جاف"
+  },
+  "p": 7.9,
+  "f": 2.9,
+  "c": 77.2,
+  "kcal": 370,
+  "badges": [],
+  "units": [
+   {
+    "en": "¼ cup dry (50 g)",
+    "ar": "ربع كوب (50 جم)",
+    "g": 50.0
+   },
+   {
+    "en": "½ cup dry (95 g)",
+    "ar": "نصف كوب (95 جم)",
+    "g": 95.0
+   }
+  ]
+ },
+ {
+  "id": "brown-rice-cooked",
+  "cat": "carbs",
+  "en": "Brown rice, cooked",
+  "ar": "أرز بني مطبوخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup cooked",
+   "ar": "~نصف كوب مطبوخ"
+  },
+  "p": 2.6,
+  "f": 0.9,
+  "c": 25.6,
+  "kcal": 123,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (98 g)",
+    "ar": "نصف كوب (98 جم)",
+    "g": 98.0
+   },
+   {
+    "en": "1 cup (195 g)",
+    "ar": "كوب (195 جم)",
+    "g": 195.0
+   }
+  ]
+ },
+ {
+  "id": "quinoa-dry",
+  "cat": "carbs",
+  "en": "Quinoa, dry",
+  "ar": "كينوا جافة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "½ cup dry",
+   "ar": "نصف كوب جاف"
+  },
+  "p": 14.1,
+  "f": 6.1,
+  "c": 64.2,
+  "kcal": 368,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "quinoa-cooked",
+  "cat": "carbs",
+  "en": "Quinoa, cooked",
+  "ar": "كينوا مطبوخة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup cooked",
+   "ar": "~نصف كوب مطبوخ"
+  },
+  "p": 4.4,
+  "f": 1.9,
+  "c": 21.3,
+  "kcal": 120,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (95 g)",
+    "ar": "نصف كوب (95 جم)",
+    "g": 95.0
+   },
+   {
+    "en": "1 cup (185 g)",
+    "ar": "كوب (185 جم)",
+    "g": 185.0
+   }
+  ]
+ },
+ {
+  "id": "bulgur-dry",
+  "cat": "carbs",
+  "en": "Bulgur, dry",
+  "ar": "برغل جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "½ cup dry",
+   "ar": "نصف كوب جاف"
+  },
+  "p": 12.3,
+  "f": 1.3,
+  "c": 75.9,
+  "kcal": 342,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "bulgur-cooked",
+  "cat": "carbs",
+  "en": "Bulgur, cooked",
+  "ar": "برغل مطبوخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup cooked",
+   "ar": "~نصف كوب مطبوخ"
+  },
+  "p": 3.1,
+  "f": 0.2,
+  "c": 18.6,
+  "kcal": 83,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (180 g)",
+    "ar": "كوب (180 جم)",
+    "g": 180.0
+   }
+  ]
+ },
+ {
+  "id": "oats",
+  "cat": "carbs",
+  "en": "Rolled oats, dry",
+  "ar": "شوفان جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "~1 cup dry",
+   "ar": "~كوب جاف"
+  },
+  "p": 13.2,
+  "f": 6.5,
+  "c": 67.7,
+  "kcal": 379,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (40 g)",
+    "ar": "نصف كوب (40 جم)",
+    "g": 40.0
+   },
+   {
+    "en": "⅔ cup (50 g)",
+    "ar": "ثلثين كوب (50 جم)",
+    "g": 50.0
+   },
+   {
+    "en": "1 cup (80 g)",
+    "ar": "كوب (80 جم)",
+    "g": 80.0
+   }
+  ]
+ },
+ {
+  "id": "steel-cut",
+  "cat": "carbs",
+  "en": "Steel-cut oats, dry",
+  "ar": "شوفان مقطع جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "¼ cup ≈ 40 g",
+   "ar": "ربع كوب ≈ 40 جم"
+  },
+  "p": 14.0,
+  "f": 7.0,
+  "c": 68.0,
+  "kcal": 379,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "pasta-ww-dry",
+  "cat": "carbs",
+  "en": "Pasta, whole wheat, dry",
+  "ar": "مكرونة قمح كامل جافة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "~1 cup dry",
+   "ar": "~كوب جاف"
+  },
+  "p": 14.6,
+  "f": 2.5,
+  "c": 71.7,
+  "kcal": 348,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "pasta-ww-cooked",
+  "cat": "carbs",
+  "en": "Pasta, whole wheat, cooked",
+  "ar": "مكرونة قمح كامل مطبوخة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ cup cooked",
+   "ar": "~نصف كوب مطبوخ"
+  },
+  "p": 5.3,
+  "f": 1.1,
+  "c": 26.5,
+  "kcal": 124,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (140 g)",
+    "ar": "كوب (140 جم)",
+    "g": 140.0
+   },
+   {
+    "en": "1½ cup (210 g)",
+    "ar": "كوب ونصف (210 جم)",
+    "g": 210.0
+   }
+  ]
+ },
+ {
+  "id": "pasta-reg",
+  "cat": "carbs",
+  "en": "Pasta, regular, dry",
+  "ar": "مكرونة عادية جافة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "~1 cup dry",
+   "ar": "~كوب جاف"
+  },
+  "p": 13.0,
+  "f": 1.5,
+  "c": 74.7,
+  "kcal": 371,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "couscous-dry",
+  "cat": "carbs",
+  "en": "Couscous, dry",
+  "ar": "كسكسي جاف",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "½ cup dry",
+   "ar": "نصف كوب جاف"
+  },
+  "p": 12.8,
+  "f": 0.6,
+  "c": 72.8,
+  "kcal": 376,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "baladi",
+  "cat": "carbs",
+  "en": "Egyptian baladi bread (whole wheat)",
+  "ar": "عيش بلدي (قمح كامل)",
+  "base": 60.0,
+  "basis": {
+   "en": "per 1 small loaf (60 g)",
+   "ar": "لكل رغيف صغير (60 جم)"
+  },
+  "easy": {
+   "en": "1 small loaf",
+   "ar": "رغيف صغير"
+  },
+  "p": 6.0,
+  "f": 0.9,
+  "c": 30.6,
+  "kcal": 150,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 small loaf (60 g)",
+    "ar": "رغيف صغير (60 جم)",
+    "g": 60.0
+   },
+   {
+    "en": "2 loaves",
+    "ar": "رغيفين",
+    "g": 120.0
+   },
+   {
+    "en": "Big loaf (100 g)",
+    "ar": "رغيف كبير (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "ww-bread",
+  "cat": "carbs",
+  "en": "Whole wheat bread (commercial)",
+  "ar": "خبز قمح كامل (تجاري)",
+  "base": 30.0,
+  "basis": {
+   "en": "per 1 slice (30 g)",
+   "ar": "لكل شريحة (30 جم)"
+  },
+  "easy": {
+   "en": "1 slice",
+   "ar": "شريحة واحدة"
+  },
+  "p": 4.0,
+  "f": 1.1,
+  "c": 12.4,
+  "kcal": 76,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 slice (30 g)",
+    "ar": "شريحة (30 جم)",
+    "g": 30.0
+   },
+   {
+    "en": "2 slices (60 g)",
+    "ar": "شريحتين (60 جم)",
+    "g": 60.0
+   },
+   {
+    "en": "3 slices (90 g)",
+    "ar": "3 شرائح (90 جم)",
+    "g": 90.0
+   }
+  ]
+ },
+ {
+  "id": "white-bread",
+  "cat": "carbs",
+  "en": "White bread",
+  "ar": "خبز أبيض",
+  "base": 28.0,
+  "basis": {
+   "en": "per 1 slice (28 g)",
+   "ar": "لكل شريحة (28 جم)"
+  },
+  "easy": {
+   "en": "1 slice",
+   "ar": "شريحة واحدة"
+  },
+  "p": 2.6,
+  "f": 0.9,
+  "c": 13.8,
+  "kcal": 76,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 slice (28 g)",
+    "ar": "شريحة (28 جم)",
+    "g": 28.0
+   },
+   {
+    "en": "2 slices",
+    "ar": "شريحتين",
+    "g": 56.0
+   }
+  ]
+ },
+ {
+  "id": "pita-ww",
+  "cat": "carbs",
+  "en": "Pita bread, whole wheat",
+  "ar": "عيش بيتا قمح كامل",
+  "base": 60.0,
+  "basis": {
+   "en": "per 1 pita (60 g)",
+   "ar": "لكل بيتا (60 جم)"
+  },
+  "easy": {
+   "en": "1 pita",
+   "ar": "بيتا واحدة"
+  },
+  "p": 6.4,
+  "f": 1.6,
+  "c": 33.5,
+  "kcal": 160,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 pita (60 g)",
+    "ar": "بيتا (60 جم)",
+    "g": 60.0
+   }
+  ]
+ },
+ {
+  "id": "corn-tortilla",
+  "cat": "carbs",
+  "en": "Corn tortilla",
+  "ar": "تورتيلا ذرة",
+  "base": 25.0,
+  "basis": {
+   "en": "per 1 tortilla (25 g)",
+   "ar": "لكل تورتيلا (25 جم)"
+  },
+  "easy": {
+   "en": "1 tortilla",
+   "ar": "تورتيلا واحدة"
+  },
+  "p": 1.4,
+  "f": 0.7,
+  "c": 11.7,
+  "kcal": 59,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "potato",
+  "cat": "carbs",
+  "en": "Potato, raw, with skin",
+  "ar": "بطاطس نية بالقشر",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "1 medium = 175 g",
+   "ar": "بطاطس متوسطة = 175 جم"
+  },
+  "p": 2.0,
+  "f": 0.1,
+  "c": 17.5,
+  "kcal": 77,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (175 g)",
+    "ar": "متوسطة (175 جم)",
+    "g": 175.0
+   },
+   {
+    "en": "1 large (300 g)",
+    "ar": "كبيرة (300 جم)",
+    "g": 300.0
+   },
+   {
+    "en": "1 small (100 g)",
+    "ar": "صغيرة (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "sweet-potato",
+  "cat": "carbs",
+  "en": "Sweet potato, raw",
+  "ar": "بطاطا حلوة نية",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "1 medium = 130 g",
+   "ar": "بطاطا متوسطة = 130 جم"
+  },
+  "p": 1.6,
+  "f": 0.1,
+  "c": 20.1,
+  "kcal": 86,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (130 g)",
+    "ar": "متوسطة (130 جم)",
+    "g": 130.0
+   },
+   {
+    "en": "1 large (200 g)",
+    "ar": "كبيرة (200 جم)",
+    "g": 200.0
+   }
+  ]
+ },
+ {
+  "id": "taro",
+  "cat": "carbs",
+  "en": "Taro (qulqas), raw",
+  "ar": "قلقاس ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~⅔ cup cubed",
+   "ar": "~ثلثين كوب مكعبات"
+  },
+  "p": 1.5,
+  "f": 0.2,
+  "c": 26.5,
+  "kcal": 112,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "corn",
+  "cat": "carbs",
+  "en": "Corn, sweet, kernels",
+  "ar": "حبوب ذرة حلوة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 3.3,
+  "f": 1.4,
+  "c": 19.0,
+  "kcal": 86,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ cup (80 g)",
+    "ar": "نصف كوب (80 جم)",
+    "g": 80.0
+   }
+  ]
+ },
+ {
+  "id": "peas-fresh",
+  "cat": "carbs",
+  "en": "Peas, green, fresh",
+  "ar": "بازلاء خضرا طازة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 5.4,
+  "f": 0.4,
+  "c": 14.5,
+  "kcal": 81,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "peas-frozen",
+  "cat": "carbs",
+  "en": "Peas, frozen",
+  "ar": "بازلاء مجمدة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 5.2,
+  "f": 0.4,
+  "c": 14.5,
+  "kcal": 77,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "butternut",
+  "cat": "carbs",
+  "en": "Butternut squash, raw",
+  "ar": "قرع عسل ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~⅔ cup cubed",
+   "ar": "~ثلثين كوب مكعبات"
+  },
+  "p": 1.0,
+  "f": 0.1,
+  "c": 11.7,
+  "kcal": 45,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "pumpkin",
+  "cat": "carbs",
+  "en": "Pumpkin, raw",
+  "ar": "قرع ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~⅔ cup cubed",
+   "ar": "~ثلثين كوب مكعبات"
+  },
+  "p": 1.0,
+  "f": 0.1,
+  "c": 6.5,
+  "kcal": 26,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "spinach",
+  "cat": "veg",
+  "en": "Spinach, raw",
+  "ar": "سبانخ نية",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~3 cups loose",
+   "ar": "~3 كوب فضفاضة"
+  },
+  "p": 2.9,
+  "f": 0.4,
+  "c": 3.6,
+  "kcal": 23,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "1 cup (30 g)",
+    "ar": "كوب (30 جم)",
+    "g": 30.0
+   },
+   {
+    "en": "3 cups (100 g)",
+    "ar": "3 كوب (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "Bunch (250 g)",
+    "ar": "حزمة (250 جم)",
+    "g": 250.0
+   }
+  ]
+ },
+ {
+  "id": "arugula",
+  "cat": "veg",
+  "en": "Arugula (gargeer)",
+  "ar": "جرجير",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~5 cups loose",
+   "ar": "~5 كوب فضفاضة"
+  },
+  "p": 2.6,
+  "f": 0.7,
+  "c": 3.7,
+  "kcal": 25,
+  "badges": [],
+  "units": [
+   {
+    "en": "Bunch (60 g)",
+    "ar": "حزمة (60 جم)",
+    "g": 60.0
+   }
+  ]
+ },
+ {
+  "id": "romaine",
+  "cat": "veg",
+  "en": "Lettuce, romaine",
+  "ar": "خس روماني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~2 cups shredded",
+   "ar": "~2 كوب مقطع"
+  },
+  "p": 1.2,
+  "f": 0.3,
+  "c": 3.3,
+  "kcal": 17,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "kale",
+  "cat": "veg",
+  "en": "Kale",
+  "ar": "كرنب أخضر",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~2 cups chopped",
+   "ar": "~2 كوب مقطع"
+  },
+  "p": 4.3,
+  "f": 0.9,
+  "c": 8.8,
+  "kcal": 49,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "cabbage",
+  "cat": "veg",
+  "en": "Cabbage, white",
+  "ar": "كرنب أبيض",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~1 cup shredded",
+   "ar": "~كوب مقطع"
+  },
+  "p": 1.3,
+  "f": 0.1,
+  "c": 5.8,
+  "kcal": 25,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "broccoli",
+  "cat": "veg",
+  "en": "Broccoli",
+  "ar": "بروكلي",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~1 cup florets",
+   "ar": "~كوب زهيرات"
+  },
+  "p": 2.8,
+  "f": 0.4,
+  "c": 6.6,
+  "kcal": 34,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (90 g)",
+    "ar": "كوب (90 جم)",
+    "g": 90.0
+   },
+   {
+    "en": "1 head (~600 g)",
+    "ar": "رأس (~600 جم)",
+    "g": 600.0
+   }
+  ]
+ },
+ {
+  "id": "cauliflower",
+  "cat": "veg",
+  "en": "Cauliflower",
+  "ar": "قرنبيط",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~1 cup florets",
+   "ar": "~كوب زهيرات"
+  },
+  "p": 1.9,
+  "f": 0.3,
+  "c": 5.0,
+  "kcal": 25,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (100 g)",
+    "ar": "كوب (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "zucchini",
+  "cat": "veg",
+  "en": "Zucchini (kousa)",
+  "ar": "كوسة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~1 small",
+   "ar": "~كوسة صغيرة"
+  },
+  "p": 1.2,
+  "f": 0.3,
+  "c": 3.1,
+  "kcal": 17,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (200 g)",
+    "ar": "متوسطة (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "1 small (100 g)",
+    "ar": "صغيرة (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "eggplant",
+  "cat": "veg",
+  "en": "Eggplant",
+  "ar": "باذنجان",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~⅓ medium",
+   "ar": "~ثلث متوسطة"
+  },
+  "p": 1.0,
+  "f": 0.2,
+  "c": 5.9,
+  "kcal": 25,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (350 g)",
+    "ar": "متوسطة (350 جم)",
+    "g": 350.0
+   },
+   {
+    "en": "1 small (175 g)",
+    "ar": "صغيرة (175 جم)",
+    "g": 175.0
+   }
+  ]
+ },
+ {
+  "id": "green-beans",
+  "cat": "veg",
+  "en": "Green beans, fresh",
+  "ar": "فاصوليا خضرا طازة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~¾ cup",
+   "ar": "~ثلاثة أرباع كوب"
+  },
+  "p": 1.8,
+  "f": 0.2,
+  "c": 7.0,
+  "kcal": 31,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "okra",
+  "cat": "veg",
+  "en": "Okra (bamia), fresh",
+  "ar": "بامية طازة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~10 pods",
+   "ar": "~10 حبات"
+  },
+  "p": 1.9,
+  "f": 0.2,
+  "c": 7.4,
+  "kcal": 33,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "frozen-veg",
+  "cat": "veg",
+  "en": "Mixed frozen vegetables",
+  "ar": "خضار مشكل مجمد",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 3.6,
+  "f": 0.4,
+  "c": 13.1,
+  "kcal": 65,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (130 g)",
+    "ar": "كوب (130 جم)",
+    "g": 130.0
+   },
+   {
+    "en": "Bag portion (200 g)",
+    "ar": "حصة من كيس (200 جم)",
+    "g": 200.0
+   }
+  ]
+ },
+ {
+  "id": "tomato",
+  "cat": "veg",
+  "en": "Tomato, fresh",
+  "ar": "طماطم طازة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "1 medium = 125 g",
+   "ar": "طماطم متوسطة = 125 جم"
+  },
+  "p": 0.9,
+  "f": 0.2,
+  "c": 3.9,
+  "kcal": 18,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (125 g)",
+    "ar": "متوسطة (125 جم)",
+    "g": 125.0
+   },
+   {
+    "en": "1 large (175 g)",
+    "ar": "كبيرة (175 جم)",
+    "g": 175.0
+   }
+  ]
+ },
+ {
+  "id": "cucumber",
+  "cat": "veg",
+  "en": "Cucumber",
+  "ar": "خيار",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "1 small = 130 g",
+   "ar": "خيار صغير = 130 جم"
+  },
+  "p": 0.7,
+  "f": 0.1,
+  "c": 3.6,
+  "kcal": 15,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 small (130 g)",
+    "ar": "صغير (130 جم)",
+    "g": 130.0
+   },
+   {
+    "en": "1 large (300 g)",
+    "ar": "كبير (300 جم)",
+    "g": 300.0
+   }
+  ]
+ },
+ {
+  "id": "pepper-red",
+  "cat": "veg",
+  "en": "Bell pepper, red",
+  "ar": "فلفل أحمر",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "1 medium = 120 g",
+   "ar": "متوسطة = 120 جم"
+  },
+  "p": 1.0,
+  "f": 0.3,
+  "c": 6.0,
+  "kcal": 31,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (120 g)",
+    "ar": "متوسط (120 جم)",
+    "g": 120.0
+   }
+  ]
+ },
+ {
+  "id": "pepper-green",
+  "cat": "veg",
+  "en": "Bell pepper, green",
+  "ar": "فلفل أخضر",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "1 medium = 120 g",
+   "ar": "متوسطة = 120 جم"
+  },
+  "p": 0.9,
+  "f": 0.2,
+  "c": 4.6,
+  "kcal": 20,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (120 g)",
+    "ar": "متوسط (120 جم)",
+    "g": 120.0
+   }
+  ]
+ },
+ {
+  "id": "carrot",
+  "cat": "veg",
+  "en": "Carrot",
+  "ar": "جزر",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "1 medium = 60 g",
+   "ar": "جزرة متوسطة = 60 جم"
+  },
+  "p": 0.9,
+  "f": 0.2,
+  "c": 9.6,
+  "kcal": 41,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (60 g)",
+    "ar": "متوسطة (60 جم)",
+    "g": 60.0
+   },
+   {
+    "en": "1 large (100 g)",
+    "ar": "كبيرة (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "onion",
+  "cat": "veg",
+  "en": "Onion",
+  "ar": "بصل",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "1 medium = 110 g",
+   "ar": "بصلة متوسطة = 110 جم"
+  },
+  "p": 1.1,
+  "f": 0.1,
+  "c": 9.3,
+  "kcal": 40,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (110 g)",
+    "ar": "متوسطة (110 جم)",
+    "g": 110.0
+   }
+  ]
+ },
+ {
+  "id": "garlic",
+  "cat": "veg",
+  "en": "Garlic, fresh",
+  "ar": "ثوم طازج",
+  "base": 3.0,
+  "basis": {
+   "en": "per 1 clove (3 g)",
+   "ar": "لكل فص (3 جم)"
+  },
+  "easy": {
+   "en": "1 clove",
+   "ar": "فص واحد"
+  },
+  "p": 0.2,
+  "f": 0.02,
+  "c": 1.0,
+  "kcal": 5,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 clove (3 g)",
+    "ar": "فص (3 جم)",
+    "g": 3.0
+   },
+   {
+    "en": "3 cloves (9 g)",
+    "ar": "3 فصوص (9 جم)",
+    "g": 9.0
+   }
+  ]
+ },
+ {
+  "id": "mushrooms",
+  "cat": "veg",
+  "en": "Mushrooms, white",
+  "ar": "عيش غراب أبيض",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~1 cup sliced",
+   "ar": "~كوب مقطع"
+  },
+  "p": 3.1,
+  "f": 0.3,
+  "c": 3.3,
+  "kcal": 22,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "beets",
+  "cat": "veg",
+  "en": "Beets, raw",
+  "ar": "بنجر ني",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~1 small",
+   "ar": "~بنجرة صغيرة"
+  },
+  "p": 1.6,
+  "f": 0.2,
+  "c": 9.6,
+  "kcal": 43,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "asparagus",
+  "cat": "veg",
+  "en": "Asparagus",
+  "ar": "هليون",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~5 spears",
+   "ar": "~5 عيدان"
+  },
+  "p": 2.2,
+  "f": 0.1,
+  "c": 3.9,
+  "kcal": 20,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "cherry-tom",
+  "cat": "veg",
+  "en": "Cherry tomatoes",
+  "ar": "طماطم شيري",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~10 cherry",
+   "ar": "~10 حبات"
+  },
+  "p": 0.9,
+  "f": 0.2,
+  "c": 3.9,
+  "kcal": 18,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "parsley",
+  "cat": "veg",
+  "en": "Parsley",
+  "ar": "بقدونس",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم ني"
+  },
+  "easy": {
+   "en": "~1 large bunch",
+   "ar": "~حزمة كبيرة"
+  },
+  "p": 3.0,
+  "f": 0.8,
+  "c": 6.3,
+  "kcal": 36,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "cilantro",
+  "cat": "veg",
+  "en": "Cilantro",
+  "ar": "كزبرة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم نية"
+  },
+  "easy": {
+   "en": "~1 bunch",
+   "ar": "~حزمة"
+  },
+  "p": 2.1,
+  "f": 0.5,
+  "c": 3.7,
+  "kcal": 23,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "apple",
+  "cat": "fruit",
+  "en": "Apple",
+  "ar": "تفاح",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 medium = 180 g",
+   "ar": "تفاحة متوسطة = 180 جم"
+  },
+  "p": 0.3,
+  "f": 0.2,
+  "c": 13.8,
+  "kcal": 52,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (180 g)",
+    "ar": "متوسطة (180 جم)",
+    "g": 180.0
+   },
+   {
+    "en": "1 small (150 g)",
+    "ar": "صغيرة (150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "1 large (220 g)",
+    "ar": "كبيرة (220 جم)",
+    "g": 220.0
+   }
+  ]
+ },
+ {
+  "id": "banana",
+  "cat": "fruit",
+  "en": "Banana",
+  "ar": "موز",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 medium = 120 g",
+   "ar": "موزة متوسطة = 120 جم"
+  },
+  "p": 1.1,
+  "f": 0.3,
+  "c": 22.8,
+  "kcal": 89,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (120 g)",
+    "ar": "متوسطة (120 جم)",
+    "g": 120.0
+   },
+   {
+    "en": "1 large (135 g)",
+    "ar": "كبيرة (135 جم)",
+    "g": 135.0
+   },
+   {
+    "en": "1 small (100 g)",
+    "ar": "صغيرة (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "orange",
+  "cat": "fruit",
+  "en": "Orange",
+  "ar": "برتقال",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 medium = 130 g",
+   "ar": "برتقالة متوسطة = 130 جم"
+  },
+  "p": 0.9,
+  "f": 0.1,
+  "c": 11.8,
+  "kcal": 47,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (130 g)",
+    "ar": "متوسطة (130 جم)",
+    "g": 130.0
+   },
+   {
+    "en": "1 large (180 g)",
+    "ar": "كبيرة (180 جم)",
+    "g": 180.0
+   }
+  ]
+ },
+ {
+  "id": "pear",
+  "cat": "fruit",
+  "en": "Pear",
+  "ar": "كمتري",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 medium = 180 g",
+   "ar": "كمتري متوسطة = 180 جم"
+  },
+  "p": 0.4,
+  "f": 0.1,
+  "c": 15.2,
+  "kcal": 57,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (180 g)",
+    "ar": "متوسطة (180 جم)",
+    "g": 180.0
+   }
+  ]
+ },
+ {
+  "id": "strawberries",
+  "cat": "fruit",
+  "en": "Strawberries",
+  "ar": "فراولة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~1 cup whole",
+   "ar": "~كوب كاملة"
+  },
+  "p": 0.7,
+  "f": 0.3,
+  "c": 7.7,
+  "kcal": 32,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (150 g)",
+    "ar": "كوب (150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "½ cup (75 g)",
+    "ar": "نصف كوب (75 جم)",
+    "g": 75.0
+   }
+  ]
+ },
+ {
+  "id": "blueberries",
+  "cat": "fruit",
+  "en": "Blueberries",
+  "ar": "توت أزرق",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 0.7,
+  "f": 0.3,
+  "c": 14.5,
+  "kcal": 57,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (150 g)",
+    "ar": "كوب (150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "½ cup (75 g)",
+    "ar": "نصف كوب (75 جم)",
+    "g": 75.0
+   }
+  ]
+ },
+ {
+  "id": "raspberries",
+  "cat": "fruit",
+  "en": "Raspberries",
+  "ar": "توت أحمر",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~¾ cup",
+   "ar": "~ثلاثة أرباع كوب"
+  },
+  "p": 1.2,
+  "f": 0.7,
+  "c": 11.9,
+  "kcal": 52,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "kiwi",
+  "cat": "fruit",
+  "en": "Kiwi",
+  "ar": "كيوي",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 large = 90 g",
+   "ar": "كيوي كبيرة = 90 جم"
+  },
+  "p": 1.1,
+  "f": 0.5,
+  "c": 14.7,
+  "kcal": 61,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (75 g)",
+    "ar": "متوسطة (75 جم)",
+    "g": 75.0
+   },
+   {
+    "en": "2 medium",
+    "ar": "اتنين متوسطة",
+    "g": 150.0
+   }
+  ]
+ },
+ {
+  "id": "watermelon",
+  "cat": "fruit",
+  "en": "Watermelon",
+  "ar": "بطيخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup cubed",
+   "ar": "~ثلثين كوب مكعبات"
+  },
+  "p": 0.6,
+  "f": 0.2,
+  "c": 7.6,
+  "kcal": 30,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (155 g)",
+    "ar": "كوب (155 جم)",
+    "g": 155.0
+   },
+   {
+    "en": "Slice (280 g)",
+    "ar": "شريحة (280 جم)",
+    "g": 280.0
+   }
+  ]
+ },
+ {
+  "id": "shammam",
+  "cat": "fruit",
+  "en": "Cantaloupe (shammam)",
+  "ar": "شمام",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup cubed",
+   "ar": "~ثلثين كوب مكعبات"
+  },
+  "p": 0.8,
+  "f": 0.2,
+  "c": 8.2,
+  "kcal": 34,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (160 g)",
+    "ar": "كوب (160 جم)",
+    "g": 160.0
+   }
+  ]
+ },
+ {
+  "id": "mango",
+  "cat": "fruit",
+  "en": "Mango",
+  "ar": "مانجة",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 small = 200 g",
+   "ar": "مانجة صغيرة = 200 جم"
+  },
+  "p": 0.8,
+  "f": 0.4,
+  "c": 15.0,
+  "kcal": 60,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 small (200 g)",
+    "ar": "صغيرة (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "1 large (335 g)",
+    "ar": "كبيرة (335 جم)",
+    "g": 335.0
+   }
+  ]
+ },
+ {
+  "id": "grapes",
+  "cat": "fruit",
+  "en": "Grapes",
+  "ar": "عنب",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup",
+   "ar": "~ثلثين كوب"
+  },
+  "p": 0.7,
+  "f": 0.2,
+  "c": 18.1,
+  "kcal": 69,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (150 g)",
+    "ar": "كوب (150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "Small bunch (100 g)",
+    "ar": "عنقود صغير (100 جم)",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "pomegranate",
+  "cat": "fruit",
+  "en": "Pomegranate, arils",
+  "ar": "حب رمان",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~⅔ cup arils",
+   "ar": "~ثلثين كوب حب"
+  },
+  "p": 1.7,
+  "f": 1.2,
+  "c": 18.7,
+  "kcal": 83,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (175 g)",
+    "ar": "كوب (175 جم)",
+    "g": 175.0
+   }
+  ]
+ },
+ {
+  "id": "peach",
+  "cat": "fruit",
+  "en": "Peach",
+  "ar": "خوخ",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 medium = 150 g",
+   "ar": "خوخة متوسطة = 150 جم"
+  },
+  "p": 0.9,
+  "f": 0.3,
+  "c": 9.5,
+  "kcal": 39,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "plum",
+  "cat": "fruit",
+  "en": "Plum",
+  "ar": "برقوق",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "1 medium = 65 g",
+   "ar": "متوسطة = 65 جم"
+  },
+  "p": 0.7,
+  "f": 0.3,
+  "c": 11.4,
+  "kcal": 46,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "grapefruit",
+  "cat": "fruit",
+  "en": "Grapefruit",
+  "ar": "جريب فروت",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "½ fruit = 120 g",
+   "ar": "نصف ثمرة = 120 جم"
+  },
+  "p": 0.8,
+  "f": 0.1,
+  "c": 10.7,
+  "kcal": 42,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "lemon",
+  "cat": "fruit",
+  "en": "Lemon, fresh",
+  "ar": "ليمون طازج",
+  "base": 60.0,
+  "basis": {
+   "en": "per 1 medium (60 g)",
+   "ar": "لكل متوسطة (60 جم)"
+  },
+  "easy": {
+   "en": "1 medium",
+   "ar": "ليمونة متوسطة"
+  },
+  "p": 0.7,
+  "f": 0.2,
+  "c": 5.6,
+  "kcal": 17,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (60 g)",
+    "ar": "متوسطة (60 جم)",
+    "g": 60.0
+   },
+   {
+    "en": "½ lemon (30 g)",
+    "ar": "نصف ليمونة (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "dates",
+  "cat": "fruit",
+  "en": "Dates, dried (medjool)",
+  "ar": "تمر مجدول مجفف",
+  "base": 24.0,
+  "basis": {
+   "en": "per 1 date (24 g)",
+   "ar": "لكل تمرة (24 جم)"
+  },
+  "easy": {
+   "en": "1 date",
+   "ar": "تمرة واحدة"
+  },
+  "p": 0.4,
+  "f": 0.05,
+  "c": 18.0,
+  "kcal": 66,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 date (24 g)",
+    "ar": "تمرة (24 جم)",
+    "g": 24.0
+   },
+   {
+    "en": "3 dates",
+    "ar": "3 تمرات",
+    "g": 72.0
+   },
+   {
+    "en": "5 dates",
+    "ar": "5 تمرات",
+    "g": 120.0
+   }
+  ]
+ },
+ {
+  "id": "figs",
+  "cat": "fruit",
+  "en": "Figs, fresh",
+  "ar": "تين طازج",
+  "base": 50.0,
+  "basis": {
+   "en": "per 1 medium (50 g)",
+   "ar": "لكل متوسطة (50 جم)"
+  },
+  "easy": {
+   "en": "1 medium",
+   "ar": "تينة متوسطة"
+  },
+  "p": 0.4,
+  "f": 0.2,
+  "c": 9.6,
+  "kcal": 37,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (50 g)",
+    "ar": "متوسطة (50 جم)",
+    "g": 50.0
+   }
+  ]
+ },
+ {
+  "id": "raisins",
+  "cat": "fruit",
+  "en": "Raisins",
+  "ar": "زبيب",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "2 tbsp = 20 g",
+   "ar": "ملعقتين = 20 جم"
+  },
+  "p": 3.1,
+  "f": 0.5,
+  "c": 79.2,
+  "kcal": 299,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (10 g)",
+    "ar": "ملعقة (10 جم)",
+    "g": 10.0
+   },
+   {
+    "en": "2 tbsp (20 g)",
+    "ar": "ملعقتين (20 جم)",
+    "g": 20.0
+   },
+   {
+    "en": "¼ cup (40 g)",
+    "ar": "ربع كوب (40 جم)",
+    "g": 40.0
+   }
+  ]
+ },
+ {
+  "id": "olive-oil",
+  "cat": "fats",
+  "en": "Olive oil, extra virgin",
+  "ar": "زيت زيتون بكر ممتاز",
+  "base": 10.0,
+  "basis": {
+   "en": "per 10 g (≈¾ tbsp)",
+   "ar": "لكل 10 جم (≈ ثلاثة أرباع ملعقة كبيرة)"
+  },
+  "easy": {
+   "en": "1 tbsp = 14 g",
+   "ar": "ملعقة كبيرة = 14 جم"
+  },
+  "p": 0.0,
+  "f": 10.0,
+  "c": 0.0,
+  "kcal": 88,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 teaspoon (5 g)",
+    "ar": "ملعقة صغيرة (5 جم)",
+    "g": 5.0
+   },
+   {
+    "en": "1 tablespoon (14 g)",
+    "ar": "ملعقة كبيرة (14 جم)",
+    "g": 14.0
+   },
+   {
+    "en": "2 tablespoons (28 g)",
+    "ar": "ملعقتين كبير (28 جم)",
+    "g": 28.0
+   },
+   {
+    "en": "3 tablespoons (42 g)",
+    "ar": "3 ملاعق كبيرة (42 جم)",
+    "g": 42.0
+   }
+  ]
+ },
+ {
+  "id": "avocado-oil",
+  "cat": "fats",
+  "en": "Avocado oil",
+  "ar": "زيت أفوكادو",
+  "base": 10.0,
+  "basis": {
+   "en": "per 10 g",
+   "ar": "لكل 10 جم"
+  },
+  "easy": {
+   "en": "~¾ tbsp",
+   "ar": "~ثلاثة أرباع ملعقة"
+  },
+  "p": 0.0,
+  "f": 10.0,
+  "c": 0.0,
+  "kcal": 88,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 tablespoon (14 g)",
+    "ar": "ملعقة كبيرة (14 جم)",
+    "g": 14.0
+   }
+  ]
+ },
+ {
+  "id": "butter",
+  "cat": "fats",
+  "en": "Butter",
+  "ar": "زبدة",
+  "base": 10.0,
+  "basis": {
+   "en": "per 10 g",
+   "ar": "لكل 10 جم"
+  },
+  "easy": {
+   "en": "~1 small pat",
+   "ar": "~قطعة صغيرة"
+  },
+  "p": 0.1,
+  "f": 8.1,
+  "c": 0.1,
+  "kcal": 72,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 teaspoon (5 g)",
+    "ar": "ملعقة صغيرة (5 جم)",
+    "g": 5.0
+   },
+   {
+    "en": "1 tablespoon (14 g)",
+    "ar": "ملعقة كبيرة (14 جم)",
+    "g": 14.0
+   }
+  ]
+ },
+ {
+  "id": "ghee",
+  "cat": "fats",
+  "en": "Ghee",
+  "ar": "سمنة (غي)",
+  "base": 10.0,
+  "basis": {
+   "en": "per 10 g",
+   "ar": "لكل 10 جم"
+  },
+  "easy": {
+   "en": "~¾ tbsp",
+   "ar": "~ثلاثة أرباع ملعقة"
+  },
+  "p": 0.0,
+  "f": 10.0,
+  "c": 0.0,
+  "kcal": 90,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 tablespoon (13 g)",
+    "ar": "ملعقة كبيرة (13 جم)",
+    "g": 13.0
+   }
+  ]
+ },
+ {
+  "id": "avocado",
+  "cat": "fats",
+  "en": "Avocado, fresh",
+  "ar": "أفوكادو طازج",
+  "base": 100.0,
+  "basis": {
+   "en": "per 100 g (½ medium)",
+   "ar": "لكل 100 جم (نصف متوسطة)"
+  },
+  "easy": {
+   "en": "½ medium = 100 g",
+   "ar": "نصف متوسطة = 100 جم"
+  },
+  "p": 2.0,
+  "f": 14.7,
+  "c": 8.5,
+  "kcal": 160,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ medium (100 g)",
+    "ar": "نصف متوسطة (100 جم)",
+    "g": 100.0
+   },
+   {
+    "en": "1 medium (200 g)",
+    "ar": "متوسطة (200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "¼ medium (50 g)",
+    "ar": "ربع متوسطة (50 جم)",
+    "g": 50.0
+   }
+  ]
+ },
+ {
+  "id": "almonds",
+  "cat": "fats",
+  "en": "Almonds, raw",
+  "ar": "لوز ني",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (handful)",
+   "ar": "لكل 30 جم (حفنة)"
+  },
+  "easy": {
+   "en": "~23 almonds",
+   "ar": "~23 حبة لوز"
+  },
+  "p": 6.3,
+  "f": 15.1,
+  "c": 6.5,
+  "kcal": 174,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "Handful (30 g)",
+    "ar": "حفنة (30 جم)",
+    "g": 30.0
+   },
+   {
+    "en": "½ handful (15 g)",
+    "ar": "نصف حفنة (15 جم)",
+    "g": 15.0
+   },
+   {
+    "en": "¼ cup (40 g)",
+    "ar": "ربع كوب (40 جم)",
+    "g": 40.0
+   },
+   {
+    "en": "~10 almonds (12 g)",
+    "ar": "~10 حبات (12 جم)",
+    "g": 12.0
+   }
+  ]
+ },
+ {
+  "id": "walnuts",
+  "cat": "fats",
+  "en": "Walnuts, raw",
+  "ar": "عين جمل ني",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (handful)",
+   "ar": "لكل 30 جم (حفنة)"
+  },
+  "easy": {
+   "en": "~7 halves",
+   "ar": "~7 نصفات"
+  },
+  "p": 4.6,
+  "f": 19.6,
+  "c": 4.1,
+  "kcal": 196,
+  "badges": [],
+  "units": [
+   {
+    "en": "Handful (30 g)",
+    "ar": "حفنة (30 جم)",
+    "g": 30.0
+   },
+   {
+    "en": "7 halves (15 g)",
+    "ar": "7 نصفات (15 جم)",
+    "g": 15.0
+   }
+  ]
+ },
+ {
+  "id": "cashews",
+  "cat": "fats",
+  "en": "Cashews, raw",
+  "ar": "كاجو ني",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (handful)",
+   "ar": "لكل 30 جم (حفنة)"
+  },
+  "easy": {
+   "en": "~18 cashews",
+   "ar": "~18 حبة"
+  },
+  "p": 5.4,
+  "f": 13.1,
+  "c": 9.3,
+  "kcal": 163,
+  "badges": [],
+  "units": [
+   {
+    "en": "Handful (30 g)",
+    "ar": "حفنة (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "pistachios",
+  "cat": "fats",
+  "en": "Pistachios, raw",
+  "ar": "فستق ني",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (handful)",
+   "ar": "لكل 30 جم (حفنة)"
+  },
+  "easy": {
+   "en": "~49 nuts",
+   "ar": "~49 حبة"
+  },
+  "p": 6.0,
+  "f": 13.4,
+  "c": 8.4,
+  "kcal": 170,
+  "badges": [],
+  "units": [
+   {
+    "en": "Handful (30 g)",
+    "ar": "حفنة (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "peanuts",
+  "cat": "fats",
+  "en": "Peanuts, raw",
+  "ar": "فول سوداني ني",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (handful)",
+   "ar": "لكل 30 جم (حفنة)"
+  },
+  "easy": {
+   "en": "~35 nuts",
+   "ar": "~35 حبة"
+  },
+  "p": 7.7,
+  "f": 14.4,
+  "c": 4.8,
+  "kcal": 170,
+  "badges": [],
+  "units": [
+   {
+    "en": "Handful (30 g)",
+    "ar": "حفنة (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "hazelnuts",
+  "cat": "fats",
+  "en": "Hazelnuts",
+  "ar": "بندق",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (handful)",
+   "ar": "لكل 30 جم (حفنة)"
+  },
+  "easy": {
+   "en": "~21 nuts",
+   "ar": "~21 حبة"
+  },
+  "p": 4.5,
+  "f": 18.3,
+  "c": 5.0,
+  "kcal": 189,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "pumpkin-seeds",
+  "cat": "fats",
+  "en": "Pumpkin seeds, raw",
+  "ar": "لب يقطين (قرع عسلي) ني",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g",
+   "ar": "لكل 30 جم"
+  },
+  "easy": {
+   "en": "~3 tbsp",
+   "ar": "~3 ملاعق كبيرة"
+  },
+  "p": 8.9,
+  "f": 14.0,
+  "c": 3.2,
+  "kcal": 170,
+  "badges": [
+   "iron"
+  ],
+  "units": [
+   {
+    "en": "Tablespoon (10 g)",
+    "ar": "ملعقة (10 جم)",
+    "g": 10.0
+   },
+   {
+    "en": "3 tbsp (30 g)",
+    "ar": "3 ملاعق (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "sunflower-seeds",
+  "cat": "fats",
+  "en": "Sunflower seeds",
+  "ar": "بذور دوار الشمس",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g",
+   "ar": "لكل 30 جم"
+  },
+  "easy": {
+   "en": "~3 tbsp",
+   "ar": "~3 ملاعق"
+  },
+  "p": 6.3,
+  "f": 15.3,
+  "c": 6.0,
+  "kcal": 175,
+  "badges": [],
+  "units": []
+ },
+ {
+  "id": "sesame",
+  "cat": "fats",
+  "en": "Sesame seeds",
+  "ar": "بذور سمسم",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g",
+   "ar": "لكل 30 جم"
+  },
+  "easy": {
+   "en": "~3 tbsp",
+   "ar": "~3 ملاعق"
+  },
+  "p": 5.3,
+  "f": 15.0,
+  "c": 7.0,
+  "kcal": 172,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (10 g)",
+    "ar": "ملعقة (10 جم)",
+    "g": 10.0
+   }
+  ]
+ },
+ {
+  "id": "chia",
+  "cat": "fats",
+  "en": "Chia seeds",
+  "ar": "بذور شيا",
+  "base": 15.0,
+  "basis": {
+   "en": "per 15 g (2 tbsp)",
+   "ar": "لكل 15 جم (ملعقتين)"
+  },
+  "easy": {
+   "en": "2 tbsp",
+   "ar": "ملعقتين"
+  },
+  "p": 2.5,
+  "f": 4.7,
+  "c": 6.3,
+  "kcal": 73,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 tablespoon (12 g)",
+    "ar": "ملعقة كبيرة (12 جم)",
+    "g": 12.0
+   },
+   {
+    "en": "2 tablespoons (24 g)",
+    "ar": "ملعقتين كبير (24 جم)",
+    "g": 24.0
+   }
+  ]
+ },
+ {
+  "id": "flax",
+  "cat": "fats",
+  "en": "Flax seeds, ground",
+  "ar": "بذور كتان مطحونة",
+  "base": 15.0,
+  "basis": {
+   "en": "per 15 g (2 tbsp)",
+   "ar": "لكل 15 جم (ملعقتين)"
+  },
+  "easy": {
+   "en": "2 tbsp",
+   "ar": "ملعقتين"
+  },
+  "p": 2.7,
+  "f": 6.4,
+  "c": 4.4,
+  "kcal": 80,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 tablespoon (7 g)",
+    "ar": "ملعقة كبيرة (7 جم)",
+    "g": 7.0
+   },
+   {
+    "en": "2 tablespoons (14 g)",
+    "ar": "ملعقتين كبير (14 جم)",
+    "g": 14.0
+   }
+  ]
+ },
+ {
+  "id": "tahini",
+  "cat": "fats",
+  "en": "Tahini (sesame paste)",
+  "ar": "طحينة",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (2 tbsp)",
+   "ar": "لكل 30 جم (ملعقتين)"
+  },
+  "easy": {
+   "en": "2 tbsp = 30 g",
+   "ar": "ملعقتين = 30 جم"
+  },
+  "p": 5.1,
+  "f": 16.2,
+  "c": 6.3,
+  "kcal": 178,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (15 g)",
+    "ar": "ملعقة كبيرة (15 جم)",
+    "g": 15.0
+   },
+   {
+    "en": "2 tablespoons (30 g)",
+    "ar": "ملعقتين (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "peanut-butter",
+  "cat": "fats",
+  "en": "Peanut butter, natural",
+  "ar": "زبدة فول سوداني طبيعية",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (2 tbsp)",
+   "ar": "لكل 30 جم (ملعقتين)"
+  },
+  "easy": {
+   "en": "2 tbsp = 30 g",
+   "ar": "ملعقتين = 30 جم"
+  },
+  "p": 7.2,
+  "f": 15.0,
+  "c": 6.0,
+  "kcal": 180,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (15 g)",
+    "ar": "ملعقة كبيرة (15 جم)",
+    "g": 15.0
+   },
+   {
+    "en": "2 tablespoons (30 g)",
+    "ar": "ملعقتين (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "almond-butter",
+  "cat": "fats",
+  "en": "Almond butter",
+  "ar": "زبدة لوز",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g (2 tbsp)",
+   "ar": "لكل 30 جم (ملعقتين)"
+  },
+  "easy": {
+   "en": "2 tbsp = 30 g",
+   "ar": "ملعقتين = 30 جم"
+  },
+  "p": 6.3,
+  "f": 17.0,
+  "c": 5.9,
+  "kcal": 189,
+  "badges": [],
+  "units": [
+   {
+    "en": "Tablespoon (15 g)",
+    "ar": "ملعقة كبيرة (15 جم)",
+    "g": 15.0
+   },
+   {
+    "en": "2 tablespoons (30 g)",
+    "ar": "ملعقتين (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "olives-green",
+  "cat": "fats",
+  "en": "Olives, green",
+  "ar": "زيتون أخضر",
+  "base": 30.0,
+  "basis": {
+   "en": "per 30 g",
+   "ar": "لكل 30 جم"
+  },
+  "easy": {
+   "en": "~10 olives",
+   "ar": "~10 حبات"
+  },
+  "p": 0.3,
+  "f": 3.5,
+  "c": 1.2,
+  "kcal": 39,
+  "badges": [],
+  "units": [
+   {
+    "en": "10 olives (30 g)",
+    "ar": "10 حبات (30 جم)",
+    "g": 30.0
+   }
+  ]
+ },
+ {
+  "id": "tazaj-quarter-nobread",
+  "cat": "al-tazaj",
+  "en": "Al Tazaj — grilled quarter chicken (no bread)",
+  "ar": "الطازج — ربع فروج مشوي (بدون عيش)",
+  "base": 250.0,
+  "basis": {
+   "en": "per quarter chicken, meat only (~250 g)",
+   "ar": "لكل ربع فروج، لحم فقط (~250 جم)"
+  },
+  "easy": {
+   "en": "¼ grilled chicken",
+   "ar": "ربع فروج مشوي"
+  },
+  "p": 70.0,
+  "f": 18.0,
+  "c": 1.0,
+  "kcal": 455,
+  "badges": [],
+  "units": [
+   {
+    "en": "Quarter (~250 g)",
+    "ar": "ربع (~250 جم)",
+    "g": 250.0
+   },
+   {
+    "en": "Half (~500 g)",
+    "ar": "نصف (~500 جم)",
+    "g": 500.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "tazaj-breast-fit-nobread",
+  "cat": "al-tazaj",
+  "en": "Al Tazaj — grilled chicken breast only (Rashaka, no bread)",
+  "ar": "الطازج — صدر دجاج مشوي فقط (الرشاقة، بدون عيش)",
+  "base": 150.0,
+  "basis": {
+   "en": "per breast portion (~150 g)",
+   "ar": "لكل حصة صدر (~150 جم)"
+  },
+  "easy": {
+   "en": "1 fit breast",
+   "ar": "صدر رشاقة"
+  },
+  "p": 46.0,
+  "f": 5.0,
+  "c": 0.0,
+  "kcal": 230,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 breast (~150 g)",
+    "ar": "صدر (~150 جم)",
+    "g": 150.0
+   },
+   {
+    "en": "Large (~200 g)",
+    "ar": "كبير (~200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "romansiah-madhbi-nobread",
+  "cat": "al-romansiah",
+  "en": "Al Romansiah — madhbi grilled chicken only (no rice)",
+  "ar": "الرومانسية — مظبي دجاج مشوي فقط (بدون أرز)",
+  "base": 250.0,
+  "basis": {
+   "en": "per quarter portion, meat only (~250 g)",
+   "ar": "لكل ربع، لحم فقط (~250 جم)"
+  },
+  "easy": {
+   "en": "¼ chicken, no rice",
+   "ar": "ربع دجاجة، بدون أرز"
+  },
+  "p": 68.0,
+  "f": 20.0,
+  "c": 1.0,
+  "kcal": 470,
+  "badges": [],
+  "units": [
+   {
+    "en": "Quarter (~250 g)",
+    "ar": "ربع (~250 جم)",
+    "g": 250.0
+   },
+   {
+    "en": "Half (~500 g)",
+    "ar": "نصف (~500 جم)",
+    "g": 500.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "romansiah-grilled-breast-nobread",
+  "cat": "al-romansiah",
+  "en": "Al Romansiah — grilled chicken breast only (no rice)",
+  "ar": "الرومانسية — صدر دجاج مشوي فقط (بدون أرز)",
+  "base": 180.0,
+  "basis": {
+   "en": "per breast portion (~180 g)",
+   "ar": "لكل حصة صدر (~180 جم)"
+  },
+  "easy": {
+   "en": "1 breast, no rice",
+   "ar": "صدر، بدون أرز"
+  },
+  "p": 54.0,
+  "f": 7.0,
+  "c": 0.0,
+  "kcal": 290,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 breast (~180 g)",
+    "ar": "صدر (~180 جم)",
+    "g": 180.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "mandi-chicken-meat-only",
+  "cat": "mandi-kabsa-generic",
+  "en": "Mandi/Kabsa — grilled chicken meat only (no rice)",
+  "ar": "مندي/كبسة — لحم دجاج مشوي فقط (بدون أرز)",
+  "base": 200.0,
+  "basis": {
+   "en": "per ~200 g meat, no rice",
+   "ar": "لكل ~200 جم لحم، بدون أرز"
+  },
+  "easy": {
+   "en": "¼ chicken, no rice",
+   "ar": "ربع دجاجة، بدون أرز"
+  },
+  "p": 54.0,
+  "f": 18.0,
+  "c": 0.0,
+  "kcal": 390,
+  "badges": [],
+  "units": [
+   {
+    "en": "Quarter meat (~200 g)",
+    "ar": "ربع لحم (~200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "Half meat (~360 g)",
+    "ar": "نصف لحم (~360 جم)",
+    "g": 360.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "madhbi-generic-meat-only",
+  "cat": "mandi-kabsa-generic",
+  "en": "Madhbi/Mashwi — grilled chicken meat only (no rice/bread)",
+  "ar": "مظبي/مشوي — لحم دجاج مشوي فقط (بدون أرز/عيش)",
+  "base": 200.0,
+  "basis": {
+   "en": "per ~200 g meat",
+   "ar": "لكل ~200 جم لحم"
+  },
+  "easy": {
+   "en": "¼ chicken",
+   "ar": "ربع دجاجة"
+  },
+  "p": 56.0,
+  "f": 16.0,
+  "c": 0.0,
+  "kcal": 380,
+  "badges": [],
+  "units": [
+   {
+    "en": "Quarter (~200 g)",
+    "ar": "ربع (~200 جم)",
+    "g": 200.0
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100.0
+   }
+  ]
+ },
+ {
+  "id": "albaik-chicken-sandwich",
+  "cat": "albaik",
+  "en": "AlBaik — chicken fillet sandwich (regular)",
+  "ar": "البيك — ساندوتش فيليه دجاج (عادي)",
+  "base": 200,
+  "basis": {
+   "en": "per sandwich (~200 g)",
+   "ar": "للساندوتش (~200 جم)"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 25,
+  "f": 20,
+  "c": 40,
+  "kcal": 450,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش واحد",
+    "g": 200
+   }
+  ]
+ },
+ {
+  "id": "albaik-chicken-sandwich-spicy",
+  "cat": "albaik",
+  "en": "AlBaik — spicy chicken fillet sandwich",
+  "ar": "البيك — ساندوتش فيليه دجاج حار",
+  "base": 205,
+  "basis": {
+   "en": "per sandwich (~205 g)",
+   "ar": "للساندوتش (~205 جم)"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 25,
+  "f": 18,
+  "c": 38,
+  "kcal": 430,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش واحد",
+    "g": 205
+   }
+  ]
+ },
+ {
+  "id": "albaik-4pc-broast-meal",
+  "cat": "albaik",
+  "en": "AlBaik — 4-piece broasted chicken meal (bun, fries, garlic sauce)",
+  "ar": "البيك — وجبة بروست ٤ قطع (عيش، بطاطس، ثومية)",
+  "base": 600,
+  "basis": {
+   "en": "per full meal",
+   "ar": "للوجبة كاملة"
+  },
+  "easy": {
+   "en": "4 pcs + fries + bun",
+   "ar": "٤ قطع + بطاطس + عيش"
+  },
+  "p": 65,
+  "f": 88,
+  "c": 96,
+  "kcal": 1480,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 meal",
+    "ar": "وجبة",
+    "g": 600
+   }
+  ]
+ },
+ {
+  "id": "albaik-broast-4pc-only",
+  "cat": "albaik",
+  "en": "AlBaik — broasted chicken, 4 pieces only (no sides)",
+  "ar": "البيك — بروست دجاج ٤ قطع فقط (بدون إضافات)",
+  "base": 400,
+  "basis": {
+   "en": "per 4 pieces",
+   "ar": "لـ ٤ قطع"
+  },
+  "easy": {
+   "en": "4 pieces",
+   "ar": "٤ قطع"
+  },
+  "p": 62,
+  "f": 48,
+  "c": 24,
+  "kcal": 800,
+  "badges": [],
+  "units": [
+   {
+    "en": "4 pieces",
+    "ar": "٤ قطع",
+    "g": 400
+   },
+   {
+    "en": "2 pieces",
+    "ar": "قطعتان",
+    "g": 200
+   }
+  ]
+ },
+ {
+  "id": "albaik-nuggets-10",
+  "cat": "albaik",
+  "en": "AlBaik — chicken fillet nuggets, 10 pieces only",
+  "ar": "البيك — ناجتس فيليه دجاج ١٠ قطع فقط",
+  "base": 240,
+  "basis": {
+   "en": "per 10 nuggets",
+   "ar": "لـ ١٠ ناجتس"
+  },
+  "easy": {
+   "en": "10 nuggets",
+   "ar": "١٠ ناجتس"
+  },
+  "p": 69,
+  "f": 22,
+  "c": 73,
+  "kcal": 780,
+  "badges": [],
+  "units": [
+   {
+    "en": "10 nuggets",
+    "ar": "١٠ ناجتس",
+    "g": 240
+   },
+   {
+    "en": "6 nuggets",
+    "ar": "٦ ناجتس",
+    "g": 144
+   }
+  ]
+ },
+ {
+  "id": "albaik-nuggets-meal-10",
+  "cat": "albaik",
+  "en": "AlBaik — 10-nuggets meal (fries, garlic sauce)",
+  "ar": "البيك — وجبة ناجتس ١٠ قطع (بطاطس، ثومية)",
+  "base": 491,
+  "basis": {
+   "en": "per full meal",
+   "ar": "للوجبة كاملة"
+  },
+  "easy": {
+   "en": "10 nuggets + fries",
+   "ar": "١٠ ناجتس + بطاطس"
+  },
+  "p": 79,
+  "f": 35,
+  "c": 149,
+  "kcal": 1240,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 meal",
+    "ar": "وجبة",
+    "g": 491
+   }
+  ]
+ },
+ {
+  "id": "albaik-fish-fillet-sandwich",
+  "cat": "albaik",
+  "en": "AlBaik — fish fillet sandwich",
+  "ar": "البيك — ساندوتش فيليه سمك",
+  "base": 190,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 20,
+  "f": 16,
+  "c": 38,
+  "kcal": 380,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش واحد",
+    "g": 190
+   }
+  ]
+ },
+ {
+  "id": "albaik-fries",
+  "cat": "albaik",
+  "en": "AlBaik — french fries (regular)",
+  "ar": "البيك — بطاطس مقلية (عادي)",
+  "base": 115,
+  "basis": {
+   "en": "per regular serving",
+   "ar": "للحصة العادية"
+  },
+  "easy": {
+   "en": "1 regular fries",
+   "ar": "بطاطس عادي"
+  },
+  "p": 2.5,
+  "f": 9,
+  "c": 25,
+  "kcal": 194,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 regular",
+    "ar": "عادي",
+    "g": 115
+   }
+  ]
+ },
+ {
+  "id": "albaik-garlic-sauce",
+  "cat": "albaik",
+  "en": "AlBaik — garlic sauce (1 cup)",
+  "ar": "البيك — صوص ثومية (علبة)",
+  "base": 25,
+  "basis": {
+   "en": "per small cup (~25 g)",
+   "ar": "للعلبة الصغيرة (~25 جم)"
+  },
+  "easy": {
+   "en": "1 cup",
+   "ar": "علبة واحدة"
+  },
+  "p": 0.3,
+  "f": 9,
+  "c": 1,
+  "kcal": 86,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup",
+    "ar": "علبة",
+    "g": 25
+   }
+  ]
+ },
+ {
+  "id": "herfy-super-herfy",
+  "cat": "herfy",
+  "en": "Herfy — Super Herfy beef burger (sandwich only)",
+  "ar": "هرفي — سوبر هرفي برجر لحم (الساندوتش فقط)",
+  "base": 240,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 burger",
+   "ar": "برجر واحد"
+  },
+  "p": 28,
+  "f": 33,
+  "c": 41,
+  "kcal": 590,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 burger",
+    "ar": "برجر",
+    "g": 240
+   }
+  ]
+ },
+ {
+  "id": "herfy-chicken-burger",
+  "cat": "herfy",
+  "en": "Herfy — crispy chicken burger (sandwich only)",
+  "ar": "هرفي — برجر دجاج كرسبي (الساندوتش فقط)",
+  "base": 220,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 burger",
+   "ar": "برجر واحد"
+  },
+  "p": 24,
+  "f": 24,
+  "c": 45,
+  "kcal": 480,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 burger",
+    "ar": "برجر",
+    "g": 220
+   }
+  ]
+ },
+ {
+  "id": "herfy-grilled-chicken-sandwich",
+  "cat": "herfy",
+  "en": "Herfy — grilled chicken sandwich (sandwich only)",
+  "ar": "هرفي — ساندوتش دجاج مشوي (الساندوتش فقط)",
+  "base": 210,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 27,
+  "f": 12,
+  "c": 40,
+  "kcal": 370,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش",
+    "g": 210
+   }
+  ]
+ },
+ {
+  "id": "herfy-fries-medium",
+  "cat": "herfy",
+  "en": "Herfy — french fries (medium)",
+  "ar": "هرفي — بطاطس مقلية (وسط)",
+  "base": 110,
+  "basis": {
+   "en": "per medium serving",
+   "ar": "للحصة الوسط"
+  },
+  "easy": {
+   "en": "1 medium fries",
+   "ar": "بطاطس وسط"
+  },
+  "p": 3,
+  "f": 14,
+  "c": 41,
+  "kcal": 310,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium",
+    "ar": "وسط",
+    "g": 110
+   }
+  ]
+ },
+ {
+  "id": "mcd-big-mac",
+  "cat": "mcdonalds",
+  "en": "McDonald's — Big Mac (sandwich only)",
+  "ar": "ماكدونالدز — بيج ماك (الساندوتش فقط)",
+  "base": 215,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 Big Mac",
+   "ar": "بيج ماك واحد"
+  },
+  "p": 26,
+  "f": 25,
+  "c": 44,
+  "kcal": 503,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش",
+    "g": 215
+   }
+  ]
+ },
+ {
+  "id": "mcd-mcchicken",
+  "cat": "mcdonalds",
+  "en": "McDonald's — McChicken (sandwich only)",
+  "ar": "ماكدونالدز — ماك تشيكن (الساندوتش فقط)",
+  "base": 173,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 McChicken",
+   "ar": "ماك تشيكن واحد"
+  },
+  "p": 17,
+  "f": 18,
+  "c": 44,
+  "kcal": 400,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش",
+    "g": 173
+   }
+  ]
+ },
+ {
+  "id": "mcd-quarter-pounder-cheese",
+  "cat": "mcdonalds",
+  "en": "McDonald's — Quarter Pounder with cheese (sandwich only)",
+  "ar": "ماكدونالدز — كوارتر باوندر بالجبن (الساندوتش فقط)",
+  "base": 199,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 30,
+  "f": 26,
+  "c": 42,
+  "kcal": 520,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش",
+    "g": 199
+   }
+  ]
+ },
+ {
+  "id": "mcd-6-nuggets",
+  "cat": "mcdonalds",
+  "en": "McDonald's — Chicken McNuggets, 6 pieces",
+  "ar": "ماكدونالدز — تشيكن ناجتس ٦ قطع",
+  "base": 96,
+  "basis": {
+   "en": "per 6 nuggets",
+   "ar": "لـ ٦ ناجتس"
+  },
+  "easy": {
+   "en": "6 nuggets",
+   "ar": "٦ ناجتس"
+  },
+  "p": 14,
+  "f": 16,
+  "c": 16,
+  "kcal": 259,
+  "badges": [],
+  "units": [
+   {
+    "en": "6 nuggets",
+    "ar": "٦ ناجتس",
+    "g": 96
+   },
+   {
+    "en": "9 nuggets",
+    "ar": "٩ ناجتس",
+    "g": 144
+   }
+  ]
+ },
+ {
+  "id": "mcd-fries-medium",
+  "cat": "mcdonalds",
+  "en": "McDonald's — french fries (medium)",
+  "ar": "ماكدونالدز — بطاطس مقلية (وسط)",
+  "base": 117,
+  "basis": {
+   "en": "per medium serving",
+   "ar": "للحصة الوسط"
+  },
+  "easy": {
+   "en": "1 medium fries",
+   "ar": "بطاطس وسط"
+  },
+  "p": 4,
+  "f": 16,
+  "c": 43,
+  "kcal": 333,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium",
+    "ar": "وسط",
+    "g": 117
+   },
+   {
+    "en": "1 large",
+    "ar": "كبير",
+    "g": 150
+   }
+  ]
+ },
+ {
+  "id": "shouse-chicken-regular",
+  "cat": "shawarma-house",
+  "en": "Shawarma House — chicken shawarma sandwich (regular)",
+  "ar": "بيت الشاورما — ساندوتش شاورما دجاج (عادي)",
+  "base": 210,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 24,
+  "f": 19,
+  "c": 42,
+  "kcal": 440,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش",
+    "g": 210
+   }
+  ]
+ },
+ {
+  "id": "shouse-meat-regular",
+  "cat": "shawarma-house",
+  "en": "Shawarma House — beef shawarma sandwich (regular)",
+  "ar": "بيت الشاورما — ساندوتش شاورما لحم (عادي)",
+  "base": 215,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 23,
+  "f": 24,
+  "c": 43,
+  "kcal": 480,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش",
+    "g": 215
+   }
+  ]
+ },
+ {
+  "id": "shouse-chicken-meal",
+  "cat": "shawarma-house",
+  "en": "Shawarma House — chicken shawarma meal (sandwich + fries + drink-free est.)",
+  "ar": "بيت الشاورما — وجبة شاورما دجاج (ساندوتش + بطاطس)",
+  "base": 360,
+  "basis": {
+   "en": "per sandwich + fries",
+   "ar": "للساندوتش + بطاطس"
+  },
+  "easy": {
+   "en": "sandwich + fries",
+   "ar": "ساندوتش + بطاطس"
+  },
+  "p": 28,
+  "f": 33,
+  "c": 72,
+  "kcal": 720,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 meal",
+    "ar": "وجبة",
+    "g": 360
+   }
+  ]
+ },
+ {
+  "id": "shouse-chicken-plate",
+  "cat": "shawarma-house",
+  "en": "Shawarma House — chicken shawarma plate (meat + garlic + bread)",
+  "ar": "بيت الشاورما — صحن شاورما دجاج (لحم + ثومية + خبز)",
+  "base": 320,
+  "basis": {
+   "en": "per plate",
+   "ar": "للصحن"
+  },
+  "easy": {
+   "en": "1 plate",
+   "ar": "صحن واحد"
+  },
+  "p": 42,
+  "f": 30,
+  "c": 38,
+  "kcal": 590,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 plate",
+    "ar": "صحن",
+    "g": 320
+   }
+  ]
+ },
+ {
+  "id": "shawarma-chicken-small",
+  "cat": "shawarma-generic",
+  "en": "Shawarma — chicken, small sandwich (typical)",
+  "ar": "شاورما — دجاج، ساندوتش صغير (نمطي)",
+  "base": 160,
+  "basis": {
+   "en": "per small sandwich",
+   "ar": "للساندوتش الصغير"
+  },
+  "easy": {
+   "en": "1 small",
+   "ar": "صغير واحد"
+  },
+  "p": 18,
+  "f": 14,
+  "c": 32,
+  "kcal": 330,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 small",
+    "ar": "صغير",
+    "g": 160
+   }
+  ]
+ },
+ {
+  "id": "shawarma-chicken-regular",
+  "cat": "shawarma-generic",
+  "en": "Shawarma — chicken, regular sandwich (typical)",
+  "ar": "شاورما — دجاج، ساندوتش عادي (نمطي)",
+  "base": 210,
+  "basis": {
+   "en": "per regular sandwich",
+   "ar": "للساندوتش العادي"
+  },
+  "easy": {
+   "en": "1 regular",
+   "ar": "عادي واحد"
+  },
+  "p": 24,
+  "f": 19,
+  "c": 42,
+  "kcal": 440,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 regular",
+    "ar": "عادي",
+    "g": 210
+   }
+  ]
+ },
+ {
+  "id": "shawarma-meat-regular",
+  "cat": "shawarma-generic",
+  "en": "Shawarma — beef, regular sandwich (typical)",
+  "ar": "شاورما — لحم، ساندوتش عادي (نمطي)",
+  "base": 215,
+  "basis": {
+   "en": "per regular sandwich",
+   "ar": "للساندوتش العادي"
+  },
+  "easy": {
+   "en": "1 regular",
+   "ar": "عادي واحد"
+  },
+  "p": 23,
+  "f": 24,
+  "c": 43,
+  "kcal": 480,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 regular",
+    "ar": "عادي",
+    "g": 215
+   }
+  ]
+ },
+ {
+  "id": "shawarma-chicken-meat-only",
+  "cat": "shawarma-generic",
+  "en": "Shawarma — chicken meat only (no bread)",
+  "ar": "شاورما — لحم دجاج فقط (بدون خبز)",
+  "base": 150,
+  "basis": {
+   "en": "per 150 g meat",
+   "ar": "لـ ١٥٠ جم لحم"
+  },
+  "easy": {
+   "en": "~1 cup meat",
+   "ar": "~كوب لحم"
+  },
+  "p": 30,
+  "f": 14,
+  "c": 2,
+  "kcal": 250,
+  "badges": [],
+  "units": [
+   {
+    "en": "150 g",
+    "ar": "١٥٠ جم",
+    "g": 150
+   },
+   {
+    "en": "100 g",
+    "ar": "١٠٠ جم",
+    "g": 100
+   }
+  ]
+ },
+ {
+  "id": "tazaj-quarter-meal",
+  "cat": "al-tazaj",
+  "en": "Al Tazaj — grilled quarter chicken meal (bread, rice/salad, sauce)",
+  "ar": "الطازج — وجبة ربع فروج مشوي (عيش، أرز/سلطة، صوص)",
+  "base": 550,
+  "basis": {
+   "en": "per meal",
+   "ar": "للوجبة"
+  },
+  "easy": {
+   "en": "¼ chicken meal",
+   "ar": "وجبة ربع فروج"
+  },
+  "p": 74,
+  "f": 30,
+  "c": 78,
+  "kcal": 880,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 meal",
+    "ar": "وجبة",
+    "g": 550
+   }
+  ]
+ },
+ {
+  "id": "tazaj-half-chicken-nobread",
+  "cat": "al-tazaj",
+  "en": "Al Tazaj — grilled half chicken only (no bread)",
+  "ar": "الطازج — نصف فروج مشوي فقط (بدون عيش)",
+  "base": 480,
+  "basis": {
+   "en": "per half chicken",
+   "ar": "لنصف الفروج"
+  },
+  "easy": {
+   "en": "½ chicken",
+   "ar": "نصف فروج"
+  },
+  "p": 132,
+  "f": 34,
+  "c": 2,
+  "kcal": 850,
+  "badges": [],
+  "units": [
+   {
+    "en": "½ chicken",
+    "ar": "نصف فروج",
+    "g": 480
+   },
+   {
+    "en": "¼ chicken",
+    "ar": "ربع فروج",
+    "g": 240
+   }
+  ]
+ },
+ {
+  "id": "tazaj-sandwich",
+  "cat": "al-tazaj",
+  "en": "Al Tazaj — grilled chicken sandwich (saj/bread)",
+  "ar": "الطازج — ساندوتش دجاج مشوي (صاج/عيش)",
+  "base": 200,
+  "basis": {
+   "en": "per sandwich",
+   "ar": "للساندوتش"
+  },
+  "easy": {
+   "en": "1 sandwich",
+   "ar": "ساندوتش واحد"
+  },
+  "p": 28,
+  "f": 12,
+  "c": 40,
+  "kcal": 370,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 sandwich",
+    "ar": "ساندوتش",
+    "g": 200
+   }
+  ]
+ },
+ {
+  "id": "romansiah-chicken-kabsa-portion",
+  "cat": "al-romansiah",
+  "en": "Al Romansiah — chicken kabsa, single portion (rice + ¼ chicken)",
+  "ar": "الرومانسية — كبسة دجاج، حصة فردية (أرز + ربع دجاج)",
+  "base": 500,
+  "basis": {
+   "en": "per single portion",
+   "ar": "للحصة الفردية"
+  },
+  "easy": {
+   "en": "1 portion",
+   "ar": "حصة واحدة"
+  },
+  "p": 45,
+  "f": 32,
+  "c": 95,
+  "kcal": 830,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 portion",
+    "ar": "حصة",
+    "g": 500
+   }
+  ]
+ },
+ {
+  "id": "romansiah-chicken-mandi-portion",
+  "cat": "al-romansiah",
+  "en": "Al Romansiah — chicken mandi, single portion (rice + ¼ chicken)",
+  "ar": "الرومانسية — مندي دجاج، حصة فردية (أرز + ربع دجاج)",
+  "base": 500,
+  "basis": {
+   "en": "per single portion",
+   "ar": "للحصة الفردية"
+  },
+  "easy": {
+   "en": "1 portion",
+   "ar": "حصة واحدة"
+  },
+  "p": 44,
+  "f": 30,
+  "c": 96,
+  "kcal": 810,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 portion",
+    "ar": "حصة",
+    "g": 500
+   }
+  ]
+ },
+ {
+  "id": "romansiah-madhbi-portion",
+  "cat": "al-romansiah",
+  "en": "Al Romansiah — chicken madhbi, single portion (rice + grilled chicken)",
+  "ar": "الرومانسية — مظبي دجاج، حصة فردية (أرز + دجاج مشوي)",
+  "base": 500,
+  "basis": {
+   "en": "per single portion",
+   "ar": "للحصة الفردية"
+  },
+  "easy": {
+   "en": "1 portion",
+   "ar": "حصة واحدة"
+  },
+  "p": 46,
+  "f": 33,
+  "c": 92,
+  "kcal": 830,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 portion",
+    "ar": "حصة",
+    "g": 500
+   }
+  ]
+ },
+ {
+  "id": "romansiah-saleeg-portion",
+  "cat": "al-romansiah",
+  "en": "Al Romansiah — chicken saleeg, single portion",
+  "ar": "الرومانسية — سليق دجاج، حصة فردية",
+  "base": 480,
+  "basis": {
+   "en": "per single portion",
+   "ar": "للحصة الفردية"
+  },
+  "easy": {
+   "en": "1 portion",
+   "ar": "حصة واحدة"
+  },
+  "p": 40,
+  "f": 28,
+  "c": 88,
+  "kcal": 740,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 portion",
+    "ar": "حصة",
+    "g": 480
+   }
+  ]
+ },
+ {
+  "id": "mandi-chicken-portion",
+  "cat": "mandi-kabsa-generic",
+  "en": "Mandi — chicken, single portion (rice + ¼ chicken)",
+  "ar": "مندي — دجاج، حصة فردية (أرز + ربع دجاج)",
+  "base": 480,
+  "basis": {
+   "en": "per single portion",
+   "ar": "للحصة الفردية"
+  },
+  "easy": {
+   "en": "1 portion",
+   "ar": "حصة واحدة"
+  },
+  "p": 42,
+  "f": 30,
+  "c": 92,
+  "kcal": 800,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 portion",
+    "ar": "حصة",
+    "g": 480
+   }
+  ]
+ },
+ {
+  "id": "kabsa-chicken-portion",
+  "cat": "mandi-kabsa-generic",
+  "en": "Kabsa — chicken, single portion (rice + ¼ chicken)",
+  "ar": "كبسة — دجاج، حصة فردية (أرز + ربع دجاج)",
+  "base": 480,
+  "basis": {
+   "en": "per single portion",
+   "ar": "للحصة الفردية"
+  },
+  "easy": {
+   "en": "1 portion",
+   "ar": "حصة واحدة"
+  },
+  "p": 43,
+  "f": 31,
+  "c": 90,
+  "kcal": 800,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 portion",
+    "ar": "حصة",
+    "g": 480
+   }
+  ]
+ },
+ {
+  "id": "mandi-lamb-portion",
+  "cat": "mandi-kabsa-generic",
+  "en": "Mandi — lamb, single portion (rice + lamb pieces)",
+  "ar": "مندي — لحم، حصة فردية (أرز + قطع لحم)",
+  "base": 500,
+  "basis": {
+   "en": "per single portion",
+   "ar": "للحصة الفردية"
+  },
+  "easy": {
+   "en": "1 portion",
+   "ar": "حصة واحدة"
+  },
+  "p": 40,
+  "f": 45,
+  "c": 92,
+  "kcal": 940,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 portion",
+    "ar": "حصة",
+    "g": 500
+   }
+  ]
+ },
+ {
+  "id": "kabsa-rice-only",
+  "cat": "mandi-kabsa-generic",
+  "en": "Kabsa/Mandi — spiced rice only (no meat)",
+  "ar": "كبسة/مندي — أرز متبل فقط (بدون لحم)",
+  "base": 250,
+  "basis": {
+   "en": "per 250 g cooked rice",
+   "ar": "لـ ٢٥٠ جم أرز مطبوخ"
+  },
+  "easy": {
+   "en": "~1 plate rice",
+   "ar": "~صحن أرز"
+  },
+  "p": 8,
+  "f": 11,
+  "c": 80,
+  "kcal": 450,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 plate",
+    "ar": "صحن",
+    "g": 250
+   },
+   {
+    "en": "½ plate",
+    "ar": "نصف صحن",
+    "g": 125
+   }
+  ]
+ },
+ {
+  "id": "apple-green",
+  "cat": "fruit",
+  "en": "Green apple (Granny Smith)",
+  "ar": "تفاح أخضر (جراني سميث)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~1 small apple",
+   "ar": "~تفاحة صغيرة"
+  },
+  "p": 0.4,
+  "f": 0.2,
+  "c": 13,
+  "kcal": 52,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 medium (150 g)",
+    "ar": "حبة وسط (150 جم)",
+    "g": 150
+   },
+   {
+    "en": "1 small (120 g)",
+    "ar": "حبة صغيرة (120 جم)",
+    "g": 120
+   }
+  ]
+ },
+ {
+  "id": "sourdough-ww-commercial",
+  "cat": "carbs",
+  "en": "Whole-wheat sourdough bread (commercial)",
+  "ar": "خبز قمح كامل ساور دو (تجاري)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~2 slices",
+   "ar": "~شريحتان"
+  },
+  "p": 11,
+  "f": 2,
+  "c": 50,
+  "kcal": 270,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 slice (~48 g)",
+    "ar": "شريحة (~48 جم)",
+    "g": 48
+   },
+   {
+    "en": "2 slices (~96 g)",
+    "ar": "شريحتان (~96 جم)",
+    "g": 96
+   }
+  ]
+ },
+ {
+  "id": "toast-ww",
+  "cat": "carbs",
+  "en": "Whole-wheat toast bread",
+  "ar": "خبز توست قمح كامل",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~3 toast slices",
+   "ar": "~3 شرائح توست"
+  },
+  "p": 12,
+  "f": 3.5,
+  "c": 48,
+  "kcal": 265,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 toast slice (~28 g)",
+    "ar": "شريحة توست (~28 جم)",
+    "g": 28
+   },
+   {
+    "en": "2 slices (~56 g)",
+    "ar": "شريحتان (~56 جم)",
+    "g": 56
+   }
+  ]
+ },
+ {
+  "id": "laban-drink",
+  "cat": "protein-dairy",
+  "en": "Laban (cultured drinking laban, not milk)",
+  "ar": "لبن (لبن رائب للشرب، ليس حليب)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 ml",
+   "ar": "لكل 100 مل"
+  },
+  "easy": {
+   "en": "~½ small cup",
+   "ar": "~نصف كوب صغير"
+  },
+  "p": 3.2,
+  "f": 2.5,
+  "c": 4.7,
+  "kcal": 58,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 glass (200 ml)",
+    "ar": "كوب (200 مل)",
+    "g": 200
+   },
+   {
+    "en": "1 small cup (250 ml)",
+    "ar": "كوب صغير (250 مل)",
+    "g": 250
+   },
+   {
+    "en": "1 carton (180 ml)",
+    "ar": "عبوة (180 مل)",
+    "g": 180
+   }
+  ]
+ },
+ {
+  "id": "laban-protein",
+  "cat": "protein-dairy",
+  "en": "Protein Laban (high-protein laban drink)",
+  "ar": "لبن بروتين (لبن عالي البروتين للشرب)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 ml",
+   "ar": "لكل 100 مل"
+  },
+  "easy": {
+   "en": "~½ small cup",
+   "ar": "~نصف كوب صغير"
+  },
+  "p": 6.0,
+  "f": 1.5,
+  "c": 5.0,
+  "kcal": 58,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 bottle (320 ml)",
+    "ar": "عبوة (320 مل)",
+    "g": 320
+   },
+   {
+    "en": "1 glass (200 ml)",
+    "ar": "كوب (200 مل)",
+    "g": 200
+   }
+  ]
+ },
+ {
+  "id": "tuna-water",
+  "cat": "protein-fish",
+  "en": "Canned tuna, in water, drained",
+  "ar": "تونة معلبة، بالماء، مصفّاة",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g drained",
+   "ar": "لكل 100 جم مصفّاة"
+  },
+  "easy": {
+   "en": "~1 small can",
+   "ar": "~علبة صغيرة"
+  },
+  "p": 24,
+  "f": 1,
+  "c": 0,
+  "kcal": 109,
+  "badges": [
+   "omega"
+  ],
+  "units": [
+   {
+    "en": "1 can drained (~120 g)",
+    "ar": "علبة مصفّاة (~120 جم)",
+    "g": 120
+   },
+   {
+    "en": "½ can (~60 g)",
+    "ar": "نصف علبة (~60 جم)",
+    "g": 60
+   }
+  ]
+ },
+ {
+  "id": "skyr",
+  "cat": "protein-dairy",
+  "en": "Skyr / high-protein yogurt, plain 0%",
+  "ar": "سكير / زبادي عالي البروتين، سادة 0%",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~½ small tub",
+   "ar": "~نصف عبوة صغيرة"
+  },
+  "p": 11,
+  "f": 0.2,
+  "c": 4,
+  "kcal": 63,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 tub (150 g)",
+    "ar": "عبوة (150 جم)",
+    "g": 150
+   },
+   {
+    "en": "1 tub (170 g)",
+    "ar": "عبوة (170 جم)",
+    "g": 170
+   }
+  ]
+ },
+ {
+  "id": "whey-isolate",
+  "cat": "protein-dairy",
+  "en": "Whey protein isolate, powder",
+  "ar": "بروتين واي أيزوليت، بودرة",
+  "base": 30,
+  "basis": {
+   "en": "per 1 scoop (~30 g)",
+   "ar": "لكل سكوب (~30 جم)"
+  },
+  "easy": {
+   "en": "1 scoop",
+   "ar": "سكوب واحد"
+  },
+  "p": 25,
+  "f": 0.5,
+  "c": 2,
+  "kcal": 113,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 scoop (30 g)",
+    "ar": "سكوب (30 جم)",
+    "g": 30
+   },
+   {
+    "en": "2 scoops (60 g)",
+    "ar": "سكوبان (60 جم)",
+    "g": 60
+   }
+  ]
+ },
+ {
+  "id": "sourdough-ww-home",
+  "cat": "carbs",
+  "en": "Whole-wheat sourdough bread (homemade)",
+  "ar": "خبز قمح كامل ساور دو (منزلي)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~2 slices",
+   "ar": "~شريحتان"
+  },
+  "p": 10,
+  "f": 1.8,
+  "c": 52,
+  "kcal": 260,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 slice (~50 g)",
+    "ar": "شريحة (~50 جم)",
+    "g": 50
+   },
+   {
+    "en": "2 slices (~100 g)",
+    "ar": "شريحتان (~100 جم)",
+    "g": 100
+   }
+  ]
+ },
+ {
+  "id": "pasta-cooked",
+  "cat": "carbs",
+  "en": "Pasta, cooked (regular)",
+  "ar": "مكرونة مسلوقة (عادية)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مسلوق"
+  },
+  "easy": {
+   "en": "~½ cup cooked",
+   "ar": "~نصف كوب مسلوق"
+  },
+  "p": 5,
+  "f": 1.1,
+  "c": 25,
+  "kcal": 131,
+  "badges": [],
+  "units": [
+   {
+    "en": "Half cup (~75 g)",
+    "ar": "نصف كوب (~75 جم)",
+    "g": 75
+   },
+   {
+    "en": "1 cup cooked (~150 g)",
+    "ar": "كوب مسلوق (~150 جم)",
+    "g": 150
+   },
+   {
+    "en": "2 cups (~300 g)",
+    "ar": "كوبين (~300 جم)",
+    "g": 300
+   }
+  ]
+ },
+ {
+  "id": "oat-noodles-dry",
+  "cat": "carbs",
+  "en": "Oat noodles, dry",
+  "ar": "نودلز شوفان جافة",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g dry",
+   "ar": "لكل 100 جم جاف"
+  },
+  "easy": {
+   "en": "~1 small portion dry",
+   "ar": "~حصة صغيرة جافة"
+  },
+  "p": 14,
+  "f": 3.5,
+  "c": 64,
+  "kcal": 360,
+  "badges": [],
+  "units": [
+   {
+    "en": "Single serving (~70 g)",
+    "ar": "حصة (~70 جم)",
+    "g": 70
+   },
+   {
+    "en": "100 g dry",
+    "ar": "100 جم جاف",
+    "g": 100
+   }
+  ]
+ },
+ {
+  "id": "turkey-smoked",
+  "cat": "protein-meat",
+  "en": "Smoked turkey breast (deli slice)",
+  "ar": "صدر ديك رومي مدخن (شرائح)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~3-4 slices",
+   "ar": "~3-4 شرائح"
+  },
+  "p": 17,
+  "f": 3,
+  "c": 4,
+  "kcal": 110,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 slice (~28 g)",
+    "ar": "شريحة (~28 جم)",
+    "g": 28
+   },
+   {
+    "en": "3 slices (~85 g)",
+    "ar": "3 شرائح (~85 جم)",
+    "g": 85
+   },
+   {
+    "en": "100 g",
+    "ar": "100 جم",
+    "g": 100
+   }
+  ]
+ },
+ {
+  "id": "molokhia-cooked-frozen",
+  "cat": "veg",
+  "en": "Molokhia (frozen, cooked plain)",
+  "ar": "ملوخية (مجمدة، مطبوخة بسيط)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ small bowl",
+   "ar": "~نصف وعاء صغير"
+  },
+  "p": 4,
+  "f": 1,
+  "c": 6,
+  "kcal": 50,
+  "badges": [],
+  "units": [
+   {
+    "en": "Small bowl (~200 g)",
+    "ar": "وعاء صغير (~200 جم)",
+    "g": 200
+   },
+   {
+    "en": "Large bowl (~350 g)",
+    "ar": "وعاء كبير (~350 جم)",
+    "g": 350
+   }
+  ]
+ },
+ {
+  "id": "molokhia-cooked-fresh",
+  "cat": "veg",
+  "en": "Molokhia (fresh, cooked plain)",
+  "ar": "ملوخية (طازجة، مطبوخة بسيط)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g cooked",
+   "ar": "لكل 100 جم مطبوخ"
+  },
+  "easy": {
+   "en": "~½ small bowl",
+   "ar": "~نصف وعاء صغير"
+  },
+  "p": 4.5,
+  "f": 1,
+  "c": 6.5,
+  "kcal": 55,
+  "badges": [],
+  "units": [
+   {
+    "en": "Small bowl (~200 g)",
+    "ar": "وعاء صغير (~200 جم)",
+    "g": 200
+   },
+   {
+    "en": "Large bowl (~350 g)",
+    "ar": "وعاء كبير (~350 جم)",
+    "g": 350
+   }
+  ]
+ },
+ {
+  "id": "popcorn-plain",
+  "cat": "carbs",
+  "en": "Popcorn, popped (plain)",
+  "ar": "فشار مفرود (بدون إضافات)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g popped",
+   "ar": "لكل 100 جم مفرود"
+  },
+  "easy": {
+   "en": "~3 cups popped",
+   "ar": "~3 أكواب مفرودة"
+  },
+  "p": 12,
+  "f": 4,
+  "c": 78,
+  "kcal": 387,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup popped (~8 g)",
+    "ar": "كوب مفرود (~8 جم)",
+    "g": 8
+   },
+   {
+    "en": "3 cups (~24 g)",
+    "ar": "3 أكواب (~24 جم)",
+    "g": 24
+   },
+   {
+    "en": "Movie bowl (~50 g)",
+    "ar": "وعاء سينما (~50 جم)",
+    "g": 50
+   }
+  ]
+ },
+ {
+  "id": "popcorn-butter",
+  "cat": "carbs",
+  "en": "Popcorn, popped (with butter)",
+  "ar": "فشار مفرود (بزبدة)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g popped",
+   "ar": "لكل 100 جم مفرود"
+  },
+  "easy": {
+   "en": "~3 cups popped",
+   "ar": "~3 أكواب مفرودة"
+  },
+  "p": 9,
+  "f": 28,
+  "c": 57,
+  "kcal": 535,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 cup (~10 g)",
+    "ar": "كوب (~10 جم)",
+    "g": 10
+   },
+   {
+    "en": "3 cups (~30 g)",
+    "ar": "3 أكواب (~30 جم)",
+    "g": 30
+   },
+   {
+    "en": "Movie bowl (~60 g)",
+    "ar": "وعاء سينما (~60 جم)",
+    "g": 60
+   }
+  ]
+ },
+ {
+  "id": "honey",
+  "cat": "desserts-sweets",
+  "en": "Honey, pure",
+  "ar": "عسل نحل صافي",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~5 tablespoons",
+   "ar": "~5 ملاعق كبيرة"
+  },
+  "p": 0.3,
+  "f": 0,
+  "c": 82,
+  "kcal": 304,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 tablespoon (~21 g)",
+    "ar": "ملعقة كبيرة (~21 جم)",
+    "g": 21
+   },
+   {
+    "en": "1 teaspoon (~7 g)",
+    "ar": "ملعقة صغيرة (~7 جم)",
+    "g": 7
+   }
+  ]
+ },
+ {
+  "id": "dark-chocolate-70",
+  "cat": "desserts-sweets",
+  "en": "Dark chocolate (70-85%)",
+  "ar": "شوكولاتة داكنة (70-85%)",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g",
+   "ar": "لكل 100 جم"
+  },
+  "easy": {
+   "en": "~10 squares",
+   "ar": "~10 مربعات"
+  },
+  "p": 7.8,
+  "f": 43,
+  "c": 46,
+  "kcal": 598,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 square (~10 g)",
+    "ar": "مربع (~10 جم)",
+    "g": 10
+   },
+   {
+    "en": "1 small bar (~25 g)",
+    "ar": "بار صغير (~25 جم)",
+    "g": 25
+   },
+   {
+    "en": "1 row (~30 g)",
+    "ar": "صف (~30 جم)",
+    "g": 30
+   }
+  ]
+ },
+ {
+  "id": "verde-oat-biscuit",
+  "cat": "desserts-sweets",
+  "en": "Verde sugar-free oat digestive biscuit",
+  "ar": "بسكويت شوفان فيردي خالي السكر",
+  "base": 15,
+  "basis": {
+   "en": "per 1 biscuit (~15 g)",
+   "ar": "لكل بسكويتة (~15 جم)"
+  },
+  "easy": {
+   "en": "1 biscuit",
+   "ar": "بسكويتة"
+  },
+  "p": 2,
+  "f": 3,
+  "c": 8,
+  "kcal": 70,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 biscuit (~15 g)",
+    "ar": "بسكويتة (~15 جم)",
+    "g": 15
+   },
+   {
+    "en": "3 biscuits (~45 g)",
+    "ar": "3 بسكويتات (~45 جم)",
+    "g": 45
+   }
+  ]
+ },
+ {
+  "id": "santiveri-cocoa-biscuit",
+  "cat": "desserts-sweets",
+  "en": "Santiveri whole-grain cocoa biscuit",
+  "ar": "بسكويت كاكاو وشوكولاتة سانتيفري",
+  "base": 20,
+  "basis": {
+   "en": "per 1 biscuit (~20 g)",
+   "ar": "لكل بسكويتة (~20 جم)"
+  },
+  "easy": {
+   "en": "1 biscuit",
+   "ar": "بسكويتة"
+  },
+  "p": 2,
+  "f": 4,
+  "c": 12,
+  "kcal": 92,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 biscuit (~20 g)",
+    "ar": "بسكويتة (~20 جم)",
+    "g": 20
+   },
+   {
+    "en": "3 biscuits (~60 g)",
+    "ar": "3 بسكويتات (~60 جم)",
+    "g": 60
+   }
+  ]
+ },
+ {
+  "id": "americana-heroz-popcorn",
+  "cat": "frozen-branded",
+  "en": "Americana Heroz Chicken Popcorn",
+  "ar": "بوبكورن الدجاج هيروز أمريكانا",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g raw frozen",
+   "ar": "لكل 100 جم خام مجمد"
+  },
+  "easy": {
+   "en": "~10 pieces",
+   "ar": "~10 قطع"
+  },
+  "p": 16,
+  "f": 14,
+  "c": 16,
+  "kcal": 250,
+  "badges": [],
+  "units": [
+   {
+    "en": "Small portion (~80 g)",
+    "ar": "حصة صغيرة (~80 جم)",
+    "g": 80
+   },
+   {
+    "en": "Medium portion (~150 g)",
+    "ar": "حصة وسط (~150 جم)",
+    "g": 150
+   }
+  ]
+ },
+ {
+  "id": "alkabeer-chicken-samosa",
+  "cat": "frozen-branded",
+  "en": "Al Kabeer chicken samosas",
+  "ar": "سمبوسة دجاج الكبير",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم خام"
+  },
+  "easy": {
+   "en": "~4-5 samosas",
+   "ar": "~4-5 سمبوسات"
+  },
+  "p": 11,
+  "f": 13,
+  "c": 23,
+  "kcal": 250,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 samosa (~22 g)",
+    "ar": "سمبوسة (~22 جم)",
+    "g": 22
+   },
+   {
+    "en": "4 samosas (~88 g)",
+    "ar": "4 سمبوسات (~88 جم)",
+    "g": 88
+   }
+  ]
+ },
+ {
+  "id": "alkabeer-seekh-kebab",
+  "cat": "frozen-branded",
+  "en": "Al Kabeer chicken seekh kebab",
+  "ar": "سيخ كباب دجاج الكبير",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم خام"
+  },
+  "easy": {
+   "en": "~3 sticks",
+   "ar": "~3 أسياخ"
+  },
+  "p": 14,
+  "f": 12,
+  "c": 8,
+  "kcal": 195,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 stick (~40 g)",
+    "ar": "سيخ (~40 جم)",
+    "g": 40
+   },
+   {
+    "en": "3 sticks (~120 g)",
+    "ar": "3 أسياخ (~120 جم)",
+    "g": 120
+   }
+  ]
+ },
+ {
+  "id": "alkabeer-tandoori-nuggets",
+  "cat": "frozen-branded",
+  "en": "Al Kabeer tandoori chicken nuggets",
+  "ar": "ناجتس دجاج تندوري الكبير",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم خام"
+  },
+  "easy": {
+   "en": "~5 nuggets",
+   "ar": "~5 ناجتس"
+  },
+  "p": 14,
+  "f": 11,
+  "c": 17,
+  "kcal": 215,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 nugget (~18 g)",
+    "ar": "ناجت (~18 جم)",
+    "g": 18
+   },
+   {
+    "en": "5 nuggets (~90 g)",
+    "ar": "5 ناجتس (~90 جم)",
+    "g": 90
+   }
+  ]
+ },
+ {
+  "id": "sadia-chicken-griller",
+  "cat": "frozen-branded",
+  "en": "Sadia chicken griller (whole)",
+  "ar": "دجاج صدور سادية للشوي",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم خام"
+  },
+  "easy": {
+   "en": "~quarter chicken",
+   "ar": "~ربع دجاجة"
+  },
+  "p": 19,
+  "f": 11,
+  "c": 0,
+  "kcal": 175,
+  "badges": [],
+  "units": [
+   {
+    "en": "Quarter chicken (~250 g)",
+    "ar": "ربع دجاجة (~250 جم)",
+    "g": 250
+   },
+   {
+    "en": "Half chicken (~500 g)",
+    "ar": "نصف دجاجة (~500 جم)",
+    "g": 500
+   }
+  ]
+ },
+ {
+  "id": "sadia-chicken-nuggets",
+  "cat": "frozen-branded",
+  "en": "Sadia chicken nuggets",
+  "ar": "ناجتس دجاج سادية",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم خام"
+  },
+  "easy": {
+   "en": "~5 nuggets",
+   "ar": "~5 ناجتس"
+  },
+  "p": 14,
+  "f": 12,
+  "c": 16,
+  "kcal": 220,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 nugget (~17 g)",
+    "ar": "ناجت (~17 جم)",
+    "g": 17
+   },
+   {
+    "en": "5 nuggets (~85 g)",
+    "ar": "5 ناجتس (~85 جم)",
+    "g": 85
+   }
+  ]
+ },
+ {
+  "id": "sadia-frozen-breast",
+  "cat": "frozen-branded",
+  "en": "Sadia frozen chicken breast (skinless)",
+  "ar": "صدور دجاج سادية مجمدة",
+  "base": 100,
+  "basis": {
+   "en": "per 100 g raw",
+   "ar": "لكل 100 جم خام"
+  },
+  "easy": {
+   "en": "1 breast",
+   "ar": "صدر دجاج"
+  },
+  "p": 23,
+  "f": 1.5,
+  "c": 0,
+  "kcal": 110,
+  "badges": [],
+  "units": [
+   {
+    "en": "1 breast (~150 g)",
+    "ar": "صدر (~150 جم)",
+    "g": 150
+   },
+   {
+    "en": "Half breast (~75 g)",
+    "ar": "نصف صدر (~75 جم)",
+    "g": 75
+   }
+  ]
+ },
+ {
+  "id": "generic-protein",
+  "cat": "generic",
+  "en": "Generic protein (1 g protein = 4 kcal)",
+  "ar": "بروتين عام (1 جم = 4 سعرة)",
+  "base": 1,
+  "basis": {
+   "en": "per 1 g",
+   "ar": "لكل 1 جم"
+  },
+  "easy": {
+   "en": "1 g",
+   "ar": "1 جم"
+  },
+  "p": 1,
+  "f": 0,
+  "c": 0,
+  "kcal": 4,
+  "badges": [],
+  "units": [
+   {
+    "en": "10 g protein",
+    "ar": "10 جم بروتين",
+    "g": 10
+   },
+   {
+    "en": "20 g protein",
+    "ar": "20 جم بروتين",
+    "g": 20
+   },
+   {
+    "en": "30 g protein",
+    "ar": "30 جم بروتين",
+    "g": 30
+   }
+  ]
+ },
+ {
+  "id": "generic-fat",
+  "cat": "generic",
+  "en": "Generic fat (1 g fat = 9 kcal)",
+  "ar": "دهون عامة (1 جم = 9 سعرة)",
+  "base": 1,
+  "basis": {
+   "en": "per 1 g",
+   "ar": "لكل 1 جم"
+  },
+  "easy": {
+   "en": "1 g",
+   "ar": "1 جم"
+  },
+  "p": 0,
+  "f": 1,
+  "c": 0,
+  "kcal": 9,
+  "badges": [],
+  "units": [
+   {
+    "en": "5 g fat",
+    "ar": "5 جم دهون",
+    "g": 5
+   },
+   {
+    "en": "10 g fat",
+    "ar": "10 جم دهون",
+    "g": 10
+   },
+   {
+    "en": "15 g fat",
+    "ar": "15 جم دهون",
+    "g": 15
+   }
+  ]
+ },
+ {
+  "id": "generic-carbs",
+  "cat": "generic",
+  "en": "Generic carbs (1 g carbs = 4 kcal)",
+  "ar": "كاربوهيدرات عامة (1 جم = 4 سعرة)",
+  "base": 1,
+  "basis": {
+   "en": "per 1 g",
+   "ar": "لكل 1 جم"
+  },
+  "easy": {
+   "en": "1 g",
+   "ar": "1 جم"
+  },
+  "p": 0,
+  "f": 0,
+  "c": 1,
+  "kcal": 4,
+  "badges": [],
+  "units": [
+   {
+    "en": "10 g carbs",
+    "ar": "10 جم كارب",
+    "g": 10
+   },
+   {
+    "en": "25 g carbs",
+    "ar": "25 جم كارب",
+    "g": 25
+   },
+   {
+    "en": "50 g carbs",
+    "ar": "50 جم كارب",
+    "g": 50
+   }
+  ]
+ },
+ {
+  "id": "generic-kcal",
+  "cat": "generic",
+  "en": "Generic calories (kcal-only fudge factor)",
+  "ar": "سعرات حرارية عامة (تصحيح)",
+  "base": 1,
+  "basis": {
+   "en": "per 1 kcal",
+   "ar": "لكل 1 سعرة"
+  },
+  "easy": {
+   "en": "1 kcal",
+   "ar": "1 سعرة"
+  },
+  "p": 0,
+  "f": 0,
+  "c": 0,
+  "kcal": 1,
+  "badges": [],
+  "units": [
+   {
+    "en": "5 kcal",
+    "ar": "5 سعرة",
+    "g": 5
+   },
+   {
+    "en": "20 kcal",
+    "ar": "20 سعرة",
+    "g": 20
+   },
+   {
+    "en": "50 kcal",
+    "ar": "50 سعرة",
+    "g": 50
+   }
+  ]
+ }
+]

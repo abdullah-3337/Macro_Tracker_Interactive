@@ -6145,7 +6145,14 @@ function renderOcrResult(r) {
   if (baseTxt) noteParts.push('📏 ' + baseTxt);
   if (r.notes) noteParts.push('📝 ' + r.notes);
   if (noteParts.length) {
-    notesEl.innerHTML = noteParts.join('<br>');
+    // Build notes element safely: r.notes is untrusted (attacker can craft image prompts).
+    // Use textContent + DOM nodes to prevent HTML injection.
+    notesEl.textContent = '';
+    noteParts.forEach((part, i) => {
+      if (i > 0) notesEl.appendChild(document.createElement('br'));
+      const text = document.createTextNode(part);
+      notesEl.appendChild(text);
+    });
     notesEl.style.display = 'block';
   } else {
     notesEl.style.display = 'none';

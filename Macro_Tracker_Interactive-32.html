@@ -5710,6 +5710,22 @@ document.getElementById('exportDbJsonBtn').addEventListener('click', () => {
   }
 });
 
+// Validate food item schema to prevent silent corruption from malformed imports.
+function validateFood(f) {
+  if (!f || typeof f !== 'object') return false;
+  if (typeof f.id !== 'string' || !f.id.trim()) return false;
+  if (typeof f.cat !== 'string' || !f.cat.trim()) return false;
+  const isNum = (v) => typeof v === 'number' && isFinite(v) && v >= 0;
+  return isNum(f.p) && isNum(f.f) && isNum(f.c) && isNum(f.kcal) && isNum(f.base);
+}
+
+// Validate goals object: must have numeric kcal/protein/fat/carbs.
+function validateGoals(g) {
+  if (!g || typeof g !== 'object') return false;
+  const isNum = (v) => typeof v === 'number' && isFinite(v) && v > 0;
+  return isNum(g.kcal) && isNum(g.protein) && isNum(g.fat) && isNum(g.carbs);
+}
+
 document.getElementById('importJsonBtn').addEventListener('click', () => {
   document.getElementById('importJsonInput').click();
 });
@@ -5751,7 +5767,15 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
                         : '\nand replace your current data. Continue?');
       if (!confirm(msg)) { e.target.value = ''; return; }
 
+      // Validate DB before accepting: all items must pass schema check.
       if (Array.isArray(payload.db) && payload.db.length) {
+        const badItems = payload.db.filter(f => !validateFood(f));
+        if (badItems.length) {
+          alert(lang === 'ar'
+            ? `خطأ: ${badItems.length} أصناف غير صحيحة (كل صنف يحتاج id + cat + أرقام للماكروز).`
+            : `Error: ${badItems.length} items have invalid schema (each needs id, cat, and numeric macros).`);
+          e.target.value = ''; return;
+        }
         DB = payload.db;
         lsSet('mt-db', JSON.stringify(DB));
       }
@@ -5763,7 +5787,14 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         savedDays = payload.saved;
         lsSet('mt-saved', JSON.stringify(savedDays));
       }
+      // Validate goals: must have numeric kcal/protein/fat/carbs.
       if (payload.goals && typeof payload.goals === 'object') {
+        if (!validateGoals(payload.goals)) {
+          alert(lang === 'ar'
+            ? 'خطأ: الأهداف يجب أن تحتوي على أرقام موجبة لـ kcal/protein/fat/carbs.'
+            : 'Error: goals must contain positive numbers for kcal, protein, fat, carbs.');
+          e.target.value = ''; return;
+        }
         goals = payload.goals;
         lsSet('mt-goals', JSON.stringify(goals));
       }

@@ -3213,81 +3213,6 @@ let DB = [
   ]
  }
 ];
-  "cat": "fats",
-  "en": "Almonds, raw",
-  "ar": "لوز ني",
-  "base": 30.0,
-  "basis": {
-   "en": "per 30 g (handful)",
-   "ar": "لكل 30 جم (حفنة)"
-  },
-  "easy": {
-   "en": "~23 almonds",
-   "ar": "~23 حبة لوز"
-  },
-  "p": 6.3,
-  "f": 15.1,
-  "c": 6.5,
-  "kcal": 174,
-  "badges": [
-   "iron"
-  ],
-  "units": [
-   {
-    "en": "Handful (30 g)",
-    "ar": "حفنة (30 جم)",
-    "g": 30.0
-   },
-   {
-    "en": "½ handful (15 g)",
-    "ar": "نصف حفنة (15 جم)",
-    "g": 15.0
-   },
-   {
-    "en": "¼ cup (40 g)",
-    "ar": "ربع كوب (40 جم)",
-    "g": 40.0
-   },
-   {
-    "en": "~10 almonds (12 g)",
-    "ar": "~10 حبات (12 جم)",
-    "g": 12.0
-   }
-  ]
- },
- {
-  "id": "honey",
-  "cat": "desserts-sweets",
-  "en": "Honey, pure",
-  "ar": "عسل نحل صافي",
-  "base": 100,
-  "basis": {
-   "en": "per 100 g",
-   "ar": "لكل 100 جم"
-  },
-  "easy": {
-   "en": "~5 tablespoons",
-   "ar": "~5 ملاعق كبيرة"
-  },
-  "p": 0.3,
-  "f": 0,
-  "c": 82,
-  "kcal": 304,
-  "badges": [],
-  "units": [
-   {
-    "en": "1 tablespoon (~21 g)",
-    "ar": "ملعقة كبيرة (~21 جم)",
-    "g": 21
-   },
-   {
-    "en": "1 teaspoon (~7 g)",
-    "ar": "ملعقة صغيرة (~7 جم)",
-    "g": 7
-   }
-  ]
- }
-];
 // ============ CATEGORIES ============
 // One entry per `cat` value used in the DB. renderTables() pulls items
 // by matching each food's `cat` field — so imported custom items show up
@@ -3393,7 +3318,7 @@ function lsGet(key, fallback) {
 // Safe localStorage write: alerts user if quota exceeded so data loss is visible, not silent.
 function lsSet(key, value) {
   try {
-    lsSet(key, value);
+    localStorage.setItem(key, value);
   } catch (e) {
     const isQuota = e.name === 'QuotaExceededError' || e.code === 22;
     const msg = isQuota
@@ -5726,7 +5651,7 @@ function validateFood(f) {
 // Validate goals object: must have numeric kcal/protein/fat/carbs.
 function validateGoals(g) {
   if (!g || typeof g !== 'object') return false;
-  const isNum = (v) => typeof v === 'number' && isFinite(v) && v > 0;
+  const isNum = (v) => typeof v === 'number' && isFinite(v) && v >= 0;
   return isNum(g.kcal) && isNum(g.protein) && isNum(g.fat) && isNum(g.carbs);
 }
 

@@ -6009,6 +6009,7 @@ const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GE
 let ocrImageBase64 = null;
 let ocrImageMime = null;
 let ocrLastResult = null;
+let ocrReqId = 0;  // Incremented on each run to detect stale in-flight responses.
 
 const OCR_PROMPT = `You are a nutrition label extraction expert. Analyze the image and extract these 5 fields:
 1. kcal (calories)
@@ -6251,13 +6252,18 @@ document.getElementById('ocrRunBtn').addEventListener('click', async () => {
   ocrShowStep('progress');
   document.getElementById('ocrRunBtn').style.display = 'none';
 
+  const myReq = ++ocrReqId;  // Track this request so stale responses are ignored if modal is reopened.
   try {
     const result = await callGeminiOCR(key, ocrImageBase64, ocrImageMime);
+    // Ignore result if another request was started while this one was in flight.
+    if (myReq !== ocrReqId) return;
     ocrLastResult = result;
     ocrShowStep('result');
     renderOcrResult(result);
     document.getElementById('ocrUseBtn').style.display = 'block';
   } catch (err) {
+    // Still show errors for the current request even if a new one started.
+    if (myReq !== ocrReqId) return;
     ocrShowStep('preview');
     document.getElementById('ocrRunBtn').style.display = 'block';
     let msg = (lang === 'ar' ? 'خطأ: ' : 'Error: ') + err.message;

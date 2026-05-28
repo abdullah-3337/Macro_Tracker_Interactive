@@ -4626,6 +4626,15 @@ function normalizeSearch(s) {
     .trim();
 }
 
+// Debounce helper: only invoke fn after ms of inactivity.
+function debounce(fn, ms) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), ms);
+  };
+}
+
 function applyFilters() {
   const query = normalizeSearch(searchInput.value);
 
@@ -4664,7 +4673,7 @@ function applyFilters() {
     if (!any) sec.classList.add('hidden');
   });
 }
-searchInput.addEventListener('input', applyFilters);
+searchInput.addEventListener('input', debounce(applyFilters, 80));
 filterBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     filterBtns.forEach(b => b.classList.remove('active'));

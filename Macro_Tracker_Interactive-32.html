@@ -6091,9 +6091,12 @@ async function callGeminiOCR(apiKey, imageBase64, mimeType) {
     }
   };
 
-  const resp = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+  const resp = await fetch(GEMINI_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey
+    },
     body: JSON.stringify(body)
   });
 

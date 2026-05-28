@@ -5081,7 +5081,7 @@ function recipeRenderPicked() {
     const optHtml = opts.map(o => {
       const sel = (Math.abs(o.g - (pk.unitG || 0)) < 0.0001) ? ' selected' : '';
       const label = lang === 'ar' ? (o.ar || o.en) : (o.en || o.ar);
-      return `<option value="${o.g}"${sel}>${escapeHtml(label)}</option>`;
+      return `<option value="${o.g}" data-label="${escapeHtml(label)}"${sel}>${escapeHtml(label)}</option>`;
     }).join('');
     return `<div class="af-picked-row" data-idx="${idx}">
       <div class="af-picked-name" title="${name}">${name}</div>
@@ -5106,7 +5106,8 @@ function recipeRenderPicked() {
       const g = parseFloat(uSel.value) || 0;
       if (recipePicked[idx]) {
         recipePicked[idx].unitG = g;
-        recipePicked[idx].unitLabel = uSel.options[uSel.selectedIndex].text;
+        // Read label from data-label attribute (not .text) to avoid browser HTML-decoding.
+        recipePicked[idx].unitLabel = uSel.options[uSel.selectedIndex].dataset.label || '';
       }
       recipeRenderTotals();
     });

@@ -4,7 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repo shape
 
-- Single-page web app, **one self-contained HTML file** (currently `Macro_Tracker_Interactive-32.html`) containing inline CSS + HTML + vanilla JS. No framework, no bundler, no dependencies fetched at build time. The only runtime network call is to the Gemini API (`gemini-2.5-flash`) for the OCR / photo-extraction feature, and it is user-triggered.
+- Single-page web app, **one self-contained HTML file** (currently `Macro_Tracker_Interactive-32.html`) containing inline CSS + HTML + vanilla JS. No framework, no bundler.
+- **External resources loaded at startup** (whitelisted in the CSP meta tag at `<head>`):
+  - `https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js` — used by the Excel export/import path (`XLSX.utils.*`).
+  - `https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js` — used by the PDF export (`new jsPDF()`).
+  - `https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js` — `doc.autoTable()` plugin for PDF tables.
+  - Google Fonts: `Fraunces`, `JetBrains Mono`, `IBM Plex Sans Arabic` via `fonts.googleapis.com` + `fonts.gstatic.com`.
+- **User-triggered runtime call:** Gemini API (`gemini-2.5-flash` at `generativelanguage.googleapis.com`) for OCR. Only fires when the user explicitly runs the photo-extraction flow.
 - Companion data file: `food_database-7.json` is the canonical food database. Users load it via the in-app "⬆ Restore JSON" button; it lands in `localStorage['mt-db']` and shadows the small sample `DB` array hard-coded in the HTML.
 - Filenames are version-suffixed (`-32`, `-7`). Bumping the suffix is the release mechanism. Edit the existing numbered file in place; only bump when explicitly asked.
 
@@ -15,7 +21,7 @@ There is no build, no lint, no test suite.
 - Run: open the HTML file directly in a browser, or serve the directory (`python3 -m http.server`) and load it.
 - For UI changes, exercise the affected feature in a real browser — that is the only feedback loop available.
 - Reset app state: `localStorage.clear()` in DevTools on the file's origin, or use the in-app reset actions.
-- **Smoke test for script-region edits:** after any change to the main `<script>` block, run: `node -e "new Function(require('fs').readFileSync('Macro_Tracker_Interactive-32.html','utf8').match(/<script>[\s\S]*?<\/script>/g)[1].slice(8,-9))" && echo OK`. Takes ~3 seconds. Catches syntax errors and orphaned content before commit.
+- **Smoke test for script-region edits:** after any change to the main `<script>` block, run: `node -e "const m=require('fs').readFileSync('Macro_Tracker_Interactive-32.html','utf8').match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)||[];const main=m.filter(s=>!/\ssrc=/.test(s)).pop();new Function(main.replace(/^<script[^>]*>|<\/script>$/g,''));console.log('OK')"`. Takes ~3 seconds. Catches syntax errors and orphaned content before commit. (Picks the last inline `<script>` block — the main one — skipping CDN `<script src="…">` tags, and tolerates attributes like `defer`/`nonce`.)
 
 ## Code organization inside the HTML
 
@@ -153,6 +159,6 @@ This repo uses three local-only files (gitignored via `*.local.*`) as an asynchr
 
 - Don't split the HTML into separate JS/CSS files — single-file delivery is the intended design.
 - Don't add a bundler, package manager, or test framework — incompatible with the ship model.
-- Don't add a runtime dependency that loads from a CDN at startup. The Gemini API is the only allowed network call, and it's user-triggered.
+- Don't add NEW CDN dependencies at startup beyond the four already whitelisted (xlsx, jspdf, jspdf-autotable, Google Fonts). New runtime calls must be user-triggered, like the Gemini OCR call. Any new endpoint also requires a CSP update at line 5 of the HTML, or the browser will silently block it.
 - Don't commit `*.local.*` files. They are the collaboration scratchpad.
 - Don't mutate `DB` or `dayItems` without firing the corresponding persistence + re-render pair noted above.

@@ -469,6 +469,54 @@ body.ar .goals-bar .label-text { font-style: normal; }
 }
 .edit-btn:hover { background: var(--accent); color: var(--on-accent); }
 
+/* Water widget */
+.water-widget {
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  padding: 12px 20px; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+body.ar .water-widget { border-left: none; border-right: 4px solid var(--accent); }
+.water-header {
+  display: flex; flex-direction: column; gap: 4px; min-width: 80px;
+}
+.water-header > span:first-child {
+  font-weight: 600; font-size: 12px;
+}
+.water-total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-soft);
+}
+.water-controls {
+  display: flex; align-items: center; gap: 10px; flex: 1;
+}
+.water-btn {
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--line);
+  width: 32px; height: 32px;
+  padding: 0; border-radius: 2px;
+  font-weight: 600; font-size: 16px;
+  cursor: pointer; flex-shrink: 0;
+}
+.water-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.water-progress {
+  flex: 1; display: flex; flex-direction: column; gap: 6px;
+}
+.water-bar {
+  background: var(--paper); border: 1px solid var(--line);
+  height: 20px; border-radius: 2px;
+  overflow: hidden;
+}
+.water-fill {
+  background: var(--accent); height: 100%;
+  transition: width 0.3s ease;
+}
+.water-ml {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-soft);
+  text-align: center;
+}
+
 /* Day controls */
 .day-controls {
   display: flex; gap: 10px; margin-bottom: 20px;

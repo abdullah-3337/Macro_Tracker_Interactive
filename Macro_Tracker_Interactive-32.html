@@ -1488,6 +1488,7 @@ body.ar .progress-card .pc-name { font-family: 'IBM Plex Sans Arabic', sans-seri
   height: 100%; transition: width 0.3s ease;
   border-radius: 3px;
 }
+.fill-netkcal { background: var(--kcal); opacity: 0.7; }
 .fill-kcal { background: var(--kcal); }
 .fill-protein { background: var(--protein); }
 .fill-fat { background: var(--fat); }
@@ -2552,6 +2553,18 @@ body.ar .footer li::before {
     <div class="progress-grid">
       <div class="progress-card">
         <div class="pc-header">
+          <span class="pc-name" data-en="Net Calories" data-ar="السعرات الصافية">Net Calories</span>
+          <span class="pc-status" id="status-netkcal"></span>
+        </div>
+        <div class="pc-values">
+          <span id="val-netkcal">0</span><span class="target"> / <span id="tgt-netkcal">1900</span> kcal</span>
+          <span class="remaining" id="rem-netkcal"></span>
+        </div>
+        <div class="progress-bar"><div class="fill fill-netkcal" id="bar-netkcal" style="width:0%"></div></div>
+      </div>
+
+      <div class="progress-card">
+        <div class="pc-header">
           <span class="pc-name" data-en="Calories" data-ar="السعرات">Calories</span>
           <span class="pc-status" id="status-kcal"></span>
         </div>
@@ -2615,6 +2628,19 @@ body.ar .footer li::before {
         <tbody id="selectedBody"></tbody>
         <tfoot id="selectedFoot"></tfoot>
       </table>
+    </div>
+
+    <!-- ============ ACTIVITY / WORKOUTS ============ -->
+    <div class="activity-section" id="activitySection" style="margin-top: 24px; padding-bottom: 20px;">
+      <h4 data-en="Activity" data-ar="النشاط">Activity</h4>
+      <div id="workoutsList" style="margin: 12px 0;">
+        <!-- Rendered list of workouts -->
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <input type="text" id="workoutName" placeholder="Activity name" data-placeholder-en="Activity name" data-placeholder-ar="اسم النشاط" style="flex: 1; padding: 6px; border: 1px solid var(--accent); border-radius: 4px; font-size: 13px;" />
+        <input type="number" id="workoutKcal" placeholder="kcal" data-placeholder-en="kcal" data-placeholder-ar="سعر" style="width: 70px; padding: 6px; border: 1px solid var(--accent); border-radius: 4px; font-size: 13px;" />
+        <button id="addWorkoutBtn" data-en="Add" data-ar="أضف" style="padding: 6px 12px; background: var(--accent); color: var(--paper); border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">Add</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3524,6 +3550,8 @@ let goals = lsGet('mt-goals', {kcal:1900, protein:145, fat:65, carbs:215});
 if (!goals || typeof goals !== 'object') goals = {kcal:1900, protein:145, fat:65, carbs:215};
 let dayItems = lsGet('mt-day', []);
 if (!Array.isArray(dayItems)) dayItems = [];
+let workouts = lsGet('mt-workouts', []);
+if (!Array.isArray(workouts)) workouts = [];
 let savedDays = lsGet('mt-saved', []);
 if (!Array.isArray(savedDays)) savedDays = [];
 let waterState = lsGet('mt-water', {glasses:0, mlPerGlass:250, goalMl:2000});
@@ -3557,6 +3585,15 @@ function escapeHtml(s) {
 function todayStr() {
   const d = new Date();
   return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+
+// ============ WORKOUT OFFSET ============
+function getTotalBurned() {
+  return workouts.reduce((sum, w) => sum + (w.kcalBurned || 0), 0);
+}
+
+function saveWorkoutState() {
+  lsSet('mt-workouts', JSON.stringify(workouts));
 }
 
 // ============ RENDER TABLES ============
@@ -4490,6 +4527,9 @@ function renderTotals() {
     return acc;
   }, {p:0, f:0, c:0, kcal:0});
 
+  const totalBurned = getTotalBurned();
+  const netKcal = totals.kcal - totalBurned;
+
   // Floating action button
   document.getElementById('fabCount').textContent = dayItems.length;
   document.getElementById('fabKcal').textContent = fmt(totals.kcal);
@@ -4497,6 +4537,7 @@ function renderTotals() {
   document.getElementById('itemCount').textContent = dayItems.length;
 
   // Progress cards
+  updateProgress('netkcal', netKcal, goals.kcal + totalBurned);
   updateProgress('kcal', totals.kcal, goals.kcal);
   updateProgress('protein', totals.p, goals.protein);
   updateProgress('fat', totals.f, goals.fat);
@@ -4610,7 +4651,9 @@ document.getElementById('newDayBtn').addEventListener('click', () => {
     if (!confirm(msg)) return;
   }
   dayItems = [];
+  workouts = [];
   saveDayState();
+  saveWorkoutState();
   waterState.glasses = 0;
   lsSet('mt-water', JSON.stringify(waterState));
   renderWater();
@@ -4642,7 +4685,9 @@ document.getElementById('clearDayBtn').addEventListener('click', () => {
   const msg = lang === 'ar' ? 'مسح أكل اليوم؟ متأكد؟' : 'Clear today\'s items?';
   if (!confirm(msg)) return;
   dayItems = [];
+  workouts = [];
   saveDayState();
+  saveWorkoutState();
   renderTotals();
 });
 
@@ -4846,6 +4891,75 @@ function closePanel() {
 document.getElementById('fab').addEventListener('click', openPanel);
 document.getElementById('panelClose').addEventListener('click', closePanel);
 document.getElementById('panelOverlay').addEventListener('click', closePanel);
+
+// Render the list of workouts in the activity section
+function renderWorkoutsList() {
+  const list = document.getElementById('workoutsList');
+  if (workouts.length === 0) {
+    list.innerHTML = `<div style="font-size: 13px; color: var(--text-soft); padding: 8px 0;">${lang === 'ar' ? 'لا توجد تمارين مسجلة' : 'No workouts logged'}</div>`;
+    return;
+  }
+  const totalBurned = getTotalBurned();
+  list.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span style="font-size: 12px; color: var(--text-soft);">${lang === 'ar' ? 'إجمالي' : 'Total'}</span>
+      <span style="font-weight: bold; color: var(--kcal);">${fmt(totalBurned)} kcal</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      ${workouts.map((w, idx) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: var(--paper-soft); border-radius: 4px; font-size: 13px;">
+          <div style="flex: 1;">
+            <div style="font-weight: 500;">${escapeHtml(w.name ? (typeof w.name === 'string' ? w.name : w.name.en) : 'Activity')}</div>
+            <div style="font-size: 11px; color: var(--text-soft);">${fmt(w.kcalBurned || 0)} kcal</div>
+          </div>
+          <button class="remove-workout-btn" data-workout-idx="${idx}" style="padding: 4px 8px; background: var(--over); color: var(--paper); border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">${lang === 'ar' ? 'حذف' : 'Remove'}</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+document.getElementById('addWorkoutBtn').addEventListener('click', () => {
+  const nameInput = document.getElementById('workoutName');
+  const kcalInput = document.getElementById('workoutKcal');
+  const name = nameInput.value.trim();
+  const kcal = parseFloat(kcalInput.value) || 0;
+
+  if (!name) {
+    alert(lang === 'ar' ? 'أدخل اسم النشاط' : 'Enter activity name');
+    return;
+  }
+  if (kcal <= 0) {
+    alert(lang === 'ar' ? 'أدخل سعرات صحيحة' : 'Enter valid kcal value');
+    return;
+  }
+
+  workouts.push({
+    id: 'w-' + Date.now(),
+    name: name,
+    kcalBurned: kcal,
+    timestamp: new Date().toISOString()
+  });
+
+  saveWorkoutState();
+  renderWorkoutsList();
+  renderTotals();
+  nameInput.value = '';
+  kcalInput.value = '';
+});
+
+// Event delegation for removing workouts
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.remove-workout-btn');
+  if (!btn) return;
+  const idx = parseInt(btn.dataset.workoutIdx, 10);
+  if (!isNaN(idx) && idx >= 0 && idx < workouts.length) {
+    workouts.splice(idx, 1);
+    saveWorkoutState();
+    renderWorkoutsList();
+    renderTotals();
+  }
+});
 
 // ============ DATA EXPORT / IMPORT (food database) ============
 // Schema columns — this exact order must be preserved for re-import
@@ -5824,6 +5938,7 @@ function buildBackupObject() {
     data: {
       db: DB,
       day: dayItems,
+      workouts: workouts,
       saved: savedDays,
       goals: goals,
       water: waterState,
@@ -5911,6 +6026,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (Array.isArray(payload.db) && payload.db.length)
         willRestore.push(lang === 'ar' ? `قاعدة البيانات (${payload.db.length})` : `database (${payload.db.length})`);
       if (Array.isArray(payload.day)) willRestore.push(lang === 'ar' ? 'يوم اليوم' : "today's items");
+      if (Array.isArray(payload.workouts)) willRestore.push(lang === 'ar' ? 'التمارين' : 'workouts');
       if (Array.isArray(payload.saved)) willRestore.push(lang === 'ar' ? 'الأيام المحفوظة' : 'saved days');
       if (payload.goals) willRestore.push(lang === 'ar' ? 'الأهداف' : 'goals');
 
@@ -5936,6 +6052,10 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (Array.isArray(payload.day)) {
         dayItems = payload.day;
         lsSet('mt-day', JSON.stringify(dayItems));
+      }
+      if (Array.isArray(payload.workouts)) {
+        workouts = payload.workouts;
+        lsSet('mt-workouts', JSON.stringify(workouts));
       }
       if (Array.isArray(payload.saved)) {
         savedDays = payload.saved;
@@ -6003,6 +6123,7 @@ function applyLanguage() {
   });
   renderTables();
   applyFilters();
+  renderWorkoutsList();
   renderTotals();
 
   // If the food popup is open, keep its action button / preview label in
@@ -6053,6 +6174,7 @@ renderGoals();
 renderWater();
 applyLanguage();
 saveDayState();
+renderWorkoutsList();
 
 // ============ GLOBAL SORT MENU HANDLERS ============
 function closeAllSortMenus() {

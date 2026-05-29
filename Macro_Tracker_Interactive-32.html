@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com https://fonts.gstatic.com https://world.openfoodfacts.org; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com">
 <script>
 /* Set theme + scheme on <html> before first paint to avoid any flash.
    Theme: 'light' | 'dark' | 'system' (system follows the OS).
@@ -1706,6 +1706,91 @@ body.ar .ocr-err { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 1
 }
 .ocr-actions button { flex: 1; }
 
+/* ============ BARCODE SCANNER MODAL ============ */
+.barcode-modal {
+  background: var(--paper); border-radius: 4px;
+  max-width: 520px; width: 100%;
+  border: 1px solid var(--line);
+  max-height: 92vh; display: flex; flex-direction: column;
+}
+.barcode-modal h3 {
+  padding: 18px 24px;
+  background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
+  color: var(--on-grad); font-size: 18px;
+  font-style: italic; font-weight: 600;
+  border-bottom: 3px solid var(--gold);
+  flex-shrink: 0;
+}
+body.ar .barcode-modal h3 { font-style: normal; }
+.barcode-body {
+  padding: 20px 24px; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.barcode-unsupported { text-align: center; padding: 20px; }
+.barcode-unsupported p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--ink-soft); line-height: 1.6;
+}
+body.ar .barcode-unsupported p { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
+.barcode-camera { text-align: center; }
+.barcode-camera video {
+  border-radius: 6px; border: 1px solid var(--line);
+  background: #000;
+}
+.barcode-hint {
+  margin-top: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--ink-soft);
+}
+body.ar .barcode-hint { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
+.barcode-progress {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 20px; text-align: center;
+}
+.barcode-result { margin-top: 10px; }
+.barcode-result-badge {
+  display: inline-block; padding: 4px 10px; border-radius: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.barcode-badge-ok { background: var(--accent-soft); color: var(--accent-dk); }
+.barcode-badge-error { background: #f8d7da; color: #721c24; }
+.barcode-values-preview {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 8px; margin-bottom: 14px;
+}
+.barcode-val-chip {
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: 4px; padding: 8px 10px;
+}
+.barcode-val-chip .bvc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--ink-soft);
+}
+body.ar .barcode-val-chip .bvc-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 11px; }
+.barcode-val-chip .bvc-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px; font-weight: 700; color: var(--ink);
+  margin-top: 2px;
+}
+.barcode-val-chip .bvc-num.missing { color: var(--over); font-size: 13px; }
+.barcode-err {
+  background: #f8d7da; color: #721c24;
+  padding: 10px 14px; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; margin-bottom: 12px; line-height: 1.5;
+  display: none;
+}
+body.ar .barcode-err { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
+.barcode-err.show { display: block; }
+.barcode-actions {
+  display: flex; gap: 10px; padding: 16px 24px;
+  border-top: 1px solid var(--line); flex-shrink: 0;
+}
+.barcode-actions button { flex: 1; }
+
 /* ============ DELETE FOOD MODAL ============ */
 .del-search-row { margin-bottom: 12px; }
 .del-search-input {
@@ -2240,6 +2325,18 @@ body.ar .footer li::before {
   </div>
   <div class="settings-body">
 
+    <!-- Meal Templates group -->
+    <div class="settings-group">
+      <div class="settings-group-label">
+        <span>🍱</span>
+        <span data-en="Meal Templates" data-ar="حصص الطعام">Meal Templates</span>
+      </div>
+      <div class="settings-btn-row">
+        <button class="dt-btn primary" id="saveCurrentDayAsTemplateBtn" data-en="💾 Save day as template" data-ar="💾 احفظ اليوم كحصة">💾 Save day as template</button>
+      </div>
+      <div class="templates-list" id="templatesListBody"></div>
+    </div>
+
     <!-- API Key group -->
     <div class="settings-group">
       <div class="settings-group-label">
@@ -2583,6 +2680,8 @@ body.ar .footer li::before {
                 data-en="🧩 Build from items" data-ar="🧩 من عناصر موجودة">🧩 Build from items</button>
         <button type="button" class="af-mode-btn af-mode-ocr" id="afModeOcrBtn"
                 data-en="📷 From photo" data-ar="📷 من صورة">📷 From photo</button>
+        <button type="button" class="af-mode-btn af-mode-barcode" id="afModeBarcode"
+                data-en="📷 Scan barcode" data-ar="📷 مسح الرمز الشريطي">📷 Scan barcode</button>
       </div>
 
       <!-- Recipe builder (hidden by default) -->
@@ -2761,6 +2860,35 @@ body.ar .footer li::before {
       <button class="btn-cancel" id="ocrCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
       <button class="btn-add" id="ocrRunBtn" data-en="Extract" data-ar="استخراج" style="display:none;">Extract</button>
       <button class="btn-add" id="ocrUseBtn" data-en="Review &amp; add →" data-ar="مراجعة وإضافة →" style="display:none;">Review &amp; add →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BARCODE SCANNER MODAL ============ -->
+<div class="popup-overlay" id="barcodeOverlay">
+  <div class="barcode-modal">
+    <h3 data-en="📷 Scan barcode" data-ar="📷 مسح الرمز الشريطي">📷 Scan barcode</h3>
+    <div class="barcode-body">
+      <div class="barcode-err" id="barcodeErr"></div>
+      <div class="barcode-unsupported" id="barcodeUnsupported" style="display:none;">
+        <p data-en="Barcode scanner is not supported on this browser. Please use a modern browser (Chrome, Edge, Safari) or try the photo-extraction method instead." data-ar="ماسح الرموز الشريطية غير مدعوم في هذا المتصفح. يرجى استخدام متصفح حديث (Chrome أو Edge أو Safari) أو جرب طريقة استخراج الصور بدلاً من ذلك.">Barcode scanner is not supported on this browser. Please use a modern browser (Chrome, Edge, Safari) or try the photo-extraction method instead.</p>
+      </div>
+      <div class="barcode-camera" id="barcodeCamera" style="display:none;">
+        <video id="barcodeVideo" style="width:100%; max-height:400px; border-radius:8px;"></video>
+        <p class="barcode-hint" data-en="Point your camera at a barcode" data-ar="وجه الكاميرا نحو الرمز الشريطي">Point your camera at a barcode</p>
+      </div>
+      <div class="barcode-progress" id="barcodeProgress" style="display:none;">
+        <div class="ocr-spinner"></div>
+        <p id="barcodeProgressText" data-en="Fetching product info..." data-ar="جاري الحصول على معلومات المنتج...">Fetching product info...</p>
+      </div>
+      <div class="barcode-result" id="barcodeResult" style="display:none;">
+        <span class="barcode-result-badge" id="barcodeResultBadge"></span>
+        <div class="barcode-values-preview" id="barcodeValuesPreview"></div>
+      </div>
+    </div>
+    <div class="barcode-actions">
+      <button class="btn-cancel" id="barcodeCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+      <button class="btn-add" id="barcodeUseBtn" data-en="Review &amp; add →" data-ar="مراجعة وإضافة →" style="display:none;">Review &amp; add →</button>
     </div>
   </div>
 </div>
@@ -3341,6 +3469,8 @@ let dayItems = lsGet('mt-day', []);
 if (!Array.isArray(dayItems)) dayItems = [];
 let savedDays = lsGet('mt-saved', []);
 if (!Array.isArray(savedDays)) savedDays = [];
+let mealTemplates = lsGet('mt-templates', []);
+if (!Array.isArray(mealTemplates)) mealTemplates = [];
 let currentFood = null;
 // When set (>=0), the popup is editing an existing day item at this index
 // instead of adding a new one.
@@ -4624,6 +4754,66 @@ document.getElementById('fab').addEventListener('click', openPanel);
 document.getElementById('panelClose').addEventListener('click', closePanel);
 document.getElementById('panelOverlay').addEventListener('click', closePanel);
 
+// ============ MEAL TEMPLATES ============
+function saveTemplatesToStorage() {
+  lsSet('mt-templates', JSON.stringify(mealTemplates));
+}
+function applyTemplate(id) {
+  const tmpl = mealTemplates.find(t => t.id === id);
+  if (!tmpl) return;
+  tmpl.items.forEach(item => {
+    const food = DB.find(f => f.id === item.foodId);
+    if (!food) return;
+    const scale = item.grams / food.base;
+    dayItems.push({
+      id: food.id, cat: food.cat, en: food.en, ar: food.ar, base: food.base,
+      basis: food.basis, easy: food.easy,
+      p: food.p * scale, f: food.f * scale, c: food.c * scale, kcal: food.kcal * scale,
+      badges: food.badges || [], units: food.units
+    });
+  });
+  saveDayState();
+  renderTotals();
+}
+function saveCurrentDayAsTemplate() {
+  if (dayItems.length === 0) {
+    alert(lang === 'ar' ? 'اليوم فاضي. أضف أصناف أول' : 'Nothing to save yet. Add some items first.');
+    return;
+  }
+  const n = prompt(lang === 'ar' ? 'اسم الحصة:' : 'Template name:', lang === 'ar' ? 'حصتي' : 'My meal');
+  if (!n || !n.trim()) return;
+  const id = 'tpl_' + Date.now();
+  mealTemplates.push({
+    id, name: {en: lang === 'en' ? n : '', ar: lang === 'ar' ? n : ''},
+    items: dayItems.map(it => ({foodId: it.id, grams: it.base}))
+  });
+  saveTemplatesToStorage();
+  updateTemplatesUI();
+  alert(lang === 'ar' ? 'تم حفظ الحصة ✓' : 'Template saved ✓');
+}
+function deleteTemplate(id) {
+  if (!confirm(lang === 'ar' ? 'حذف الحصة؟' : 'Delete template?')) return;
+  mealTemplates = mealTemplates.filter(t => t.id !== id);
+  saveTemplatesToStorage();
+  updateTemplatesUI();
+}
+function updateTemplatesUI() {
+  const c = document.getElementById('templatesListBody');
+  if (!c) return;
+  if (mealTemplates.length === 0) {
+    c.innerHTML = `<div class="empty-state">${lang === 'ar' ? 'لا توجد حصص' : 'No templates yet'}</div>`;
+    return;
+  }
+  c.innerHTML = mealTemplates.map(t => {
+    const nm = t.name[lang] || t.name.en || t.name.ar || 'Unnamed';
+    return `<div class="template-item"><div class="template-info"><div class="template-name">${escapeHtml(nm)}</div><div class="template-count">${t.items.length} ${lang === 'ar' ? 'صنف' : 'items'}</div></div><div class="template-actions"><button class="dt-btn primary apply-template-btn" data-id="${t.id}">${lang === 'ar' ? 'تطبيق' : 'Apply'}</button><button class="dt-btn warn delete-template-btn" data-id="${t.id}">${lang === 'ar' ? 'حذف' : 'Delete'}</button></div></div>`;
+  }).join('');
+  c.querySelectorAll('.apply-template-btn').forEach(b => b.addEventListener('click', e => applyTemplate(e.target.dataset.id)));
+  c.querySelectorAll('.delete-template-btn').forEach(b => b.addEventListener('click', e => deleteTemplate(e.target.dataset.id)));
+}
+updateTemplatesUI();
+document.getElementById('saveCurrentDayAsTemplateBtn')?.addEventListener('click', saveCurrentDayAsTemplate);
+
 // ============ DATA EXPORT / IMPORT (food database) ============
 // Schema columns — this exact order must be preserved for re-import
 const SCHEMA = ['id','category','en','ar','base_amount','basis_en','basis_ar','easy_en','easy_ar','protein_g','fat_g','carbs_g','kcal','badges','units_json'];
@@ -5602,6 +5792,7 @@ function buildBackupObject() {
       db: DB,
       day: dayItems,
       saved: savedDays,
+      templates: mealTemplates,
       goals: goals,
       lang: lang,
       theme: currentTheme,
@@ -5688,6 +5879,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         willRestore.push(lang === 'ar' ? `قاعدة البيانات (${payload.db.length})` : `database (${payload.db.length})`);
       if (Array.isArray(payload.day)) willRestore.push(lang === 'ar' ? 'يوم اليوم' : "today's items");
       if (Array.isArray(payload.saved)) willRestore.push(lang === 'ar' ? 'الأيام المحفوظة' : 'saved days');
+      if (Array.isArray(payload.templates)) willRestore.push(lang === 'ar' ? 'الحصص' : 'templates');
       if (payload.goals) willRestore.push(lang === 'ar' ? 'الأهداف' : 'goals');
 
       const msg = (lang === 'ar'
@@ -5716,6 +5908,10 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (Array.isArray(payload.saved)) {
         savedDays = payload.saved;
         lsSet('mt-saved', JSON.stringify(savedDays));
+      }
+      if (Array.isArray(payload.templates)) {
+        mealTemplates = payload.templates;
+        lsSet('mt-templates', JSON.stringify(mealTemplates));
       }
       // Validate goals: must have numeric kcal/protein/fat/carbs.
       if (payload.goals && typeof payload.goals === 'object') {
@@ -5746,6 +5942,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       applyLanguage();   // re-renders tables + filters + totals
       saveDayState();
       renderTotals();
+      updateTemplatesUI();
 
       alert(lang === 'ar' ? 'تم الاسترجاع بنجاح ✓' : 'Restored successfully ✓');
     } catch (err) {
@@ -6264,6 +6461,201 @@ function openAddFoodFromOCR(r) {
     if (nameField && !nameField.value) nameField.focus();
   }, 100);
 }
+
+// ============ BARCODE SCANNER FEATURE ============
+let barcodeDetectorAvailable = false;
+let barcodeDetectorInstance = null;
+let barcodeVideoStream = null;
+let barcodeDetectionActive = false;
+
+async function initBarcodeDetector() {
+  if (!('BarcodeDetector' in window)) {
+    barcodeDetectorAvailable = false;
+    return;
+  }
+  try {
+    const formats = await BarcodeDetector.getSupportedFormats();
+    if (formats.length === 0) {
+      barcodeDetectorAvailable = false;
+      return;
+    }
+    barcodeDetectorInstance = new BarcodeDetector({
+      formats: formats.filter(f => ['ean_13', 'ean_8', 'upca', 'code_128'].includes(f))
+    });
+    barcodeDetectorAvailable = true;
+  } catch (e) {
+    barcodeDetectorAvailable = false;
+  }
+}
+
+async function openBarcodeModal() {
+  if (!barcodeDetectorAvailable) {
+    document.getElementById('barcodeUnsupported').style.display = 'block';
+    document.getElementById('barcodeCamera').style.display = 'none';
+  } else {
+    document.getElementById('barcodeUnsupported').style.display = 'none';
+    document.getElementById('barcodeCamera').style.display = 'block';
+    await startBarcodeStream();
+  }
+  document.getElementById('barcodeOverlay').classList.add('active');
+}
+
+function closeBarcodeModal() {
+  document.getElementById('barcodeOverlay').classList.remove('active');
+  stopBarcodeStream();
+  document.getElementById('barcodeErr').classList.remove('show');
+  document.getElementById('barcodeErr').textContent = '';
+  document.getElementById('barcodeResult').style.display = 'none';
+  document.getElementById('barcodeCamera').style.display = 'block';
+  document.getElementById('barcodeProgress').style.display = 'none';
+}
+
+async function startBarcodeStream() {
+  barcodeDetectionActive = true;
+  const video = document.getElementById('barcodeVideo');
+  try {
+    barcodeVideoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    video.srcObject = barcodeVideoStream;
+    video.play();
+    detectBarcodeFrame();
+  } catch (e) {
+    showBarcodeError(lang === 'ar' ? 'لم تتمكن من الوصول إلى الكاميرا' : 'Could not access camera');
+  }
+}
+
+function stopBarcodeStream() {
+  barcodeDetectionActive = false;
+  if (barcodeVideoStream) {
+    barcodeVideoStream.getTracks().forEach(track => track.stop());
+    barcodeVideoStream = null;
+  }
+}
+
+async function detectBarcodeFrame() {
+  const video = document.getElementById('barcodeVideo');
+  if (!barcodeDetectionActive || !video.srcObject) return;
+  try {
+    const barcodes = await barcodeDetectorInstance.detect(video);
+    if (barcodes.length > 0) {
+      const barcode = barcodes[0];
+      stopBarcodeStream();
+      await fetchOpenFoodFactsProduct(barcode.rawValue);
+      return;
+    }
+  } catch (e) {
+    // Continue detecting
+  }
+  requestAnimationFrame(detectBarcodeFrame);
+}
+
+async function fetchOpenFoodFactsProduct(barcode) {
+  document.getElementById('barcodeCamera').style.display = 'none';
+  document.getElementById('barcodeProgress').style.display = 'flex';
+  document.getElementById('barcodeErr').classList.remove('show');
+  try {
+    const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
+    if (!res.ok) throw new Error('Product not found');
+    const data = await res.json();
+    const product = data.product;
+    if (!product || !product.nutriments) {
+      throw new Error('No nutritional data');
+    }
+    displayBarcodeResult(product);
+  } catch (e) {
+    showBarcodeError(lang === 'ar' ? 'لم يتم العثور على المنتج' : 'Product not found');
+    document.getElementById('barcodeProgress').style.display = 'none';
+    document.getElementById('barcodeCamera').style.display = 'block';
+    barcodeDetectionActive = true;
+    detectBarcodeFrame();
+  }
+}
+
+function displayBarcodeResult(product) {
+  document.getElementById('barcodeProgress').style.display = 'none';
+  document.getElementById('barcodeResult').style.display = 'block';
+  const badge = document.getElementById('barcodeResultBadge');
+  const preview = document.getElementById('barcodeValuesPreview');
+  preview.innerHTML = '';
+  const nutriments = product.nutriments || {};
+  const kcal = nutriments['energy-kcal_100g'] || nutriments['energy_kcal_100g'] || 0;
+  const p = nutriments['proteins_100g'] || 0;
+  const f = nutriments['fat_100g'] || 0;
+  const c = nutriments['carbohydrates_100g'] || 0;
+  const productName = escapeHtml(product.product_name || product.product_name_en || '');
+  const productNameAr = escapeHtml(product.product_name_ar || '');
+  window.barcodeProductData = {
+    name_en: productName,
+    name_ar: productNameAr,
+    kcal: Math.round(kcal * 10) / 10,
+    p: Math.round(p * 10) / 10,
+    f: Math.round(f * 10) / 10,
+    c: Math.round(c * 10) / 10
+  };
+  badge.className = 'barcode-result-badge barcode-badge-ok';
+  badge.textContent = lang === 'ar' ? 'وجدت' : 'FOUND';
+  const chips = [
+    { label: 'kcal', value: window.barcodeProductData.kcal },
+    { label: 'protein (g)', value: window.barcodeProductData.p },
+    { label: 'fat (g)', value: window.barcodeProductData.f },
+    { label: 'carbs (g)', value: window.barcodeProductData.c }
+  ];
+  chips.forEach(chip => {
+    const div = document.createElement('div');
+    div.className = 'barcode-val-chip';
+    div.innerHTML = `<div class="bvc-label">${escapeHtml(chip.label)}</div><div class="bvc-num">${chip.value || 0}</div>`;
+    preview.appendChild(div);
+  });
+  document.getElementById('barcodeUseBtn').style.display = 'inline-block';
+}
+
+function showBarcodeError(msg) {
+  const errEl = document.getElementById('barcodeErr');
+  errEl.textContent = msg;
+  errEl.classList.add('show');
+}
+
+function openAddFoodFromBarcode() {
+  if (!window.barcodeProductData) return;
+  closeBarcodeModal();
+  currentFood = {
+    id: `barcode-${Date.now()}`,
+    en: window.barcodeProductData.name_en,
+    ar: window.barcodeProductData.name_ar || window.barcodeProductData.name_en,
+    cat: 'packaged',
+    base: 100,
+    basis: { en: 'per 100 g', ar: 'لكل 100 جم' },
+    p: window.barcodeProductData.p,
+    f: window.barcodeProductData.f,
+    c: window.barcodeProductData.c,
+    kcal: window.barcodeProductData.kcal,
+    badges: ['barcode'],
+    units: []
+  };
+  editingIndex = -1;
+  openPopup();
+  if (document.getElementById('afEn')) {
+    document.getElementById('afEn').value = window.barcodeProductData.name_en;
+  }
+  if (document.getElementById('afAr')) {
+    document.getElementById('afAr').value = window.barcodeProductData.name_ar;
+  }
+  document.getElementById('afP').value = window.barcodeProductData.p;
+  document.getElementById('afF').value = window.barcodeProductData.f;
+  document.getElementById('afC').value = window.barcodeProductData.c;
+  document.getElementById('afKcal').value = window.barcodeProductData.kcal;
+  if (typeof updateAfKcalCheck === 'function') updateAfKcalCheck();
+}
+
+initBarcodeDetector();
+
+const afModeBarcode = document.getElementById('afModeBarcode');
+if (afModeBarcode) afModeBarcode.addEventListener('click', openBarcodeModal);
+
+const barcodeCancelBtn = document.getElementById('barcodeCancelBtn');
+if (barcodeCancelBtn) barcodeCancelBtn.addEventListener('click', closeBarcodeModal);
+
+const barcodeUseBtn = document.getElementById('barcodeUseBtn');
+if (barcodeUseBtn) barcodeUseBtn.addEventListener('click', openAddFoodFromBarcode);
 
 // ============ LIVE CALORIE-MISMATCH CHECK (Add Food modal) ============
 // Compares the entered Calories against P×4 + F×9 + C×4 and shows a live

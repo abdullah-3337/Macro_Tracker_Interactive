@@ -469,6 +469,57 @@ body.ar .goals-bar .label-text { font-style: normal; }
 }
 .edit-btn:hover { background: var(--accent); color: var(--on-accent); }
 
+/* ============ WATER TRACKER ============ */
+.water-widget {
+  background: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+  padding: 12px 20px; margin-bottom: 20px;
+}
+body.ar .water-widget { border-left: none; border-right: 4px solid var(--accent); }
+.water-content {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.water-label {
+  font-style: italic; font-weight: 600; font-size: 14px;
+}
+body.ar .water-label { font-style: normal; }
+.water-display {
+  flex: 1; display: flex; align-items: center; gap: 12px; min-width: 200px;
+}
+.water-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; white-space: nowrap;
+  font-weight: 500;
+}
+.water-progress {
+  flex: 1; display: flex; flex-direction: column; gap: 4px;
+}
+.water-bar {
+  height: 8px; background: var(--line);
+  border-radius: 100px; overflow: hidden;
+}
+.water-fill {
+  height: 100%; background: var(--accent);
+  border-radius: 100px; width: 0%;
+  transition: width 0.2s ease;
+}
+.water-ml {
+  font-size: 11px; color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+}
+.water-controls {
+  display: flex; gap: 6px;
+}
+.water-btn {
+  width: 32px; height: 32px;
+  border: 1px solid var(--line); background: var(--paper);
+  font-weight: 600; font-size: 16px;
+  cursor: pointer; border-radius: 2px;
+  color: var(--ink); padding: 0;
+}
+.water-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.water-btn:active { transform: scale(0.95); }
+
 /* Day controls */
 .day-controls {
   display: flex; gap: 10px; margin-bottom: 20px;
@@ -2173,6 +2224,31 @@ body.ar .footer li::before {
   <button class="edit-btn" id="editGoalsBtn" data-en="Edit goals" data-ar="تعديل الأهداف">Edit goals</button>
 </div>
 
+<div class="water-widget" id="waterWidget">
+  <div class="water-content">
+    <div class="water-label">
+      <span data-en="💧 Water" data-ar="💧 ماء">💧 Water</span>
+    </div>
+    <div class="water-display">
+      <div class="water-count">
+        <span id="waterGlasses">0</span> <span data-en="glasses" data-ar="أكواب">glasses</span>
+      </div>
+      <div class="water-progress">
+        <div class="water-bar">
+          <div class="water-fill" id="waterFill"></div>
+        </div>
+        <div class="water-ml">
+          <span id="waterMlDisplay">0</span> / <span id="waterMlGoal">2000</span> <span data-en="ml" data-ar="مل">ml</span>
+        </div>
+      </div>
+    </div>
+    <div class="water-controls">
+      <button class="water-btn water-minus" id="waterMinusBtn" data-en="−" data-ar="−">−</button>
+      <button class="water-btn water-plus" id="waterPlusBtn" data-en="+" data-ar="+">+</button>
+    </div>
+  </div>
+</div>
+
 <div class="day-controls">
   <button class="day-btn" id="newDayBtn" data-en="+ New Day" data-ar="+ يوم جديد">+ New Day</button>
   <button class="day-btn" id="saveDayBtn" data-en="💾 Save Day" data-ar="💾 احفظ اليوم">💾 Save Day</button>
@@ -2290,6 +2366,17 @@ body.ar .footer li::before {
         <button class="dt-btn warn" id="importJsonBtn" data-en="⬆ Restore JSON" data-ar="⬆ استرجاع JSON">⬆ Restore JSON</button>
         <input type="file" id="importJsonInput" accept=".json,application/json" style="display:none">
       </div>
+    </div>
+
+    <!-- Water tracker settings group -->
+    <div class="settings-group">
+      <div class="settings-group-label">
+        <span>💧</span>
+        <span data-en="Water Tracker" data-ar="متتبع المياه">Water Tracker</span>
+      </div>
+      <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="number" id="waterMlPerGlass" min="100" max="500" value="250"></div>
+      <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="number" id="waterGoalMl" min="500" max="5000" value="2000"></div>
+      <button class="dt-btn primary" id="saveWaterSettingsBtn" data-en="Save" data-ar="حفظ">Save</button>
     </div>
 
   </div>
@@ -3341,6 +3428,8 @@ let dayItems = lsGet('mt-day', []);
 if (!Array.isArray(dayItems)) dayItems = [];
 let savedDays = lsGet('mt-saved', []);
 if (!Array.isArray(savedDays)) savedDays = [];
+let waterState = lsGet('mt-water', {glasses:0, mlPerGlass:250, goalMl:2000});
+if (!waterState || typeof waterState !== 'object') waterState = {glasses:0, mlPerGlass:250, goalMl:2000};
 let currentFood = null;
 // When set (>=0), the popup is editing an existing day item at this index
 // instead of adding a new one.
@@ -4424,6 +4513,9 @@ document.getElementById('newDayBtn').addEventListener('click', () => {
   }
   dayItems = [];
   saveDayState();
+  waterState.glasses = 0;
+  lsSet('mt-water', JSON.stringify(waterState));
+  renderWater();
   renderTotals();
 });
 
@@ -4530,6 +4622,39 @@ document.getElementById('saveGoalsBtn').addEventListener('click', () => {
   renderGoals();
   renderTotals();
   document.getElementById('goalsOverlay').classList.remove('active');
+});
+
+// ============ WATER TRACKER ============
+function renderWater() {
+  const currentMl = waterState.glasses * waterState.mlPerGlass;
+  const percentage = Math.min(100, (currentMl / waterState.goalMl) * 100);
+
+  document.getElementById('waterGlasses').textContent = waterState.glasses;
+  document.getElementById('waterMlDisplay').textContent = currentMl;
+  document.getElementById('waterMlGoal').textContent = waterState.goalMl;
+  document.getElementById('waterFill').style.width = percentage + '%';
+}
+
+function updateWater(delta) {
+  waterState.glasses = Math.max(0, waterState.glasses + delta);
+  lsSet('mt-water', JSON.stringify(waterState));
+  renderWater();
+}
+
+document.getElementById('waterPlusBtn').addEventListener('click', () => {
+  updateWater(1);
+});
+
+document.getElementById('waterMinusBtn').addEventListener('click', () => {
+  updateWater(-1);
+});
+
+document.getElementById('saveWaterSettingsBtn').addEventListener('click', () => {
+  waterState.mlPerGlass = parseFloat(document.getElementById('waterMlPerGlass').value) || 250;
+  waterState.goalMl = parseFloat(document.getElementById('waterGoalMl').value) || 2000;
+  lsSet('mt-water', JSON.stringify(waterState));
+  renderWater();
+  alert(lang === 'ar' ? 'تم حفظ إعدادات الماء ✓' : 'Water settings saved ✓');
 });
 
 // ============ SEARCH & FILTER ============
@@ -5603,6 +5728,7 @@ function buildBackupObject() {
       day: dayItems,
       saved: savedDays,
       goals: goals,
+      water: waterState,
       lang: lang,
       theme: currentTheme,
       scheme: currentScheme
@@ -5728,6 +5854,10 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         goals = payload.goals;
         lsSet('mt-goals', JSON.stringify(goals));
       }
+      if (payload.water && typeof payload.water === 'object') {
+        waterState = payload.water;
+        lsSet('mt-water', JSON.stringify(waterState));
+      }
       if (payload.lang === 'en' || payload.lang === 'ar') {
         lang = payload.lang;
         lsSet('mt-lang', lang);
@@ -5743,6 +5873,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
 
       applyTheme();
       renderGoals();
+      renderWater();
       applyLanguage();   // re-renders tables + filters + totals
       saveDayState();
       renderTotals();
@@ -5821,6 +5952,7 @@ document.getElementById('langToggle').addEventListener('click', () => {
 // ============ INIT ============
 applyTheme();
 renderGoals();
+renderWater();
 applyLanguage();
 saveDayState();
 
@@ -5872,6 +6004,10 @@ document.addEventListener('keydown', e => {
   header.addEventListener('click', () => {
     section.classList.toggle('open');
     lsSet('mt-settings-open', section.classList.contains('open') ? '1' : '0');
+    if (section.classList.contains('open')) {
+      refreshApiKeyStatus();
+      refreshWaterSettingsUI();
+    }
   });
 })();
 
@@ -5901,6 +6037,13 @@ function refreshApiKeyStatus() {
       ? '<span>لا يوجد مفتاح محفوظ — استخراج الصور معطّل</span>'
       : '<span>No key saved — photo extraction disabled</span>';
   }
+}
+
+function refreshWaterSettingsUI() {
+  const mlPerGlassInput = document.getElementById('waterMlPerGlass');
+  const goalMlInput = document.getElementById('waterGoalMl');
+  if (mlPerGlassInput) mlPerGlassInput.value = waterState.mlPerGlass;
+  if (goalMlInput) goalMlInput.value = waterState.goalMl;
 }
 
 document.getElementById('saveApiKeyBtn').addEventListener('click', () => {

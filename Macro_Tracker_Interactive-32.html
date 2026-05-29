@@ -2765,6 +2765,35 @@ body.ar .footer li::before {
   </div>
 </div>
 
+<!-- ============ BARCODE SCANNER MODAL ============ -->
+<div class="popup-overlay" id="barcodeOverlay">
+  <div class="barcode-modal">
+    <h3 data-en="📷 Scan barcode" data-ar="📷 مسح الرمز الشريطي">📷 Scan barcode</h3>
+    <div class="barcode-body">
+      <div class="barcode-err" id="barcodeErr"></div>
+      <div class="barcode-unsupported" id="barcodeUnsupported" style="display:none;">
+        <p data-en="Barcode scanner is not supported on this browser. Please use a modern browser (Chrome, Edge, Safari) or try the photo-extraction method instead." data-ar="ماسح الرموز الشريطية غير مدعوم في هذا المتصفح. يرجى استخدام متصفح حديث (Chrome أو Edge أو Safari) أو جرب طريقة استخراج الصور بدلاً من ذلك.">Barcode scanner is not supported on this browser. Please use a modern browser (Chrome, Edge, Safari) or try the photo-extraction method instead.</p>
+      </div>
+      <div class="barcode-camera" id="barcodeCamera" style="display:none;">
+        <video id="barcodeVideo" style="width:100%; max-height:400px; border-radius:8px;"></video>
+        <p class="barcode-hint" data-en="Point your camera at a barcode" data-ar="وجه الكاميرا نحو الرمز الشريطي">Point your camera at a barcode</p>
+      </div>
+      <div class="barcode-progress" id="barcodeProgress" style="display:none;">
+        <div class="ocr-spinner"></div>
+        <p id="barcodeProgressText" data-en="Fetching product info..." data-ar="جاري الحصول على معلومات المنتج...">Fetching product info...</p>
+      </div>
+      <div class="barcode-result" id="barcodeResult" style="display:none;">
+        <span class="barcode-result-badge" id="barcodeResultBadge"></span>
+        <div class="barcode-values-preview" id="barcodeValuesPreview"></div>
+      </div>
+    </div>
+    <div class="barcode-actions">
+      <button class="btn-cancel" id="barcodeCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+      <button class="btn-add" id="barcodeUseBtn" data-en="Review &amp; add →" data-ar="مراجعة وإضافة →" style="display:none;">Review &amp; add →</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ SCHEME / THEME PICKER MODAL ============ -->
 <div class="popup-overlay" id="schemeOverlay">
   <div class="scheme-modal">
@@ -3341,6 +3370,8 @@ let dayItems = lsGet('mt-day', []);
 if (!Array.isArray(dayItems)) dayItems = [];
 let savedDays = lsGet('mt-saved', []);
 if (!Array.isArray(savedDays)) savedDays = [];
+let workouts = lsGet('mt-workouts', []);
+if (!Array.isArray(workouts)) workouts = [];
 let currentFood = null;
 // When set (>=0), the popup is editing an existing day item at this index
 // instead of adding a new one.
@@ -4423,7 +4454,9 @@ document.getElementById('newDayBtn').addEventListener('click', () => {
     if (!confirm(msg)) return;
   }
   dayItems = [];
+  workouts = [];
   saveDayState();
+  lsSet('mt-workouts', JSON.stringify(workouts));
   renderTotals();
 });
 

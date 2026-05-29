@@ -60,10 +60,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 /* ============================================================
    THEME SYSTEM
@@ -451,8 +449,7 @@ body.ar {
 .preview-row span:last-child,
 .pc-values,
 .fab .fab-kcal,
-.fab .fab-count,
-.summary-pill .v {
+.fab .fab-count {
   unicode-bidi: isolate;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
@@ -1323,10 +1320,6 @@ body.ar .badge-key-label {
   font-style: italic;
 }
 body.ar .badge-key-text { font-style: normal; }
-@media (max-width: 700px) {
-  .badge-key { gap: 8px 12px; padding: 10px 12px; }
-  .badge-key-text { font-size: 11px; }
-}
 
 .col-protein { color: var(--protein); }
 .col-fat { color: var(--fat); }
@@ -1884,6 +1877,56 @@ body.ar .search-empty {
   font-size: 28px; opacity: 0.55;
 }
 
+/* ============ FEATURE TOGGLES ============ */
+.feat-help {
+  font-size: 12px; color: var(--ink-soft); margin: 4px 0 12px;
+  line-height: 1.5;
+}
+body.ar .feat-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+@media (max-width: 480px) {
+  .feat-grid { grid-template-columns: 1fr; }
+}
+.feat-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer; user-select: none;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--ink);
+  font-size: 13px;
+}
+.feat-row:hover { background: var(--accent-soft); border-color: var(--accent); }
+.feat-row input[type="checkbox"] {
+  width: 18px; height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer; flex-shrink: 0;
+}
+.feat-icon { font-size: 16px; flex-shrink: 0; }
+.feat-name { flex: 1; }
+body.ar .feat-name { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
+
+/* Feature-disabled visibility rules.
+   body.feat-off-X hides the matching panels + entry-point buttons.
+   Saved state stays in localStorage so toggling back on restores everything. */
+body.feat-off-water .water-widget,
+body.feat-off-water .feat-water-config { display: none !important; }
+body.feat-off-training .activity-section { display: none !important; }
+body.feat-off-smartSort .sort-menu-wrap { display: none !important; }
+body.feat-off-trends #trendsBtn { display: none !important; }
+body.feat-off-ocr .am-btn-photo { display: none !important; }
+body.feat-off-barcode .am-btn-barcode { display: none !important; }
+body.feat-off-recipes [data-tab="recipe"],
+body.feat-off-recipes #recipeTab { display: none !important; }
+body.feat-off-mealTemplates #templatesPane,
+body.feat-off-mealTemplates #saveCurrentDayBtn { display: none !important; }
+
 /* ============ ACTIVITY SECTION ============ */
 .activity-section {
   padding: 16px;
@@ -2077,11 +2120,6 @@ body.ar .dt-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 .dt-btn.json:hover { background: var(--accent-dk); border-color: var(--accent-dk); }
-.dt-sep {
-  display: inline-block; width: 1px; align-self: stretch;
-  min-height: 24px; background: var(--line); margin: 0 4px;
-}
-
 /* ============ QUICK ACTIONS BAR (always visible) ============ */
 .quick-actions {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -2323,9 +2361,6 @@ body.ar .ocr-progress-text { font-family: 'IBM Plex Sans Arabic', sans-serif; fo
   font-size: 10px; font-weight: 700; text-transform: uppercase;
   margin-bottom: 12px;
 }
-.ocr-badge-high { background: var(--accent-soft); color: var(--accent-dk); }
-.ocr-badge-medium { background: var(--warn-bg); color: var(--warn-fg); }
-.ocr-badge-low { background: var(--error-bg); color: var(--error-fg); }
 .ocr-notes {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; color: var(--ink-soft);
@@ -2370,59 +2405,6 @@ body.ar .ocr-err { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 1
 .ocr-actions button { flex: 1; }
 
 /* ============ DELETE FOOD MODAL ============ */
-.del-search-row { margin-bottom: 12px; }
-.del-search-input {
-  width: 100%; padding: 10px 12px;
-  border: 1px solid var(--line); border-radius: 3px;
-  background: var(--bg); color: var(--ink);
-  font-family: 'JetBrains Mono', monospace; font-size: 13px;
-}
-body.ar .del-search-input { font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; }
-.del-count {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--ink-soft); margin-bottom: 8px;
-}
-body.ar .del-count { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; text-transform: none; }
-.del-list {
-  max-height: 50vh; overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  border: 1px solid var(--line); border-radius: 3px;
-}
-.del-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--line-soft);
-}
-.del-row:last-child { border-bottom: none; }
-.del-row-info { flex: 1; min-width: 0; }
-.del-row-name {
-  font-size: 13px; font-weight: 600; color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.del-row-meta {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--ink-soft); margin-top: 2px;
-}
-body.ar .del-row-meta { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 11px; }
-.del-row-btn {
-  flex-shrink: 0;
-  padding: 7px 12px; border-radius: 3px;
-  border: 1px solid var(--over);
-  background: var(--bg); color: var(--over);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 600; cursor: pointer;
-  transition: all 0.15s;
-}
-body.ar .del-row-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
-.del-row-btn:hover { background: var(--over); color: #fff; }
-.del-row.confirming .del-row-btn { background: var(--over); color: #fff; }
-.del-empty {
-  padding: 24px; text-align: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; color: var(--ink-soft);
-}
-body.ar .del-empty { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
 
 /* Add-food modal — reuses goals-modal shell, adds a scrollable body
    and a two-column grid for the macro inputs on wider screens */
@@ -2992,7 +2974,7 @@ body.ar .footer li::before {
     </div>
 
     <!-- Water tracker settings group -->
-    <div class="settings-group">
+    <div class="settings-group feat-water-config">
       <div class="settings-group-label">
         <span>💧</span>
         <span data-en="Water Tracker" data-ar="متتبع المياه">Water Tracker</span>
@@ -3000,6 +2982,27 @@ body.ar .footer li::before {
       <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="number" id="waterMlPerGlass" min="100" max="500" value="250"></div>
       <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="number" id="waterGoalMl" min="500" max="5000" value="2000"></div>
       <button class="dt-btn primary" id="saveWaterSettingsBtn" data-en="Save" data-ar="حفظ">Save</button>
+    </div>
+
+    <!-- Feature toggles group -->
+    <div class="settings-group">
+      <div class="settings-group-label">
+        <span>🎛</span>
+        <span data-en="Features" data-ar="المميزات">Features</span>
+      </div>
+      <div class="feat-help"
+           data-en="Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched."
+           data-ar="عطّل المميزات التي لا تستخدمها. ستختفي اللوحات والأزرار المرتبطة بها مع الإبقاء على بياناتك المحفوظة.">Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched.</div>
+      <div class="feat-grid">
+        <label class="feat-row"><input type="checkbox" data-feat="water"><span class="feat-icon">💧</span><span class="feat-name" data-en="Water tracker" data-ar="متتبع المياه">Water tracker</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="training"><span class="feat-icon">🏋</span><span class="feat-name" data-en="Training / activity" data-ar="التمارين / النشاط">Training / activity</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="smartSort"><span class="feat-icon">🔀</span><span class="feat-name" data-en="Smart sort" data-ar="الترتيب الذكي">Smart sort</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="trends"><span class="feat-icon">📈</span><span class="feat-name" data-en="Statistics / charts" data-ar="الإحصائيات / المخططات">Statistics / charts</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="ocr"><span class="feat-icon">📷</span><span class="feat-name" data-en="Photo extraction (OCR)" data-ar="استخراج الصور (OCR)">Photo extraction (OCR)</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="barcode"><span class="feat-icon">🧾</span><span class="feat-name" data-en="Barcode scanner" data-ar="ماسح الباركود">Barcode scanner</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="recipes"><span class="feat-icon">🥘</span><span class="feat-name" data-en="Recipe builder" data-ar="منشئ الوصفات">Recipe builder</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="mealTemplates"><span class="feat-icon">💾</span><span class="feat-name" data-en="Meal templates" data-ar="قوالب الوجبات">Meal templates</span></label>
+      </div>
     </div>
 
   </div>
@@ -4172,7 +4175,11 @@ function lsGet(key, fallback) {
 }
 
 // Safe localStorage write: alerts user if quota exceeded so data loss is visible, not silent.
-function lsSet(key, value) {
+// Trailing-edge throttled per key: rapid successive writes (e.g. typing into goals
+// inputs) collapse into one localStorage write 250 ms after the last call.
+const _lsPending = new Map();
+const _lsTimers = new Map();
+function _lsWriteImmediate(key, value) {
   try {
     localStorage.setItem(key, value);
   } catch (e) {
@@ -4188,6 +4195,32 @@ function lsSet(key, value) {
     console.error('localStorage write failed for "' + key + '":', e);
   }
 }
+function flushLsKey(key) {
+  if (!_lsPending.has(key)) return;
+  const value = _lsPending.get(key);
+  _lsPending.delete(key);
+  const t = _lsTimers.get(key);
+  if (t !== undefined) { clearTimeout(t); _lsTimers.delete(key); }
+  _lsWriteImmediate(key, value);
+}
+function flushLsAll() { Array.from(_lsPending.keys()).forEach(flushLsKey); }
+window.addEventListener('beforeunload', flushLsAll);
+window.addEventListener('pagehide', flushLsAll);
+function lsSet(key, value) {
+  _lsPending.set(key, value);
+  if (_lsTimers.has(key)) return;
+  const t = setTimeout(() => { _lsTimers.delete(key); flushLsKey(key); }, 250);
+  _lsTimers.set(key, t);
+}
+// Synchronous variant for critical paths (e.g. one-shot writes during a
+// confirmed destructive operation). Use sparingly — throttled lsSet is the
+// default.
+function lsSetNow(key, value) {
+  _lsPending.delete(key);
+  const t = _lsTimers.get(key);
+  if (t !== undefined) { clearTimeout(t); _lsTimers.delete(key); }
+  _lsWriteImmediate(key, value);
+}
 
 let lang = localStorage.getItem('mt-lang') || 'en';
 const MT_API_KEY = 'mt-gemini-key';
@@ -4201,6 +4234,21 @@ let savedDays = lsGet('mt-saved', []);
 if (!Array.isArray(savedDays)) savedDays = [];
 let waterState = lsGet('mt-water', {glasses:0, mlPerGlass:250, goalMl:2000});
 if (!waterState || typeof waterState !== 'object') waterState = {glasses:0, mlPerGlass:250, goalMl:2000};
+
+const FEATURE_KEYS = ['water','training','smartSort','trends','ocr','barcode','recipes','mealTemplates'];
+const DEFAULT_FEATURES = FEATURE_KEYS.reduce((acc, k) => (acc[k] = true, acc), {});
+let featureFlags = lsGet('mt-features', DEFAULT_FEATURES);
+if (!featureFlags || typeof featureFlags !== 'object') featureFlags = { ...DEFAULT_FEATURES };
+FEATURE_KEYS.forEach(k => { if (typeof featureFlags[k] !== 'boolean') featureFlags[k] = true; });
+function applyFeatures() {
+  FEATURE_KEYS.forEach(k => {
+    document.body.classList.toggle('feat-off-' + k, !featureFlags[k]);
+  });
+}
+function saveFeatures() {
+  lsSet('mt-features', JSON.stringify(featureFlags));
+  applyFeatures();
+}
 let currentFood = null;
 // When set (>=0), the popup is editing an existing day item at this index
 // instead of adding a new one.
@@ -4227,6 +4275,43 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+// ============ LAZY-LOAD CDN SCRIPTS ============
+const CDN = {
+  xlsx:        'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  jspdf:       'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+  jspdfTable:  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js',
+};
+
+const _loadedScripts = new Map();
+function loadScript(url) {
+  if (_loadedScripts.has(url)) return _loadedScripts.get(url);
+  const p = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Failed to load ' + url));
+    document.head.appendChild(s);
+  });
+  _loadedScripts.set(url, p);
+  return p;
+}
+
+async function withButtonBusy(btn, fn) {
+  if (!btn) return await fn();
+  const orig = btn.textContent;
+  const wasDisabled = btn.disabled;
+  btn.disabled = true;
+  btn.textContent = lang === 'ar' ? '⏳ جاري التحميل…' : '⏳ Loading…';
+  try {
+    await fn();
+  } finally {
+    btn.textContent = orig;
+    btn.disabled = wasDisabled;
+  }
+}
+
 function fadeAndRemove(el, doRemove) {
   if (!el || !window.matchMedia || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
     doRemove(); return;
@@ -5523,6 +5608,23 @@ document.getElementById('saveWaterSettingsBtn').addEventListener('click', () => 
   alert(lang === 'ar' ? 'تم حفظ إعدادات الماء ✓' : 'Water settings saved ✓');
 });
 
+function syncFeatureCheckboxes() {
+  document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
+    const key = cb.dataset.feat;
+    if (FEATURE_KEYS.indexOf(key) === -1) return;
+    cb.checked = !!featureFlags[key];
+  });
+}
+document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const key = cb.dataset.feat;
+    if (FEATURE_KEYS.indexOf(key) === -1) return;
+    featureFlags[key] = !!cb.checked;
+    saveFeatures();
+  });
+});
+syncFeatureCheckboxes();
+
 // ============ ADD METHOD CHOOSER ============
 function openAddMethodSheet() {
   document.getElementById('addMethodOverlay').classList.add('active');
@@ -5581,23 +5683,34 @@ function debounce(fn, ms) {
   };
 }
 
+// Pre-computed haystack per food.id. Built once per DB change, reused on every
+// keystroke — saves recomputing normalizeSearch() across 500+ foods on every
+// keypress.
+const searchIndex = new Map();
+function rebuildSearchIndex() {
+  searchIndex.clear();
+  DB.forEach(f => {
+    const hay = normalizeSearch(
+      [f.en, f.ar,
+       f.basis && f.basis.en, f.basis && f.basis.ar,
+       f.easy && f.easy.en, f.easy && f.easy.ar,
+       (f.badges || []).join(' ')
+      ].filter(Boolean).join(' ')
+    );
+    searchIndex.set(f.id, hay);
+  });
+}
+
 function applyFilters() {
   const query = normalizeSearch(searchInput.value);
 
-  // Build a per-id match set from the DATA (not DOM text), so numbers in
-  // the basis/macros can't cause false positives and language is irrelevant.
+  // Build a per-id match set from the pre-computed search index.
   let matchIds = null;
   if (query !== '') {
+    if (searchIndex.size === 0) rebuildSearchIndex();
     matchIds = new Set();
-    DB.forEach(f => {
-      const hay = normalizeSearch(
-        [f.en, f.ar,
-         f.basis && f.basis.en, f.basis && f.basis.ar,
-         f.easy && f.easy.en, f.easy && f.easy.ar,
-         (f.badges || []).join(' ')
-        ].filter(Boolean).join(' ')
-      );
-      if (hay.includes(query)) matchIds.add(f.id);
+    searchIndex.forEach((hay, id) => {
+      if (hay.includes(query)) matchIds.add(id);
     });
   }
 
@@ -5930,26 +6043,32 @@ function rowsToDb(rows) {
 }
 
 // ---- Export Excel ----
-document.getElementById('exportExcelBtn').addEventListener('click', () => {
-  try {
-    const rows = dbToRows();
-    const ws = XLSX.utils.json_to_sheet(rows, { header: SCHEMA });
-    // Column widths for readability
-    ws['!cols'] = [
-      {wch:18},{wch:14},{wch:32},{wch:32},{wch:11},{wch:22},{wch:24},
-      {wch:24},{wch:24},{wch:10},{wch:9},{wch:9},{wch:8},{wch:12},{wch:50}
-    ];
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'FoodDatabase');
-    XLSX.writeFile(wb, 'food_database.xlsx');
-  } catch(e) {
-    alert((lang === 'ar' ? 'خطأ في التصدير: ' : 'Export error: ') + e.message);
-  }
+document.getElementById('exportExcelBtn').addEventListener('click', async function() {
+  await withButtonBusy(this, async () => {
+    try {
+      await loadScript(CDN.xlsx);
+      const rows = dbToRows();
+      const ws = XLSX.utils.json_to_sheet(rows, { header: SCHEMA });
+      // Column widths for readability
+      ws['!cols'] = [
+        {wch:18},{wch:14},{wch:32},{wch:32},{wch:11},{wch:22},{wch:24},
+        {wch:24},{wch:24},{wch:10},{wch:9},{wch:9},{wch:8},{wch:12},{wch:50}
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'FoodDatabase');
+      XLSX.writeFile(wb, 'food_database.xlsx');
+    } catch(e) {
+      alert((lang === 'ar' ? 'خطأ في التصدير: ' : 'Export error: ') + e.message);
+    }
+  });
 });
 
 // ---- Export PDF ----
-document.getElementById('exportPdfBtn').addEventListener('click', () => {
+document.getElementById('exportPdfBtn').addEventListener('click', async function () {
+  await withButtonBusy(this, async () => {
   try {
+    await loadScript(CDN.jspdf);
+    await loadScript(CDN.jspdfTable);
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
     doc.setFontSize(16);
@@ -5995,11 +6114,19 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
   } catch(e) {
     alert((lang === 'ar' ? 'خطأ في تصدير PDF: ' : 'PDF export error: ') + e.message);
   }
+  });
 });
 
 // ---- Import Excel ----
-document.getElementById('importExcelBtn').addEventListener('click', () => {
-  document.getElementById('importFileInput').click();
+document.getElementById('importExcelBtn').addEventListener('click', async function () {
+  await withButtonBusy(this, async () => {
+    try {
+      await loadScript(CDN.xlsx);
+      document.getElementById('importFileInput').click();
+    } catch (e) {
+      alert((lang === 'ar' ? 'فشل تحميل المكتبة: ' : 'Library load failed: ') + e.message);
+    }
+  });
 });
 
 document.getElementById('importFileInput').addEventListener('change', (e) => {
@@ -6060,6 +6187,7 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
 
       DB = newDb;
       lsSet('mt-db', JSON.stringify(DB));
+      rebuildSearchIndex();
       renderTables();
       applyFilters();
       alert((lang === 'ar' ? 'تم الاستيراد بنجاح! ' : 'Imported successfully! ') + DB.length + (lang === 'ar' ? ' صنف' : ' items'));
@@ -6866,7 +6994,8 @@ function buildBackupObject() {
       lang: lang,
       theme: currentTheme,
       scheme: currentScheme,
-      templates: mealTemplates
+      templates: mealTemplates,
+      features: featureFlags
     }
   };
 }
@@ -6972,6 +7101,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         }
         DB = payload.db;
         lsSet('mt-db', JSON.stringify(DB));
+        rebuildSearchIndex();
       }
       if (Array.isArray(payload.day)) {
         dayItems = payload.day;
@@ -7015,6 +7145,13 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (Array.isArray(payload.templates) && payload.templates.length) {
         mealTemplates = payload.templates;
         lsSet('mt-templates', JSON.stringify(mealTemplates));
+      }
+      if (payload.features && typeof payload.features === 'object') {
+        FEATURE_KEYS.forEach(k => {
+          if (typeof payload.features[k] === 'boolean') featureFlags[k] = payload.features[k];
+        });
+        saveFeatures();
+        syncFeatureCheckboxes();
       }
 
       applyTheme();
@@ -7099,7 +7236,9 @@ document.getElementById('langToggle').addEventListener('click', () => {
 });
 
 // ============ INIT ============
+rebuildSearchIndex();
 applyTheme();
+applyFeatures();
 renderGoals();
 renderWater();
 applyLanguage();

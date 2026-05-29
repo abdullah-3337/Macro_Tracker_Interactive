@@ -5,11 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Repo shape
 
 - Single-page web app, **one self-contained HTML file** (currently `Macro_Tracker_Interactive-32.html`) containing inline CSS + HTML + vanilla JS. No framework, no bundler.
-- **External resources loaded at startup** (whitelisted in the CSP meta tag at `<head>`):
-  - `https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js` — used by the Excel export/import path (`XLSX.utils.*`).
-  - `https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js` — used by the PDF export (`new jsPDF()`).
-  - `https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js` — `doc.autoTable()` plugin for PDF tables.
-  - Google Fonts: `Fraunces`, `JetBrains Mono`, `IBM Plex Sans Arabic` via `fonts.googleapis.com` + `fonts.gstatic.com`.
+- **External resources** (whitelisted in the CSP meta tag at `<head>`):
+  - `https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js` — **lazy-loaded** via `loadScript(CDN.xlsx)` on first Export-Excel or Import-Excel click (no longer fetched at startup).
+  - `https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js` + `https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js` — **lazy-loaded** in sequence on first Export-PDF click.
+  - Google Fonts: `Fraunces`, `JetBrains Mono`, `IBM Plex Sans Arabic` via `fonts.googleapis.com` + `fonts.gstatic.com` (eager, `font-display:swap`).
 - **User-triggered runtime call:** Gemini API (`gemini-2.5-flash` at `generativelanguage.googleapis.com`) for OCR. Only fires when the user explicitly runs the photo-extraction flow.
 - Companion data file: `food_database-7.json` is the canonical food database. Users load it via the in-app "⬆ Restore JSON" button; it lands in `localStorage['mt-db']` and shadows the small sample `DB` array hard-coded in the HTML.
 - Filenames are version-suffixed (`-32`, `-7`). Bumping the suffix is the release mechanism. Edit the existing numbered file in place; only bump when explicitly asked.
@@ -66,7 +65,7 @@ The hard-coded `DB` array, the imported `food_database-7.json`, and individual d
 
 ## State (localStorage keys)
 
-All keys are `mt-`-prefixed: `mt-db`, `mt-day`, `mt-saved`, `mt-goals`, `mt-lang`, `mt-theme`, `mt-scheme`, `mt-display-modes`, `mt-smart-sort`, `mt-settings-open`, `mt-gemini-key`.
+All keys are `mt-`-prefixed: `mt-db`, `mt-day`, `mt-saved`, `mt-goals`, `mt-lang`, `mt-theme`, `mt-scheme`, `mt-display-modes`, `mt-smart-sort`, `mt-settings-open`, `mt-gemini-key`, `mt-water`, `mt-workouts`, `mt-templates`, `mt-features`.
 
 - `lsGet(key, fallback)` (in the STATE section) is the safe JSON-read helper — use it for any new key so a corrupt value can't crash startup.
 - The sample `DB` array is overwritten on load if `mt-db` is present. New seed data must go through the JSON import path, not by editing the hard-coded `DB`.

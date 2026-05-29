@@ -27,6 +27,24 @@
   }
 })();
 </script>
+<script>
+/* Set language + direction on <html> before first paint to avoid a flash
+   of the wrong direction when the saved language is Arabic. */
+(function () {
+  try {
+    var lang = localStorage.getItem('mt-lang') || 'en';
+    if (lang !== 'ar' && lang !== 'en') lang = 'en';
+    var el = document.documentElement;
+    el.setAttribute('lang', lang);
+    el.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    el.classList.add(lang, 'preload');
+  } catch (e) {
+    document.documentElement.setAttribute('lang', 'en');
+    document.documentElement.setAttribute('dir', 'ltr');
+    document.documentElement.classList.add('en', 'preload');
+  }
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Daily Macro Tracker · جدول الأكل اليومي</title>
 
@@ -61,7 +79,6 @@
   --gold: #c2a878;
   /* Fallbacks; every scheme overrides these with WCAG-checked values. */
   --on-accent: #ffffff;
-  --on-sage: #ffffff;
 }
 
 /* ---------- DEFAULT (original periwinkle / sage) ---------- */
@@ -70,24 +87,42 @@ html[data-scheme="default"][data-theme="light"] {
   --paper:#ffffff; --paper-soft:#f6f7f4;
   --line:#d2d5dd; --line-soft:#e2e4e6;
   --ink:#2e3142; --ink-soft:#6f7280; --ink-faint:#9a9ca8;
-  --accent:#6f70a8; --accent-bright:#999ac6; --accent-soft:#e6e6f1; --accent-dk:#565680; --on-accent:#ffffff; --on-sage:#1a1a1a;
-  --sage:#798071; --sage-soft:#e9ebe6;
+  --accent:#6f70a8; --accent-bright:#999ac6; --accent-soft:#e6e6f1; --accent-dk:#565680; --on-accent:#ffffff;
   --protein:#4a7c59; --fat:#b08847; --carb:#6f70a8; --kcal:#798071;
   --highlight:#f3f3fb; --success:#4a7c59; --warn:#b08847; --over:#b5615e;
   --grad-a:#2e3142; --grad-b:#3a3d52; --on-grad:#f4f4f8;
   --gold:#c2a878;
+  --warn-bg: #fff3cd;     --warn-fg: #856404;
+  --error-bg: #f8d7da;    --error-fg: #721c24;
+  --badge-iron-bg: #f4c430;  --badge-iron-fg: #5c3a00;  --badge-iron-bd: #c89000;  --badge-iron-dot: #8b1a1a;
+  --badge-omega-bg: #7eb3e8; --badge-omega-fg: #0d2a52; --badge-omega-bd: #3f7cc0; --badge-omega-dot: #0d2a52;
+  --scrim: rgba(0,0,0,0.6);
+  --veil-hi: rgba(0,0,0,0.06);
+  --veil-hi-hover: rgba(0,0,0,0.10);
+  --on-grad-veil: rgba(255,255,255,0.15);
+  --on-grad-veil-hover: rgba(255,255,255,0.28);
+  --on-grad-bd: rgba(255,255,255,0.25);
 }
 html[data-scheme="default"][data-theme="dark"] {
   --bg:#14151c; --bg-grad-a:#181923; --bg-grad-b:#101117;
   --paper:#20222e; --paper-soft:#272a38;
   --line:#353848; --line-soft:#2c2f3c;
   --ink:#e8e9ef; --ink-soft:#a0a2b0; --ink-faint:#6f7280;
-  --accent:#9d9ed0; --accent-bright:#b8b9e0; --accent-soft:#2f3046; --accent-dk:#7a7bb0; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#9aa090; --sage-soft:#2a2d2a;
+  --accent:#9d9ed0; --accent-bright:#b8b9e0; --accent-soft:#2f3046; --accent-dk:#7a7bb0; --on-accent:#1a1a1a;
   --protein:#7bb98c; --fat:#d9b06a; --carb:#9d9ed0; --kcal:#9aa090;
   --highlight:#2a2b3d; --success:#7bb98c; --warn:#d9b06a; --over:#d98884;
   --grad-a:#262838; --grad-b:#1c1d28; --on-grad:#e8e9ef;
   --gold:#c2a878;
+  --warn-bg: #3a2f0a;     --warn-fg: #f4d77b;
+  --error-bg: #3a1316;    --error-fg: #f5a3a8;
+  --badge-iron-bg: #d9b85a;  --badge-iron-fg: #2a2208;  --badge-iron-bd: #b89636;  --badge-iron-dot: #6b1010;
+  --badge-omega-bg: #6f9fd0; --badge-omega-fg: #0a1a30; --badge-omega-bd: #4f7fb0; --badge-omega-dot: #061226;
+  --scrim: rgba(0,0,0,0.72);
+  --veil-hi: rgba(255,255,255,0.06);
+  --veil-hi-hover: rgba(255,255,255,0.12);
+  --on-grad-veil: rgba(255,255,255,0.10);
+  --on-grad-veil-hover: rgba(255,255,255,0.20);
+  --on-grad-bd: rgba(255,255,255,0.18);
 }
 
 /* ---------- OCEAN (5D737E 64B6AC C0FDFB DAFFEF) ---------- */
@@ -96,24 +131,42 @@ html[data-scheme="ocean"][data-theme="light"] {
   --paper:#ffffff; --paper-soft:#eafcff;
   --line:#bfe6e6; --line-soft:#d8f1f1;
   --ink:#1f3a40; --ink-soft:#4f6d72; --ink-faint:#86a5a8;
-  --accent:#3f8f87; --accent-bright:#64b6ac; --accent-soft:#d6f3ef; --accent-dk:#2c6b66; --on-accent:#1a1a1a; --on-sage:#ffffff;
-  --sage:#5d737e; --sage-soft:#e3eef0;
+  --accent:#3f8f87; --accent-bright:#64b6ac; --accent-soft:#d6f3ef; --accent-dk:#2c6b66; --on-accent:#1a1a1a;
   --protein:#2f8f7a; --fat:#c08a3e; --carb:#4d8aa0; --kcal:#5d737e;
   --highlight:#e2fbf6; --success:#2f8f7a; --warn:#c08a3e; --over:#c25f5c;
   --grad-a:#5d737e; --grad-b:#3f8f87; --on-grad:#f2feff;
   --gold:#4f9d93;
+  --warn-bg: #fff3cd;     --warn-fg: #856404;
+  --error-bg: #f8d7da;    --error-fg: #721c24;
+  --badge-iron-bg: #f4c430;  --badge-iron-fg: #5c3a00;  --badge-iron-bd: #c89000;  --badge-iron-dot: #8b1a1a;
+  --badge-omega-bg: #7eb3e8; --badge-omega-fg: #0d2a52; --badge-omega-bd: #3f7cc0; --badge-omega-dot: #0d2a52;
+  --scrim: rgba(0,0,0,0.6);
+  --veil-hi: rgba(0,0,0,0.06);
+  --veil-hi-hover: rgba(0,0,0,0.10);
+  --on-grad-veil: rgba(255,255,255,0.15);
+  --on-grad-veil-hover: rgba(255,255,255,0.28);
+  --on-grad-bd: rgba(255,255,255,0.25);
 }
 html[data-scheme="ocean"][data-theme="dark"] {
   --bg:#0e1f22; --bg-grad-a:#12262a; --bg-grad-b:#0a191b;
   --paper:#16302f; --paper-soft:#1d3b39;
   --line:#274846; --line-soft:#1f3a38;
   --ink:#def6f3; --ink-soft:#8fb6b3; --ink-faint:#5d8480;
-  --accent:#64b6ac; --accent-bright:#8fd3c9; --accent-soft:#22433f; --accent-dk:#4a948b; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#8aa5ab; --sage-soft:#1f3134;
+  --accent:#64b6ac; --accent-bright:#8fd3c9; --accent-soft:#22433f; --accent-dk:#4a948b; --on-accent:#1a1a1a;
   --protein:#5fc9ad; --fat:#dcb06a; --carb:#7bc0d4; --kcal:#8aa5ab;
   --highlight:#1f3d3a; --success:#5fc9ad; --warn:#dcb06a; --over:#df8d8a;
   --grad-a:#1f4440; --grad-b:#12302d; --on-grad:#def6f3;
   --gold:#64b6ac;
+  --warn-bg: #3a2f0a;     --warn-fg: #f4d77b;
+  --error-bg: #3a1316;    --error-fg: #f5a3a8;
+  --badge-iron-bg: #d9b85a;  --badge-iron-fg: #2a2208;  --badge-iron-bd: #b89636;  --badge-iron-dot: #6b1010;
+  --badge-omega-bg: #6f9fd0; --badge-omega-fg: #0a1a30; --badge-omega-bd: #4f7fb0; --badge-omega-dot: #061226;
+  --scrim: rgba(0,0,0,0.72);
+  --veil-hi: rgba(255,255,255,0.06);
+  --veil-hi-hover: rgba(255,255,255,0.12);
+  --on-grad-veil: rgba(255,255,255,0.10);
+  --on-grad-veil-hover: rgba(255,255,255,0.20);
+  --on-grad-bd: rgba(255,255,255,0.18);
 }
 
 /* ---------- PEACH (B09E99 FEE9E1 FAD4C0 64B6AC) ---------- */
@@ -122,24 +175,42 @@ html[data-scheme="peach"][data-theme="light"] {
   --paper:#ffffff; --paper-soft:#fff3ee;
   --line:#f0d3c6; --line-soft:#f7e3da;
   --ink:#4a3b35; --ink-soft:#7d685f; --ink-faint:#ac958b;
-  --accent:#c98a6f; --accent-bright:#e0a98a; --accent-soft:#f9ddd0; --accent-dk:#a36a52; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#b09e99; --sage-soft:#f0e8e5;
+  --accent:#c98a6f; --accent-bright:#e0a98a; --accent-soft:#f9ddd0; --accent-dk:#a36a52; --on-accent:#1a1a1a;
   --protein:#3f8f7a; --fat:#c2843f; --carb:#c98a6f; --kcal:#b09e99;
   --highlight:#fdeadf; --success:#3f8f7a; --warn:#c2843f; --over:#c45b54;
   --grad-a:#b09e99; --grad-b:#c98a6f; --on-grad:#fff7f3;
   --gold:#d99a7a;
+  --warn-bg: #fff3cd;     --warn-fg: #856404;
+  --error-bg: #f8d7da;    --error-fg: #721c24;
+  --badge-iron-bg: #f4c430;  --badge-iron-fg: #5c3a00;  --badge-iron-bd: #c89000;  --badge-iron-dot: #8b1a1a;
+  --badge-omega-bg: #7eb3e8; --badge-omega-fg: #0d2a52; --badge-omega-bd: #3f7cc0; --badge-omega-dot: #0d2a52;
+  --scrim: rgba(0,0,0,0.6);
+  --veil-hi: rgba(0,0,0,0.06);
+  --veil-hi-hover: rgba(0,0,0,0.10);
+  --on-grad-veil: rgba(255,255,255,0.15);
+  --on-grad-veil-hover: rgba(255,255,255,0.28);
+  --on-grad-bd: rgba(255,255,255,0.25);
 }
 html[data-scheme="peach"][data-theme="dark"] {
   --bg:#1f1714; --bg-grad-a:#251c18; --bg-grad-b:#181210;
   --paper:#2b211d; --paper-soft:#342822;
   --line:#43342c; --line-soft:#372a24;
   --ink:#f4e4db; --ink-soft:#bf9f92; --ink-faint:#8a6f64;
-  --accent:#e0a98a; --accent-bright:#f0c4aa; --accent-soft:#3f2e26; --accent-dk:#bd8568; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#c2afa8; --sage-soft:#2a211e;
+  --accent:#e0a98a; --accent-bright:#f0c4aa; --accent-soft:#3f2e26; --accent-dk:#bd8568; --on-accent:#1a1a1a;
   --protein:#62c5ac; --fat:#dcb06a; --carb:#e0a98a; --kcal:#c2afa8;
   --highlight:#33261f; --success:#62c5ac; --warn:#dcb06a; --over:#e08a82;
   --grad-a:#3a2c25; --grad-b:#241a16; --on-grad:#f4e4db;
   --gold:#e0a98a;
+  --warn-bg: #3a2f0a;     --warn-fg: #f4d77b;
+  --error-bg: #3a1316;    --error-fg: #f5a3a8;
+  --badge-iron-bg: #d9b85a;  --badge-iron-fg: #2a2208;  --badge-iron-bd: #b89636;  --badge-iron-dot: #6b1010;
+  --badge-omega-bg: #6f9fd0; --badge-omega-fg: #0a1a30; --badge-omega-bd: #4f7fb0; --badge-omega-dot: #061226;
+  --scrim: rgba(0,0,0,0.72);
+  --veil-hi: rgba(255,255,255,0.06);
+  --veil-hi-hover: rgba(255,255,255,0.12);
+  --on-grad-veil: rgba(255,255,255,0.10);
+  --on-grad-veil-hover: rgba(255,255,255,0.20);
+  --on-grad-bd: rgba(255,255,255,0.18);
 }
 
 /* ---------- VIVID (26547C EF476F FFD166 06D6A0) ---------- */
@@ -148,24 +219,42 @@ html[data-scheme="vivid"][data-theme="light"] {
   --paper:#ffffff; --paper-soft:#f1f5f9;
   --line:#cfdbe6; --line-soft:#e2e9f0;
   --ink:#1c3a52; --ink-soft:#4f6b80; --ink-faint:#8aa0b0;
-  --accent:#26547c; --accent-bright:#3f7aa8; --accent-soft:#d8e6f0; --accent-dk:#1a3e5c; --on-accent:#ffffff; --on-sage:#ffffff;
-  --sage:#5b7488; --sage-soft:#e6ecf0;
+  --accent:#26547c; --accent-bright:#3f7aa8; --accent-soft:#d8e6f0; --accent-dk:#1a3e5c; --on-accent:#ffffff;
   --protein:#06a17a; --fat:#d99a1e; --carb:#26547c; --kcal:#5b7488;
   --highlight:#e8f1f8; --success:#06a17a; --warn:#d99a1e; --over:#ef476f;
   --grad-a:#26547c; --grad-b:#1a3e5c; --on-grad:#f4f9fd;
   --gold:#d99a1e;
+  --warn-bg: #fff3cd;     --warn-fg: #856404;
+  --error-bg: #f8d7da;    --error-fg: #721c24;
+  --badge-iron-bg: #f4c430;  --badge-iron-fg: #5c3a00;  --badge-iron-bd: #c89000;  --badge-iron-dot: #8b1a1a;
+  --badge-omega-bg: #7eb3e8; --badge-omega-fg: #0d2a52; --badge-omega-bd: #3f7cc0; --badge-omega-dot: #0d2a52;
+  --scrim: rgba(0,0,0,0.6);
+  --veil-hi: rgba(0,0,0,0.06);
+  --veil-hi-hover: rgba(0,0,0,0.10);
+  --on-grad-veil: rgba(255,255,255,0.15);
+  --on-grad-veil-hover: rgba(255,255,255,0.28);
+  --on-grad-bd: rgba(255,255,255,0.25);
 }
 html[data-scheme="vivid"][data-theme="dark"] {
   --bg:#0f1922; --bg-grad-a:#13212c; --bg-grad-b:#0b141b;
   --paper:#172530; --paper-soft:#1e303d;
   --line:#2a3f4f; --line-soft:#213240;
   --ink:#e4eef5; --ink-soft:#94b0c0; --ink-faint:#637f8f;
-  --accent:#4f9fd0; --accent-bright:#7bc0e8; --accent-soft:#1f3a4a; --accent-dk:#3a82b0; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#8aa5b5; --sage-soft:#1c2a33;
+  --accent:#4f9fd0; --accent-bright:#7bc0e8; --accent-soft:#1f3a4a; --accent-dk:#3a82b0; --on-accent:#1a1a1a;
   --protein:#10d6a0; --fat:#ffd166; --carb:#5fb0e0; --kcal:#8aa5b5;
   --highlight:#1d2f3b; --success:#10d6a0; --warn:#ffd166; --over:#ef6f8d;
   --grad-a:#1f3a52; --grad-b:#132533; --on-grad:#e4eef5;
   --gold:#ffd166;
+  --warn-bg: #3a2f0a;     --warn-fg: #f4d77b;
+  --error-bg: #3a1316;    --error-fg: #f5a3a8;
+  --badge-iron-bg: #d9b85a;  --badge-iron-fg: #2a2208;  --badge-iron-bd: #b89636;  --badge-iron-dot: #6b1010;
+  --badge-omega-bg: #6f9fd0; --badge-omega-fg: #0a1a30; --badge-omega-bd: #4f7fb0; --badge-omega-dot: #061226;
+  --scrim: rgba(0,0,0,0.72);
+  --veil-hi: rgba(255,255,255,0.06);
+  --veil-hi-hover: rgba(255,255,255,0.12);
+  --on-grad-veil: rgba(255,255,255,0.10);
+  --on-grad-veil-hover: rgba(255,255,255,0.20);
+  --on-grad-bd: rgba(255,255,255,0.18);
 }
 
 /* ---------- STONE (E2DADB DAE2DF A2A7A5 6D696A) — calm neutral ---------- */
@@ -174,24 +263,42 @@ html[data-scheme="stone"][data-theme="light"] {
   --paper:#ffffff; --paper-soft:#f3f2f1;
   --line:#d2cfce; --line-soft:#e3e1e0;
   --ink:#33312f; --ink-soft:#6b6766; --ink-faint:#9a9695;
-  --accent:#6d696a; --accent-bright:#8f8a8b; --accent-soft:#e2dfde; --accent-dk:#534f50; --on-accent:#ffffff; --on-sage:#1a1a1a;
-  --sage:#a2a7a5; --sage-soft:#e8e9e8;
+  --accent:#6d696a; --accent-bright:#8f8a8b; --accent-soft:#e2dfde; --accent-dk:#534f50; --on-accent:#ffffff;
   --protein:#4a7c59; --fat:#b08847; --carb:#6d696a; --kcal:#8a8786;
   --highlight:#eeecec; --success:#4a7c59; --warn:#b08847; --over:#b5615e;
   --grad-a:#6d696a; --grad-b:#4f4c4d; --on-grad:#f4f3f2;
   --gold:#a2978f;
+  --warn-bg: #fff3cd;     --warn-fg: #856404;
+  --error-bg: #f8d7da;    --error-fg: #721c24;
+  --badge-iron-bg: #f4c430;  --badge-iron-fg: #5c3a00;  --badge-iron-bd: #c89000;  --badge-iron-dot: #8b1a1a;
+  --badge-omega-bg: #7eb3e8; --badge-omega-fg: #0d2a52; --badge-omega-bd: #3f7cc0; --badge-omega-dot: #0d2a52;
+  --scrim: rgba(0,0,0,0.6);
+  --veil-hi: rgba(0,0,0,0.06);
+  --veil-hi-hover: rgba(0,0,0,0.10);
+  --on-grad-veil: rgba(255,255,255,0.15);
+  --on-grad-veil-hover: rgba(255,255,255,0.28);
+  --on-grad-bd: rgba(255,255,255,0.25);
 }
 html[data-scheme="stone"][data-theme="dark"] {
   --bg:#171615; --bg-grad-a:#1c1b1a; --bg-grad-b:#121111;
   --paper:#232221; --paper-soft:#2b2a29;
   --line:#3a3837; --line-soft:#2f2e2d;
   --ink:#e9e7e6; --ink-soft:#a3a09f; --ink-faint:#706d6c;
-  --accent:#a8a3a4; --accent-bright:#c4bfc0; --accent-soft:#34312f; --accent-dk:#857f80; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#9b9897; --sage-soft:#262423;
+  --accent:#a8a3a4; --accent-bright:#c4bfc0; --accent-soft:#34312f; --accent-dk:#857f80; --on-accent:#1a1a1a;
   --protein:#7bb98c; --fat:#d9b06a; --carb:#b0acab; --kcal:#9b9897;
   --highlight:#2b2928; --success:#7bb98c; --warn:#d9b06a; --over:#d98884;
   --grad-a:#36332f; --grad-b:#1f1d1c; --on-grad:#e9e7e6;
   --gold:#b0a89f;
+  --warn-bg: #3a2f0a;     --warn-fg: #f4d77b;
+  --error-bg: #3a1316;    --error-fg: #f5a3a8;
+  --badge-iron-bg: #d9b85a;  --badge-iron-fg: #2a2208;  --badge-iron-bd: #b89636;  --badge-iron-dot: #6b1010;
+  --badge-omega-bg: #6f9fd0; --badge-omega-fg: #0a1a30; --badge-omega-bd: #4f7fb0; --badge-omega-dot: #061226;
+  --scrim: rgba(0,0,0,0.72);
+  --veil-hi: rgba(255,255,255,0.06);
+  --veil-hi-hover: rgba(255,255,255,0.12);
+  --on-grad-veil: rgba(255,255,255,0.10);
+  --on-grad-veil-hover: rgba(255,255,255,0.20);
+  --on-grad-bd: rgba(255,255,255,0.18);
 }
 
 /* ---------- SLATE (2E5266 6E8898 9FB1BC E2C044) ---------- */
@@ -200,24 +307,42 @@ html[data-scheme="slate"][data-theme="light"] {
   --paper:#ffffff; --paper-soft:#eff2f4;
   --line:#cdd6dc; --line-soft:#e0e6ea;
   --ink:#22323b; --ink-soft:#54686f; --ink-faint:#8a9aa1;
-  --accent:#2e5266; --accent-bright:#6e8898; --accent-soft:#dbe3e8; --accent-dk:#213c4b; --on-accent:#ffffff; --on-sage:#1a1a1a;
-  --sage:#9fb1bc; --sage-soft:#e7ebed;
+  --accent:#2e5266; --accent-bright:#6e8898; --accent-soft:#dbe3e8; --accent-dk:#213c4b; --on-accent:#ffffff;
   --protein:#3f8f6f; --fat:#c79a2e; --carb:#2e5266; --kcal:#6e8898;
   --highlight:#e7eef1; --success:#3f8f6f; --warn:#c79a2e; --over:#bd5f5c;
   --grad-a:#2e5266; --grad-b:#213c4b; --on-grad:#f3f7f9;
   --gold:#c79a2e;
+  --warn-bg: #fff3cd;     --warn-fg: #856404;
+  --error-bg: #f8d7da;    --error-fg: #721c24;
+  --badge-iron-bg: #f4c430;  --badge-iron-fg: #5c3a00;  --badge-iron-bd: #c89000;  --badge-iron-dot: #8b1a1a;
+  --badge-omega-bg: #7eb3e8; --badge-omega-fg: #0d2a52; --badge-omega-bd: #3f7cc0; --badge-omega-dot: #0d2a52;
+  --scrim: rgba(0,0,0,0.6);
+  --veil-hi: rgba(0,0,0,0.06);
+  --veil-hi-hover: rgba(0,0,0,0.10);
+  --on-grad-veil: rgba(255,255,255,0.15);
+  --on-grad-veil-hover: rgba(255,255,255,0.28);
+  --on-grad-bd: rgba(255,255,255,0.25);
 }
 html[data-scheme="slate"][data-theme="dark"] {
   --bg:#10181c; --bg-grad-a:#141d22; --bg-grad-b:#0c1316;
   --paper:#18242a; --paper-soft:#1f2f36;
   --line:#2b3f48; --line-soft:#22333a;
   --ink:#e2ebef; --ink-soft:#90a7b0; --ink-faint:#5f757d;
-  --accent:#6e8898; --accent-bright:#9fb1bc; --accent-soft:#1f343d; --accent-dk:#4f6878; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#9fb1bc; --sage-soft:#1b282d;
+  --accent:#6e8898; --accent-bright:#9fb1bc; --accent-soft:#1f343d; --accent-dk:#4f6878; --on-accent:#1a1a1a;
   --protein:#5fc99a; --fat:#e2c044; --carb:#88a8b8; --kcal:#9fb1bc;
   --highlight:#1c2d34; --success:#5fc99a; --warn:#e2c044; --over:#df8d8a;
   --grad-a:#274450; --grad-b:#15252c; --on-grad:#e2ebef;
   --gold:#e2c044;
+  --warn-bg: #3a2f0a;     --warn-fg: #f4d77b;
+  --error-bg: #3a1316;    --error-fg: #f5a3a8;
+  --badge-iron-bg: #d9b85a;  --badge-iron-fg: #2a2208;  --badge-iron-bd: #b89636;  --badge-iron-dot: #6b1010;
+  --badge-omega-bg: #6f9fd0; --badge-omega-fg: #0a1a30; --badge-omega-bd: #4f7fb0; --badge-omega-dot: #061226;
+  --scrim: rgba(0,0,0,0.72);
+  --veil-hi: rgba(255,255,255,0.06);
+  --veil-hi-hover: rgba(255,255,255,0.12);
+  --on-grad-veil: rgba(255,255,255,0.10);
+  --on-grad-veil-hover: rgba(255,255,255,0.20);
+  --on-grad-bd: rgba(255,255,255,0.18);
 }
 
 /* ---------- MONO (very simple, single grey) ---------- */
@@ -226,24 +351,42 @@ html[data-scheme="mono"][data-theme="light"] {
   --paper:#ffffff; --paper-soft:#f2f2f2;
   --line:#d8d8d8; --line-soft:#e8e8e8;
   --ink:#1a1a1a; --ink-soft:#5c5c5c; --ink-faint:#949494;
-  --accent:#333333; --accent-bright:#666666; --accent-soft:#e6e6e6; --accent-dk:#1a1a1a; --on-accent:#ffffff; --on-sage:#ffffff;
-  --sage:#7a7a7a; --sage-soft:#ededed;
+  --accent:#333333; --accent-bright:#666666; --accent-soft:#e6e6e6; --accent-dk:#1a1a1a; --on-accent:#ffffff;
   --protein:#3a3a3a; --fat:#6a6a6a; --carb:#5a5a5a; --kcal:#7a7a7a;
   --highlight:#eeeeee; --success:#3a7a4a; --warn:#9a7a3a; --over:#9a4a4a;
   --grad-a:#2a2a2a; --grad-b:#3c3c3c; --on-grad:#f5f5f5;
   --gold:#8a8a8a;
+  --warn-bg: #fff3cd;     --warn-fg: #856404;
+  --error-bg: #f8d7da;    --error-fg: #721c24;
+  --badge-iron-bg: #f4c430;  --badge-iron-fg: #5c3a00;  --badge-iron-bd: #c89000;  --badge-iron-dot: #8b1a1a;
+  --badge-omega-bg: #7eb3e8; --badge-omega-fg: #0d2a52; --badge-omega-bd: #3f7cc0; --badge-omega-dot: #0d2a52;
+  --scrim: rgba(0,0,0,0.6);
+  --veil-hi: rgba(0,0,0,0.06);
+  --veil-hi-hover: rgba(0,0,0,0.10);
+  --on-grad-veil: rgba(255,255,255,0.15);
+  --on-grad-veil-hover: rgba(255,255,255,0.28);
+  --on-grad-bd: rgba(255,255,255,0.25);
 }
 html[data-scheme="mono"][data-theme="dark"] {
   --bg:#0f0f0f; --bg-grad-a:#141414; --bg-grad-b:#0a0a0a;
   --paper:#1a1a1a; --paper-soft:#222222;
   --line:#333333; --line-soft:#2a2a2a;
   --ink:#ededed; --ink-soft:#a0a0a0; --ink-faint:#6a6a6a;
-  --accent:#c8c8c8; --accent-bright:#e0e0e0; --accent-soft:#2c2c2c; --accent-dk:#9a9a9a; --on-accent:#1a1a1a; --on-sage:#1a1a1a;
-  --sage:#9a9a9a; --sage-soft:#222222;
+  --accent:#c8c8c8; --accent-bright:#e0e0e0; --accent-soft:#2c2c2c; --accent-dk:#9a9a9a; --on-accent:#1a1a1a;
   --protein:#7bb98c; --fat:#cfa860; --carb:#b0b0b0; --kcal:#9a9a9a;
   --highlight:#262626; --success:#7bb98c; --warn:#cfa860; --over:#d98884;
   --grad-a:#303030; --grad-b:#1a1a1a; --on-grad:#ededed;
   --gold:#9a9a9a;
+  --warn-bg: #3a2f0a;     --warn-fg: #f4d77b;
+  --error-bg: #3a1316;    --error-fg: #f5a3a8;
+  --badge-iron-bg: #d9b85a;  --badge-iron-fg: #2a2208;  --badge-iron-bd: #b89636;  --badge-iron-dot: #6b1010;
+  --badge-omega-bg: #6f9fd0; --badge-omega-fg: #0a1a30; --badge-omega-bd: #4f7fb0; --badge-omega-dot: #061226;
+  --scrim: rgba(0,0,0,0.72);
+  --veil-hi: rgba(255,255,255,0.06);
+  --veil-hi-hover: rgba(255,255,255,0.12);
+  --on-grad-veil: rgba(255,255,255,0.10);
+  --on-grad-veil-hover: rgba(255,255,255,0.20);
+  --on-grad-bd: rgba(255,255,255,0.18);
 }
 
 /* Gradient-bearing surfaces now use theme tokens instead of hardcoded
@@ -258,6 +401,12 @@ header.cover, header.cover *,
 .panel-header, .panel-header *,
 .category-header, .category-header *,
 .totals-header, .totals-header * { color: var(--on-grad) !important; }
+.category-header .table-portion-toggle,
+.category-header .sort-menu-btn { color: var(--ink) !important; }
+.category-header .table-portion-toggle:hover,
+.category-header .sort-menu-btn:hover,
+.category-header .table-portion-toggle.portion-on,
+.category-header .sort-menu-btn.sort-on { color: var(--on-accent) !important; }
 .category-iron { background: linear-gradient(to right, var(--grad-b) 0%, var(--grad-a) 100%) !important; }
 .popup-macros { background: var(--paper-soft) !important; }
 thead th { background: var(--paper-soft) !important; }
@@ -270,11 +419,12 @@ thead th { background: var(--paper-soft) !important; }
 .input-row input, .input-row select,
 .search-box input,
 .goals-form .input-row input { background: var(--paper-soft); color: var(--ink); }
-html[data-theme="dark"] .badge-iron { background:#d9b85a; color:#2a2208; border-color:#b89636; }
-html[data-theme="dark"] .badge-omega { background:#6f9fd0; color:#0a1a30; border-color:#4f7fb0; }
 html[data-theme="dark"] .fab { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dk) 100%); }
-html[data-theme="dark"] .popup-overlay { background: rgba(0,0,0,0.72); }
-html[data-theme="dark"] .panel-overlay { background: rgba(0,0,0,0.6); }
+html.preload, html.preload *,
+html.preload *::before, html.preload *::after {
+  transition: none !important;
+  animation: none !important;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: 'Fraunces', Georgia, serif;
@@ -358,8 +508,8 @@ body.ar header.cover .sub { font-family: 'JetBrains Mono', monospace; }
 
 .header-tools { display: flex; gap: 8px; align-items: center; }
 .hdr-btn {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: var(--on-grad-veil);
+  border: 1px solid var(--on-grad-bd);
   color: var(--on-grad);
   width: 40px; height: 40px;
   font-size: 18px; line-height: 1;
@@ -367,7 +517,7 @@ body.ar header.cover .sub { font-family: 'JetBrains Mono', monospace; }
   transition: all 0.15s;
   display: flex; align-items: center; justify-content: center;
 }
-.hdr-btn:hover { background: rgba(255,255,255,0.28); transform: translateY(-1px); }
+.hdr-btn:hover { background: var(--on-grad-veil-hover); transform: translateY(-1px); }
 .hdr-btn:active { transform: translateY(0); }
 
 /* Scheme picker modal */
@@ -403,7 +553,7 @@ body.ar .scheme-section-label {
 }
 .theme-seg button {
   flex: 1; padding: 11px 8px; border: none;
-  background: var(--paper); color: var(--ink-soft);
+  background: var(--paper); color: var(--ink);
   font-family: inherit; font-size: 13px; cursor: pointer;
   transition: all 0.15s;
   border-right: 1px solid var(--line);
@@ -463,7 +613,7 @@ body.ar .trends-modal h3 { font-style: normal; }
 .window-btn {
   padding: 8px 16px;
   border: 1px solid var(--line); background: var(--paper-soft);
-  color: var(--ink-soft); cursor: pointer;
+  color: var(--ink); cursor: pointer;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
@@ -515,87 +665,173 @@ body.ar .trend-chart-title {
 }
 
 /* Goals bar */
-.goals-bar {
-  background: var(--accent-soft);
-  border-left: 4px solid var(--accent);
-  padding: 16px 20px; margin-bottom: 20px;
-  display: flex; align-items: center; gap: 20px;
-  flex-wrap: wrap;
-}
-body.ar .goals-bar { border-left: none; border-right: 4px solid var(--accent); }
-.goals-bar .label-text {
-  font-style: italic; font-weight: 600;
-}
-body.ar .goals-bar .label-text { font-style: normal; }
-.goals-bar .pills { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
-.goals-bar .pill {
+/* Goals card */
+.goals-card {
   background: var(--paper);
-  padding: 6px 14px; border-radius: 100px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; font-weight: 500;
   border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
-.goals-bar .pill b { color: var(--accent); }
-.edit-btn {
-  background: var(--ink); color: var(--bg);
-  padding: 8px 16px; border: none;
+.goals-card-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.goals-card-title {
+  margin: 0;
+  font-style: italic; font-weight: 600; font-size: 15px;
+  color: var(--ink);
+}
+body.ar .goals-card-title { font-style: normal; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.goals-edit-btn {
+  background: var(--accent-soft); color: var(--accent-dk);
+  border: 1px solid var(--accent);
+  padding: 6px 12px; border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  cursor: pointer; border-radius: 2px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s;
 }
-.edit-btn:hover { background: var(--accent); color: var(--on-accent); }
+body.ar .goals-edit-btn {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 12px; letter-spacing: 0; text-transform: none;
+}
+.goals-edit-btn:hover { background: var(--accent); color: var(--on-accent); }
+.goals-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.goal-tile {
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 10px 8px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.goal-tile-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink);
+}
+body.ar .goal-tile-label {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 11px; letter-spacing: 0; text-transform: none;
+}
+.goal-tile-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px; font-weight: 700;
+  line-height: 1;
+}
+.goal-tile-value b { font-weight: 700; }
+.goal-tile-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--ink);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+body.ar .goal-tile-unit {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 11px; letter-spacing: 0; text-transform: none;
+}
+.goal-tile--kcal    .goal-tile-value b { color: var(--kcal); }
+.goal-tile--protein .goal-tile-value b { color: var(--protein); }
+.goal-tile--fat     .goal-tile-value b { color: var(--fat); }
+.goal-tile--carb    .goal-tile-value b { color: var(--carb); }
+@media (max-width: 520px) {
+  .goals-card-grid { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* ============ WATER TRACKER ============ */
 .water-widget {
-  background: var(--accent-soft);
-  border-left: 4px solid var(--accent);
-  padding: 12px 20px; margin-bottom: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
-body.ar .water-widget { border-left: none; border-right: 4px solid var(--accent); }
-.water-content {
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+.water-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap; gap: 8px;
 }
-.water-label {
-  font-style: italic; font-weight: 600; font-size: 14px;
+.water-title {
+  margin: 0;
+  font-style: italic; font-weight: 600; font-size: 15px;
+  color: var(--ink);
 }
-body.ar .water-label { font-style: normal; }
-.water-display {
-  flex: 1; display: flex; align-items: center; gap: 12px; min-width: 200px;
-}
-.water-count {
+body.ar .water-title { font-style: normal; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.water-summary {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; white-space: nowrap;
-  font-weight: 500;
+  font-size: 12px; color: var(--ink);
 }
-.water-progress {
-  flex: 1; display: flex; flex-direction: column; gap: 4px;
+body.ar .water-summary { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+.water-cups {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 12px;
 }
-.water-bar {
-  height: 8px; background: var(--line);
-  border-radius: 100px; overflow: hidden;
+.water-cup {
+  width: 32px; height: 38px;
+  border: 2px solid var(--accent);
+  border-radius: 4px 4px 8px 8px;
+  background: var(--paper-soft);
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.15s ease;
+  overflow: hidden;
+  font-size: 0;
 }
-.water-fill {
-  height: 100%; background: var(--accent);
-  border-radius: 100px; width: 0%;
-  transition: width 0.2s ease;
+.water-cup::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 0;
+  background: linear-gradient(180deg, var(--accent-bright) 0%, var(--accent) 100%);
+  transition: height 0.2s ease;
 }
-.water-ml {
-  font-size: 11px; color: var(--ink-soft);
-  font-family: 'JetBrains Mono', monospace;
-}
-.water-controls {
-  display: flex; gap: 6px;
+.water-cup.filled::after { height: 100%; }
+.water-cup:hover { transform: translateY(-1px); }
+.water-cup:active { transform: scale(0.96); }
+.water-actions {
+  display: flex; gap: 8px; align-items: center;
+  flex-wrap: wrap;
 }
 .water-btn {
-  width: 32px; height: 32px;
+  width: 38px; height: 38px;
   border: 1px solid var(--line); background: var(--paper);
-  font-weight: 600; font-size: 16px;
-  cursor: pointer; border-radius: 2px;
-  color: var(--ink); padding: 0;
+  color: var(--ink);
+  font-weight: 700; font-size: 18px;
+  cursor: pointer; border-radius: 4px;
+  padding: 0;
+  transition: all 0.15s;
 }
 .water-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .water-btn:active { transform: scale(0.95); }
+.water-quick {
+  flex: 1; min-width: 90px;
+  padding: 9px 12px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft); color: var(--accent-dk);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 4px; cursor: pointer;
+  transition: all 0.15s;
+}
+body.ar .water-quick {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px; letter-spacing: 0;
+}
+.water-quick:hover { background: var(--accent); color: var(--on-accent); }
+.water-quick--big { font-weight: 800; }
 
 /* Day controls */
 .day-controls {
@@ -604,7 +840,7 @@ body.ar .water-label { font-style: normal; }
 }
 .day-info {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; color: var(--ink-soft);
+  font-size: 12px; color: var(--ink);
   margin-left: auto;
 }
 body.ar .day-info { margin-left: 0; margin-right: auto; }
@@ -612,10 +848,15 @@ body.ar .day-info { margin-left: 0; margin-right: auto; }
   padding: 8px 14px;
   border: 1px solid var(--line); background: var(--paper);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 600;
+  font-size: 11px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
   cursor: pointer; border-radius: 2px;
-  color: var(--ink-soft);
+  color: var(--ink);
+}
+body.ar .day-btn {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0; text-transform: none;
 }
 .day-btn:hover { background: var(--accent-soft); color: var(--ink); }
 .day-btn.danger:hover { background: var(--accent); color: var(--on-accent); }
@@ -683,10 +924,15 @@ body.ar .dock-search::before { left: auto; right: 16px; }
   border: 1px solid var(--line); background: var(--paper);
   border-radius: 3px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 600;
+  font-size: 11px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
   cursor: pointer; transition: all 0.15s;
-  color: var(--ink-soft);
+  color: var(--ink);
+}
+body.ar .filter-btn {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0; text-transform: none;
 }
 .filter-btn:hover { background: var(--accent-soft); }
 .filter-btn.active {
@@ -867,7 +1113,7 @@ body.ar .sort-menu-item { text-align: right; }
 .smi-shortcut {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--ink-soft);
+  color: var(--ink);
   padding: 2px 6px;
   background: var(--paper-soft);
   border-radius: 3px;
@@ -883,7 +1129,7 @@ body.ar .smi-shortcut {
   padding: 8px 12px 4px;
   font-size: 10px;
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--ink);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-top: 1px solid var(--line-soft);
@@ -905,11 +1151,11 @@ body.ar .sort-menu-sep {
 
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead th {
-  background: #f6f7f4; padding: 9px 10px; text-align: left;
+  background: var(--paper-soft); padding: 9px 10px; text-align: left;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; font-weight: 700;
+  font-size: 9px; font-weight: 800;
   text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--ink-soft);
+  color: var(--ink);
   border-bottom: 2px solid var(--ink); white-space: nowrap;
 }
 body.ar thead th { text-align: right; }
@@ -981,7 +1227,7 @@ body.ar tbody td.num { text-align: center; }
 .row-del-btn.confirming {
   background: var(--over);
   border-color: var(--over);
-  color: #fff;
+  color: var(--on-accent);
   width: auto; padding: 0 8px;
   font-size: 10px; font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
@@ -1025,21 +1271,21 @@ body.ar .badge {
   font-size: 11px;
 }
 .badge-iron {
-  background: #f4c430;
-  color: #5c3a00;
-  border: 1.5px solid #c89000;
+  background: var(--badge-iron-bg);
+  color: var(--badge-iron-fg);
+  border: 1.5px solid var(--badge-iron-bd);
 }
 .badge-omega {
-  background: #7eb3e8;
-  color: #0d2a52;
-  border: 1.5px solid #3f7cc0;
+  background: var(--badge-omega-bg);
+  color: var(--badge-omega-fg);
+  border: 1.5px solid var(--badge-omega-bd);
 }
 .badge .dot {
   width: 6px; height: 6px; border-radius: 50%;
   display: inline-block;
 }
-.badge-iron .dot { background: #8b1a1a; }
-.badge-omega .dot { background: #0d2a52; }
+.badge-iron .dot { background: var(--badge-iron-dot); }
+.badge-omega .dot { background: var(--badge-omega-dot); }
 
 /* ============ BADGE KEY / LEGEND ============ */
 .badge-key {
@@ -1089,7 +1335,7 @@ body.ar .badge-key-text { font-style: normal; }
 /* ============ POPUP ============ */
 .popup-overlay {
   position: fixed; inset: 0;
-  background: rgba(26, 26, 26, 0.6);
+  background: var(--scrim);
   backdrop-filter: blur(4px);
   display: none; align-items: center; justify-content: center;
   z-index: 100; padding: 16px;
@@ -1121,7 +1367,7 @@ body.ar .popup-header h3 { font-style: normal; }
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px; margin-bottom: 24px;
-  padding: 14px; background: #f6f7f4;
+  padding: 14px; background: var(--paper-soft);
   border-radius: 3px;
 }
 
@@ -1131,7 +1377,7 @@ body.ar .popup-header h3 { font-style: normal; }
   margin-bottom: 8px;
   padding: 5px 10px;
   background: transparent; border: 1px solid var(--line);
-  border-radius: 2px; cursor: pointer; color: var(--ink-soft);
+  border-radius: 2px; cursor: pointer; color: var(--ink);
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
@@ -1190,16 +1436,16 @@ body.ar .macro-override-hint {
 body.ar .popup-macro .l { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 11px; }
 .tab-row {
   display: flex; gap: 4px; margin-bottom: 16px;
-  background: #eceef0; padding: 4px; border-radius: 3px;
+  background: var(--line-soft); padding: 4px; border-radius: 3px;
 }
 .tab-btn {
   flex: 1; padding: 10px;
   border: none; background: transparent;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 600;
+  font-size: 11px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
   cursor: pointer; border-radius: 2px;
-  color: var(--ink-soft); transition: all 0.15s;
+  color: var(--ink); transition: all 0.15s;
 }
 body.ar .tab-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
 .tab-btn.active {
@@ -1248,7 +1494,7 @@ body.ar .input-row input, body.ar .input-row select {
 }
 .preview {
   background: var(--accent-soft);
-  border: 1px solid #d2d5dd;
+  border: 1px solid var(--line);
   border-radius: 3px;
   padding: 14px 16px; margin-top: 16px;
   width: 100%;
@@ -1296,7 +1542,7 @@ body.ar .preview .label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-
 body.ar .popup-actions button { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
 .btn-cancel {
   background: transparent; border: 1px solid var(--line) !important;
-  color: var(--ink-soft);
+  color: var(--ink);
 }
 .btn-cancel:hover { background: var(--highlight); }
 .btn-add {
@@ -1453,7 +1699,7 @@ body.ar .fab-add { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 /* ============ SLIDE-IN SIDE PANEL ============ */
 .panel-overlay {
   position: fixed; inset: 0;
-  background: rgba(26, 26, 26, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(3px);
   z-index: 70;
   opacity: 0; pointer-events: none;
@@ -1492,15 +1738,15 @@ body.ar .side-panel.active { transform: translateX(0); }
 }
 body.ar .panel-header h3 { font-style: normal; }
 .panel-close {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: var(--on-grad-veil);
+  border: 1px solid var(--on-grad-bd);
   color: var(--on-grad);
   width: 32px; height: 32px; border-radius: 50%;
   font-size: 18px; cursor: pointer; line-height: 1;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.panel-close:hover { background: rgba(255,255,255,0.25); }
+.panel-close:hover { background: var(--on-grad-veil-hover); }
 .panel-scroll {
   flex: 1; overflow-y: auto;
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -1511,7 +1757,7 @@ body.ar .panel-header h3 { font-style: normal; }
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  background: #e8ebe4;
+  background: var(--bg-grad-a);
   border-bottom: 1px solid var(--line);
 }
 .progress-card {
@@ -1532,7 +1778,11 @@ body.ar .panel-header h3 { font-style: normal; }
 body.ar .progress-card .pc-name { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
 .progress-card .pc-status {
   font-size: 11px; font-weight: 600;
+  color: var(--ink-soft);
 }
+.pc-status.over { color: var(--over); }
+.pc-status.success { color: var(--success); }
+.pc-status.warn { color: var(--warn); }
 .progress-card .pc-values {
   font-family: 'JetBrains Mono', monospace;
   font-size: 16px; font-weight: 700; margin-bottom: 8px;
@@ -1545,7 +1795,7 @@ body.ar .progress-card .pc-name { font-family: 'IBM Plex Sans Arabic', sans-seri
   font-weight: 500; display: block; margin-top: 2px;
 }
 .progress-bar {
-  height: 6px; background: #eceef0; border-radius: 3px;
+  height: 6px; background: var(--line-soft); border-radius: 3px;
   overflow: hidden; position: relative;
 }
 .progress-bar .fill {
@@ -1572,7 +1822,7 @@ body.ar .progress-card .pc-name { font-family: 'IBM Plex Sans Arabic', sans-seri
   font-size: 12px;
 }
 .selected-table th {
-  background: #f6f7f4; text-align: left;
+  background: var(--paper-soft); text-align: left;
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px; text-transform: uppercase;
   letter-spacing: 0.1em; color: var(--ink-soft);
@@ -1594,7 +1844,7 @@ body.ar .selected-table td.num { text-align: center; }
 }
 .remove-btn {
   background: transparent; border: 1px solid var(--line);
-  color: var(--ink-soft); padding: 3px 9px;
+  color: var(--ink); padding: 3px 9px;
   font-size: 11px; cursor: pointer; border-radius: 2px;
   transition: all 0.15s;
 }
@@ -1610,6 +1860,92 @@ body.ar .selected-table td.num { text-align: center; }
   transition: all 0.15s; font-family: inherit;
 }
 .edit-row-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* ============ ACTIVITY SECTION ============ */
+.activity-section {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+}
+.activity-section h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin: 0 0 12px;
+}
+body.ar .activity-section h4 {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px;
+}
+.activity-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 2px 10px;
+  border-bottom: 1px dashed var(--line);
+  font-size: 12px; color: var(--ink-soft);
+}
+.activity-total .val {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--kcal); font-weight: 700;
+}
+.activity-list {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 10px 0;
+}
+.activity-row {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 10px 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px;
+}
+.activity-row .name {
+  font-weight: 500; color: var(--ink);
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.activity-row .kcal {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-soft);
+  white-space: nowrap;
+}
+.activity-empty {
+  font-size: 13px; color: var(--ink-soft);
+  padding: 8px 0;
+}
+.activity-add {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.activity-add input {
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 3px;
+  padding: 8px 10px;
+  font-size: 13px; font-family: inherit;
+  min-width: 0;
+}
+.activity-add input::placeholder { color: var(--ink-soft); opacity: 0.6; }
+.activity-add input:focus { outline: none; border-color: var(--accent); }
+.activity-add #workoutName { flex: 1; }
+.activity-add #workoutKcal { width: 80px; text-align: center; }
+.activity-add #addWorkoutBtn {
+  background: var(--accent); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 8px 14px; cursor: pointer;
+  font-size: 13px; font-weight: 600;
+  font-family: inherit;
+}
+.activity-add #addWorkoutBtn:hover { filter: brightness(1.05); }
+.remove-workout-btn {
+  background: var(--over); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 4px 10px; cursor: pointer; font-size: 11px;
+  font-family: inherit;
+}
+.remove-workout-btn:hover { filter: brightness(1.05); }
+@media (max-width: 360px) {
+  .activity-add { flex-wrap: wrap; }
+  .activity-add #workoutName { flex: 1 1 100%; }
+}
 
 /* ============ MEAL TEMPLATES ============ */
 .templates-pane {
@@ -1851,6 +2187,21 @@ body.ar .apikey-privacy {
   border-left: none; border-right: 2px solid var(--gold);
 }
 
+.barcode-camera-container {
+  position: relative; width: 100%; max-width: 400px; margin: 0 auto;
+  background: var(--scrim); border-radius: 8px; overflow: hidden;
+}
+.barcode-camera-hint {
+  text-align: center; color: var(--ink-soft); font-size: 12px; padding: 8px;
+}
+.ocr-sanity, .barcode-sanity {
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+}
+.ocr-sanity.ok    { border-left-color: var(--accent); }
+.ocr-sanity.warn  { border-left-color: var(--gold);   }
+.ocr-sanity.error { border-left-color: var(--over);   }
+
 /* ============ OCR MODAL ============ */
 .ocr-modal {
   background: var(--paper); border-radius: 4px;
@@ -1906,6 +2257,38 @@ body.ar .ocr-dropzone .dz-text { font-family: 'IBM Plex Sans Arabic', sans-serif
   margin: 0 auto;
 }
 @keyframes ocrspin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mt-popup-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.985); }
+    to   { opacity: 1; transform: translateY(0)   scale(1);     }
+  }
+  .popup-overlay.active .popup { animation: mt-popup-in 0.18s ease-out; }
+
+  @keyframes mt-row-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+  .activity-row { animation: mt-row-in 0.18s ease-out; }
+  .selected-table tbody tr { animation: mt-row-in 0.18s ease-out; }
+
+  @keyframes mt-fade-out {
+    to { opacity: 0; transform: scale(0.97); }
+  }
+  .activity-row.removing,
+  .selected-table tbody tr.removing { animation: mt-fade-out 0.15s ease-in forwards; }
+
+  @keyframes mt-sort-in {
+    from { opacity: 0; transform: translateY(2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .category-section table.sort-fade-in { animation: mt-sort-in 0.2s ease-out; }
+  .category-section table { transition: opacity 0.15s ease; }
+  .category-section table.sort-fade-out { opacity: 0; }
+
+  .ocr-spinner { animation: ocrspin 0.8s linear infinite; }
+}
+
 .ocr-progress-text {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; color: var(--ink-soft);
@@ -1918,8 +2301,8 @@ body.ar .ocr-progress-text { font-family: 'IBM Plex Sans Arabic', sans-serif; fo
   margin-bottom: 12px;
 }
 .ocr-badge-high { background: var(--accent-soft); color: var(--accent-dk); }
-.ocr-badge-medium { background: #fff3cd; color: #856404; }
-.ocr-badge-low { background: #f8d7da; color: #721c24; }
+.ocr-badge-medium { background: var(--warn-bg); color: var(--warn-fg); }
+.ocr-badge-low { background: var(--error-bg); color: var(--error-fg); }
 .ocr-notes {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; color: var(--ink-soft);
@@ -1949,7 +2332,7 @@ body.ar .ocr-val-chip .ovc-label { font-family: 'IBM Plex Sans Arabic', sans-ser
 }
 .ocr-val-chip .ovc-num.missing { color: var(--over); font-size: 13px; }
 .ocr-err {
-  background: #f8d7da; color: #721c24;
+  background: var(--error-bg); color: var(--error-fg);
   padding: 10px 14px; border-radius: 4px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; margin-bottom: 12px; line-height: 1.5;
@@ -2083,12 +2466,12 @@ body.ar .addfood-form .hint { font-style: normal; }
 body.ar .af-kcal-warn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
 .af-kcal-warn.show { display: block; }
 .af-kcal-warn.warn {
-  background: #fff3cd; color: #856404;
+  background: var(--warn-bg); color: var(--warn-fg);
   border-left: 3px solid var(--gold);
 }
 body.ar .af-kcal-warn.warn { border-left: none; border-right: 3px solid var(--gold); }
 .af-kcal-warn.error {
-  background: #f8d7da; color: #721c24;
+  background: var(--error-bg); color: var(--error-fg);
   border-left: 3px solid var(--over);
 }
 body.ar .af-kcal-warn.error { border-left: none; border-right: 3px solid var(--over); }
@@ -2419,39 +2802,49 @@ body.ar .footer li::before {
   </div>
 </header>
 
-<div class="goals-bar">
-  <span class="label-text" data-en="Daily targets:" data-ar="الأهداف اليومية:">Daily targets:</span>
-  <div class="pills">
-    <span class="pill"><b id="goalKcal">1900</b> <span data-en="kcal" data-ar="سعر">kcal</span></span>
-    <span class="pill"><b id="goalProtein">145</b> <span data-en="g protein" data-ar="جم بروتين">g protein</span></span>
-    <span class="pill"><b id="goalFat">65</b> <span data-en="g fat" data-ar="جم دهون">g fat</span></span>
-    <span class="pill"><b id="goalCarbs">215</b> <span data-en="g carbs" data-ar="جم كارب">g carbs</span></span>
+<div class="goals-card" id="goalsCard">
+  <div class="goals-card-head">
+    <h3 class="goals-card-title" data-en="Daily targets" data-ar="الأهداف اليومية">Daily targets</h3>
+    <button class="goals-edit-btn" id="editGoalsBtn" data-en="✎ Edit" data-ar="✎ تعديل">✎ Edit</button>
   </div>
-  <button class="edit-btn" id="editGoalsBtn" data-en="Edit goals" data-ar="تعديل الأهداف">Edit goals</button>
+  <div class="goals-card-grid">
+    <div class="goal-tile goal-tile--kcal">
+      <span class="goal-tile-label" data-en="Calories" data-ar="سعرات">Calories</span>
+      <span class="goal-tile-value"><b id="goalKcal">1900</b></span>
+      <span class="goal-tile-unit">kcal</span>
+    </div>
+    <div class="goal-tile goal-tile--protein">
+      <span class="goal-tile-label" data-en="Protein" data-ar="بروتين">Protein</span>
+      <span class="goal-tile-value"><b id="goalProtein">145</b></span>
+      <span class="goal-tile-unit" data-en="g" data-ar="جم">g</span>
+    </div>
+    <div class="goal-tile goal-tile--fat">
+      <span class="goal-tile-label" data-en="Fat" data-ar="دهون">Fat</span>
+      <span class="goal-tile-value"><b id="goalFat">65</b></span>
+      <span class="goal-tile-unit" data-en="g" data-ar="جم">g</span>
+    </div>
+    <div class="goal-tile goal-tile--carb">
+      <span class="goal-tile-label" data-en="Carbs" data-ar="كارب">Carbs</span>
+      <span class="goal-tile-value"><b id="goalCarbs">215</b></span>
+      <span class="goal-tile-unit" data-en="g" data-ar="جم">g</span>
+    </div>
+  </div>
 </div>
 
 <div class="water-widget" id="waterWidget">
-  <div class="water-content">
-    <div class="water-label">
-      <span data-en="💧 Water" data-ar="💧 ماء">💧 Water</span>
-    </div>
-    <div class="water-display">
-      <div class="water-count">
-        <span id="waterGlasses">0</span> <span data-en="glasses" data-ar="أكواب">glasses</span>
-      </div>
-      <div class="water-progress">
-        <div class="water-bar">
-          <div class="water-fill" id="waterFill"></div>
-        </div>
-        <div class="water-ml">
-          <span id="waterMlDisplay">0</span> / <span id="waterMlGoal">2000</span> <span data-en="ml" data-ar="مل">ml</span>
-        </div>
-      </div>
-    </div>
-    <div class="water-controls">
-      <button class="water-btn water-minus" id="waterMinusBtn" data-en="−" data-ar="−">−</button>
-      <button class="water-btn water-plus" id="waterPlusBtn" data-en="+" data-ar="+">+</button>
-    </div>
+  <div class="water-head">
+    <h3 class="water-title"><span data-en="💧 Water" data-ar="💧 ماء">💧 Water</span></h3>
+    <span class="water-summary">
+      <span id="waterMlDisplay">0</span> / <span id="waterMlGoal">2000</span> <span data-en="ml" data-ar="مل">ml</span>
+      · <span id="waterPct">0</span>%
+    </span>
+  </div>
+  <div class="water-cups" id="waterCups" aria-label="Glasses of water"></div>
+  <div class="water-actions">
+    <button class="water-btn water-minus" id="waterMinusBtn" aria-label="Remove glass">−</button>
+    <button class="water-quick" id="waterQuick250" data-en="+1 cup" data-ar="+ كوب">+1 cup</button>
+    <button class="water-quick water-quick--big" id="waterQuick500" data-en="+2 cups" data-ar="+ كوبين">+2 cups</button>
+    <button class="water-btn water-plus" id="waterPlusBtn" aria-label="Add glass">+</button>
   </div>
 </div>
 
@@ -2459,7 +2852,7 @@ body.ar .footer li::before {
   <button class="day-btn" id="newDayBtn" data-en="+ New Day" data-ar="+ يوم جديد">+ New Day</button>
   <button class="day-btn" id="saveDayBtn" data-en="💾 Save Day" data-ar="💾 احفظ اليوم">💾 Save Day</button>
   <button class="day-btn" id="loadDayBtn" data-en="📂 Load Saved" data-ar="📂 الأيام المحفوظة">📂 Load Saved</button>
-  <button class="day-btn" id="trendsBtn" data-en="📈 Trends" data-ar="📈 الاتجاهات">📈 Trends</button>
+  <button class="day-btn" id="trendsBtn" data-en="📈 Trends" data-ar="📈 الإحصائيات">📈 Trends</button>
   <button class="day-btn danger" id="clearDayBtn" data-en="🗑 Clear" data-ar="🗑 مسح">🗑 Clear</button>
   <span class="day-info" id="dayInfo"></span>
 </div>
@@ -2544,7 +2937,7 @@ body.ar .footer li::before {
            data-ar="احصل على مفتاح مجاني من aistudio.google.com/app/apikey. الباقة المجانية: 1500 طلب يومياً، بدون بطاقة ائتمان.">Get a free key at aistudio.google.com/app/apikey. Free tier: 1,500 requests/day, no credit card needed.</div>
       <div class="apikey-privacy"
            data-en="⚠ Privacy: photos you extract are sent to Google for processing. Google may use free-tier data for model training. Your key is stored only in this browser."
-           data-ar="⚠ الخصوصية: الصور اللي بتستخرجها بتتبعت لجوجل للمعالجة. جوجل ممكن تستخدم بيانات الباقة المجانية لتدريب النماذج. مفتاحك محفوظ في المتصفح ده فقط.">⚠ Privacy: photos you extract are sent to Google for processing. Google may use free-tier data for model training. Your key is stored only in this browser.</div>
+           data-ar="⚠ الخصوصية: الصور التي تستخرجها تُرسَل إلى جوجل للمعالجة. قد تستخدم جوجل بيانات الباقة المجانية لتدريب النماذج. مفتاحك محفوظ في هذا المتصفح فقط.">⚠ Privacy: photos you extract are sent to Google for processing. Google may use free-tier data for model training. Your key is stored only in this browser.</div>
     </div>
 
     <!-- Export group -->
@@ -2608,39 +3001,39 @@ body.ar .footer li::before {
   <ul>
     <li>
       <span data-en="All weights are raw / pre-cooking unless a row says &quot;cooked&quot; or &quot;canned&quot;. Chicken loses about 25% of its weight when cooked — if a recipe needs 115 g cooked, weigh about 145 g raw."
-            data-ar="كل الأوزان نية / قبل الطبخ إلا لو الصف مكتوب فيه &quot;مطبوخ&quot; أو &quot;معلب&quot;. الفراخ بتفقد حوالي 25% من وزنها بعد الطبخ — لو وصفة محتاجة 115 جم مطبوخ، يبقى الوزن النية حوالي 145 جم.">All weights are raw / pre-cooking unless a row says "cooked" or "canned". Chicken loses about 25% of its weight when cooked — if a recipe needs 115 g cooked, weigh about 145 g raw.</span>
+            data-ar="كل الأوزان خام / قبل الطبخ إلا إذا كان السطر مكتوباً فيه &quot;مطبوخ&quot; أو &quot;معلب&quot;. الدجاج يفقد حوالي 25% من وزنه بعد الطبخ — إذا احتاجت وصفة إلى 115 جم مطبوخ، فالوزن الخام يبقى حوالي 145 جم.">All weights are raw / pre-cooking unless a row says "cooked" or "canned". Chicken loses about 25% of its weight when cooked — if a recipe needs 115 g cooked, weigh about 145 g raw.</span>
     </li>
     <li>
       <span data-en="The Easy measure column is for when you have no scale handy — use it for rough planning, but a kitchen scale is far more accurate."
-            data-ar="عمود المعيار السهل بيفيد لما ما يكونش فيه ميزان — للتقدير السريع، بس الميزان أدق بكتير.">The Easy measure column is for when you have no scale handy — use it for rough planning, but a kitchen scale is far more accurate.</span>
+            data-ar="عمود المعيار السهل يُفيد عند عدم توفر ميزان — استخدمه للتقدير السريع، لكن الميزان أدق بكثير.">The Easy measure column is for when you have no scale handy — use it for rough planning, but a kitchen scale is far more accurate.</span>
     </li>
     <li>
       <span data-en="The IRON marker flags iron-rich foods. Pair these with vitamin C (lemon, orange, bell pepper) and avoid tea or coffee within 2 hours — important given the anemia picture in the lab reports."
-            data-ar="علامة (حديد) بتشاور على الأكل الغني بالحديد. الأفضل تكون مع فيتامين C (ليمون، برتقان، فلفل رومي) والابتعاد عن الشاي والقهوة لمدة ساعتين — مهم بسبب صورة الأنيميا في التحاليل.">The IRON marker flags iron-rich foods. Pair these with vitamin C (lemon, orange, bell pepper) and avoid tea or coffee within 2 hours — important given the anemia picture in the lab reports.</span>
+            data-ar="علامة (حديد) تُشير إلى الأطعمة الغنية بالحديد. من الأفضل تناولها مع فيتامين C (ليمون، برتقال، فلفل حلو) وتجنب الشاي والقهوة لمدة ساعتين — مهم جداً نظراً لصورة الأنيميا في التحاليل.">The IRON marker flags iron-rich foods. Pair these with vitamin C (lemon, orange, bell pepper) and avoid tea or coffee within 2 hours — important given the anemia picture in the lab reports.</span>
     </li>
     <li>
       <span data-en="The OMEGA-3 marker flags foods high in omega-3. Aim for fatty fish 2–3 times per week."
-            data-ar="علامة (أوميجا-٣) بتشاور على الأكل الغني بأوميجا 3. الأفضل تناول سمك دهني 2–3 مرات في الأسبوع.">The OMEGA-3 marker flags foods high in omega-3. Aim for fatty fish 2–3 times per week.</span>
+            data-ar="علامة (أوميجا-٣) تُشير إلى الأطعمة الغنية بأوميجا-3. يفضل تناول الأسماك الدهنية 2–3 مرات في الأسبوع.">The OMEGA-3 marker flags foods high in omega-3. Aim for fatty fish 2–3 times per week.</span>
     </li>
     <li>
       <span data-en="Small-portion items (oils, seeds, spreads) are listed per 10 g or per 30 g instead of 100 g, because nobody eats 100 g of olive oil. Check the basis line under each food name."
-            data-ar="العناصر الصغيرة (زيوت، بذور، زبدات) مكتوبة لكل 10 جم أو 30 جم بدل 100 جم، لأن محدش بياكل 100 جم زيت زيتون. شوف سطر الأساس تحت اسم كل صنف.">Small-portion items (oils, seeds, spreads) are listed per 10 g or per 30 g instead of 100 g, because nobody eats 100 g of olive oil. Check the basis line under each food name.</span>
+            data-ar="العناصر الصغيرة (زيوت، بذور، زبدات) مكتوبة لكل 10 جم أو 30 جم بدلاً من 100 جم، لأنه لا أحد يتناول 100 جم من زيت الزيتون. تحقق من سطر الأساس تحت اسم كل عنصر.">Small-portion items (oils, seeds, spreads) are listed per 10 g or per 30 g instead of 100 g, because nobody eats 100 g of olive oil. Check the basis line under each food name.</span>
     </li>
     <li>
       <span data-en="Tap any food to open the calculator: enter grams directly, a × 100 g multiplier, or pick an easy measure. The running total sits behind the floating button at the bottom corner."
-            data-ar="اضغط على أي صنف يفتح الحاسبة: اكتب الجرامات مباشرة، أو مضاعف × 100 جم، أو اختر معيار سهل. الإجمالي الجاري موجود ورا الزر العائم في الركن السفلي.">Tap any food to open the calculator: enter grams directly, a × 100 g multiplier, or pick an easy measure. The running total sits behind the floating button at the bottom corner.</span>
+            data-ar="اضغط على أي عنصر لفتح الحاسبة: أدخل الجرامات مباشرة، أو مضاعف × 100 جم، أو اختر معياراً سهلاً. المجموع الجاري يقع خلف الزر العائم في الزاوية السفلية.">Tap any food to open the calculator: enter grams directly, a × 100 g multiplier, or pick an easy measure. The running total sits behind the floating button at the bottom corner.</span>
     </li>
     <li>
       <span data-en="The display button at the top of each table cycles through three views: (1) per 100 g — the default, uniform baseline for comparison; (2) DB portion — whatever the database defines (per 100 g, per 1 egg, per slice, etc.); (3) Easy measure — per the first easy unit (1 filet, 1 piece, 1 fruit). If a food has no easy unit defined, the Easy view shows per 100 g."
-            data-ar="زر العرض في رأس كل جدول يدور بين ثلاثة معايير: (١) لكل 100 جم — الافتراضي، معيار موحد للمقارنة العادلة؛ (٢) معيار الحصة — الحصة كما هي معرّفة في قاعدة البيانات (لكل 100 جم، لكل بيضة، لكل شريحة، إلخ)؛ (٣) المعيار السهل — لكل وحدة سهلة (1 فيليه، 1 قطعة، 1 ثمرة). لو الصنف ما عندوش معيار سهل، عرض المعيار السهل يستخدم لكل 100 جم.">The display button at the top of each table cycles through three views: (1) per 100 g — the default, uniform baseline for comparison; (2) DB portion — whatever the database defines (per 100 g, per 1 egg, per slice, etc.); (3) Easy measure — per the first easy unit (1 filet, 1 piece, 1 fruit). If a food has no easy unit defined, the Easy view shows per 100 g.</span>
+            data-ar="زر العرض في رأس كل جدول يدور بين ثلاثة معايير: (١) لكل 100 جم — الافتراضي، معيار موحد للمقارنة العادلة؛ (٢) معيار الحصة — الحصة كما هي معرّفة في قاعدة البيانات (لكل 100 جم، لكل بيضة، لكل شريحة، إلخ)؛ (٣) المعيار السهل — لكل وحدة سهلة (1 فيليه، 1 قطعة، 1 ثمرة). إذا لم يكن للعنصر معيار سهل معرّف، يعرض المعيار السهل القيمة لكل 100 جم.">The display button at the top of each table cycles through three views: (1) per 100 g — the default, uniform baseline for comparison; (2) DB portion — whatever the database defines (per 100 g, per 1 egg, per slice, etc.); (3) Easy measure — per the first easy unit (1 filet, 1 piece, 1 fruit). If a food has no easy unit defined, the Easy view shows per 100 g.</span>
     </li>
     <li>
       <span data-en="The smart sort button (↕) at the top of each table re-ranks items by what you actually care about: highest protein, highest protein with lowest carbs, lowest calories per gram, etc. The ranking uses the current display mode — so if you switch to Easy measure, the order reflects the actual grams shown."
-            data-ar="زر الترتيب الذكي (↕) في رأس كل جدول بيرتّب الأصناف حسب اللي يهمك فعلاً: أعلى بروتين، أعلى بروتين مع أقل كارب، أقل سعرات لكل جرام، إلخ. الترتيب بيستخدم معيار العرض الحالي — يعني لو غيّرت لمعيار سهل، الترتيب بيعكس الجرامات الفعلية في الجدول.">The smart sort button (↕) at the top of each table re-ranks items by what you actually care about: highest protein, highest protein with lowest carbs, lowest calories per gram, etc. The ranking uses the current display mode — so if you switch to Easy measure, the order reflects the actual grams shown.</span>
+            data-ar="زر الترتيب الذكي (↕) في رأس كل جدول يُعيد ترتيب الأصناف حسب ما يهمك فعلاً: أعلى بروتين، أعلى بروتين مع أقل كربوهيدرات، أقل سعرات لكل جرام، إلخ. يستخدم الترتيب معيار العرض الحالي — أي أنه إذا غيّرت إلى معيار سهل، يعكس الترتيب الجرامات الفعلية في الجدول.">The smart sort button (↕) at the top of each table re-ranks items by what you actually care about: highest protein, highest protein with lowest carbs, lowest calories per gram, etc. The ranking uses the current display mode — so if you switch to Easy measure, the order reflects the actual grams shown.</span>
     </li>
     <li>
       <span data-en="Data sources: USDA FoodData Central (Foundation Foods and SR Legacy). Regional staples like baladi bread were cross-checked against published Middle Eastern composition tables. Values are typical averages and real products can vary by about 10%."
-            data-ar="مصادر البيانات: USDA FoodData Central (Foundation Foods و SR Legacy). الأصناف المحلية زي العيش البلدي اتراجعت مع جداول التركيب الغذائي المنشورة للمنطقة. الأرقام متوسطات تقريبية والمنتجات الحقيقية ممكن تختلف بحوالي 10%.">Data sources: USDA FoodData Central (Foundation Foods and SR Legacy). Regional staples like baladi bread were cross-checked against published Middle Eastern composition tables. Values are typical averages and real products can vary by about 10%.</span>
+            data-ar="مصادر البيانات: USDA FoodData Central (Foundation Foods و SR Legacy). تم التحقق من الأصناف المحلية مثل العيش البلدي مقابل جداول التركيب الغذائي المنشورة للمنطقة. القيم متوسطات تقريبية والمنتجات الحقيقية قد تختلف بحوالي 10%.">Data sources: USDA FoodData Central (Foundation Foods and SR Legacy). Regional staples like baladi bread were cross-checked against published Middle Eastern composition tables. Values are typical averages and real products can vary by about 10%.</span>
     </li>
   </ul>
 </div>
@@ -2681,18 +3074,6 @@ body.ar .footer li::before {
     <div class="progress-grid">
       <div class="progress-card">
         <div class="pc-header">
-          <span class="pc-name" data-en="Net Calories" data-ar="السعرات الصافية">Net Calories</span>
-          <span class="pc-status" id="status-netkcal"></span>
-        </div>
-        <div class="pc-values">
-          <span id="val-netkcal">0</span><span class="target"> / <span id="tgt-netkcal">1900</span> kcal</span>
-          <span class="remaining" id="rem-netkcal"></span>
-        </div>
-        <div class="progress-bar"><div class="fill fill-netkcal" id="bar-netkcal" style="width:0%"></div></div>
-      </div>
-
-      <div class="progress-card">
-        <div class="pc-header">
           <span class="pc-name" data-en="Calories" data-ar="السعرات">Calories</span>
           <span class="pc-status" id="status-kcal"></span>
         </div>
@@ -2701,6 +3082,28 @@ body.ar .footer li::before {
           <span class="remaining" id="rem-kcal"></span>
         </div>
         <div class="progress-bar"><div class="fill fill-kcal" id="bar-kcal" style="width:0%"></div></div>
+      </div>
+
+      <div class="progress-card progress-card--burned" id="card-burnedkcal">
+        <div class="pc-header">
+          <span class="pc-name" data-en="Burned" data-ar="السعرات المحروقة">Burned</span>
+          <span class="pc-status" id="status-burnedkcal"></span>
+        </div>
+        <div class="pc-values">
+          <span id="val-burnedkcal">0</span><span class="target"> kcal</span>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="pc-header">
+          <span class="pc-name" data-en="Net Calories" data-ar="السعرات الصافية">Net Calories</span>
+          <span class="pc-status" id="status-netkcal"></span>
+        </div>
+        <div class="pc-values">
+          <span id="val-netkcal">0</span><span class="target"> / <span id="tgt-netkcal">1900</span> kcal</span>
+          <span class="remaining" id="rem-netkcal"></span>
+        </div>
+        <div class="progress-bar"><div class="fill fill-netkcal" id="bar-netkcal" style="width:0%"></div></div>
       </div>
 
       <div class="progress-card">
@@ -2772,15 +3175,15 @@ body.ar .footer li::before {
     </div>
 
     <!-- ============ ACTIVITY / WORKOUTS ============ -->
-    <div class="activity-section" id="activitySection" style="margin-top: 24px; padding-bottom: 20px;">
+    <div class="activity-section" id="activitySection">
       <h4 data-en="Activity" data-ar="النشاط">Activity</h4>
-      <div id="workoutsList" style="margin: 12px 0;">
+      <div id="workoutsList">
         <!-- Rendered list of workouts -->
       </div>
-      <div style="display: flex; gap: 8px; margin-top: 12px;">
-        <input type="text" id="workoutName" placeholder="Activity name" data-placeholder-en="Activity name" data-placeholder-ar="اسم النشاط" style="flex: 1; padding: 6px; border: 1px solid var(--accent); border-radius: 4px; font-size: 13px;" />
-        <input type="number" id="workoutKcal" placeholder="kcal" data-placeholder-en="kcal" data-placeholder-ar="سعر" style="width: 70px; padding: 6px; border: 1px solid var(--accent); border-radius: 4px; font-size: 13px;" />
-        <button id="addWorkoutBtn" data-en="Add" data-ar="أضف" style="padding: 6px 12px; background: var(--accent); color: var(--paper); border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">Add</button>
+      <div class="activity-add">
+        <input type="text" id="workoutName" placeholder="Activity name" data-placeholder-en="Activity name" data-placeholder-ar="اسم النشاط" />
+        <input type="number" id="workoutKcal" placeholder="kcal" data-placeholder-en="kcal" data-placeholder-ar="سعر" />
+        <button id="addWorkoutBtn" data-en="Add" data-ar="أضف">Add</button>
       </div>
     </div>
   </div>
@@ -2920,7 +3323,7 @@ body.ar .footer li::before {
       <!-- Recipe builder (hidden by default) -->
       <div class="af-recipe" id="afRecipeBox" style="display:none;">
         <div class="hint" data-en="Pick existing items and grams; macros below sum automatically. Total kcal = ingredients only."
-             data-ar="اختر عناصر موجودة وكميتها بالجرام؛ الماكروز هتتجمع تلقائياً. السعرات = من العناصر فقط.">
+             data-ar="اختر عناصر موجودة وكمياتها بالجرام؛ ستُجمَّع الماكروز أدناه تلقائياً. إجمالي السعرات = المكونات فقط.">
           Pick existing items and grams; macros below sum automatically.
         </div>
         <div class="af-recipe-search-row">
@@ -2937,7 +3340,7 @@ body.ar .footer li::before {
              easy-measure weight they want; macros scale proportionally. -->
         <div class="af-recipe-overrides">
           <div class="hint" data-en="Override the portion & easy-measure size. Macros above scale proportionally to whatever portion size you enter here."
-               data-ar="حدّد وزن الحصة والمعيار السهل يدوياً. الماكروز فوق هتتعدل تلقائياً مع وزن الحصة المُدخل.">
+               data-ar="حدّد وزن الحصة والمعيار السهل يدويّاً. ستُعدَّل الماكروز أعلاه تلقائياً وفق وزن الحصة المُدخَل.">
             Override the portion & easy-measure size.
           </div>
           <div class="grid2">
@@ -3028,7 +3431,7 @@ body.ar .footer li::before {
         <label data-en="Easy measure size (g per 1 unit)" data-ar="وزن المعيار السهل (جم للوحدة)">Easy measure size (g per 1 unit)</label>
         <input type="number" id="afEasyG" min="0" step="0.1" placeholder="e.g. 15" value="15">
         <div class="hint" data-en="Grams of ONE easy unit (e.g. 1 slice = 15 g). Used by the Easy tab in the calculator. Leave blank if you don't want an easy measure."
-             data-ar="وزن وحدة واحدة من المعيار السهل (مثل: شريحة = 15 جم). يستخدم في تبويب المعيار السهل في الحاسبة. اتركه فارغاً لو مفيش معيار سهل.">Grams of ONE easy unit (e.g. 1 slice = 15 g).</div>
+             data-ar="وزن وحدة واحدة من المعيار السهل (مثلاً: شريحة = 15 جم). يُستخدَم في تبويب المعيار السهل في الحاسبة. اتركه فارغاً إذا لم يوجد معيار سهل.">Grams of ONE easy unit (e.g. 1 slice = 15 g).</div>
       </div>
 
       <div class="field">
@@ -3115,9 +3518,9 @@ body.ar .footer li::before {
 
       <!-- Step 2: camera preview (hidden until device supports BarcodeDetector) -->
       <div class="ocr-step" id="barcodeStepStream" style="display:none;">
-        <div id="barcodeCameraContainer" style="position:relative; width:100%; max-width:400px; margin:0 auto; background:#000; border-radius:8px; overflow:hidden;">
+        <div id="barcodeCameraContainer" class="barcode-camera-container">
           <video id="barcodeVideo" style="width:100%; height:auto; display:block;"></video>
-          <div style="text-align:center; color:#999; font-size:12px; padding:8px;">
+          <div class="barcode-camera-hint">
             <span data-en="Point camera at barcode" data-ar="وجّه الكاميرا نحو الرمز">Point camera at barcode</span>
           </div>
         </div>
@@ -3170,14 +3573,14 @@ body.ar .footer li::before {
 <!-- ============ TREND CHARTS MODAL ============ -->
 <div class="popup-overlay" id="trendsOverlay">
   <div class="trends-modal">
-    <h3 data-en="📈 Macro Trends" data-ar="📈 اتجاهات الماكروز">📈 Macro Trends</h3>
+    <h3 data-en="📈 Macro Trends" data-ar="📈 إحصائيات الماكروز">📈 Macro Trends</h3>
     <div class="trends-body">
       <div class="trends-controls">
         <button class="window-btn" data-window="7" data-en="Last 7 days" data-ar="آخر 7 أيام">Last 7 days</button>
         <button class="window-btn active" data-window="30" data-en="Last 30 days" data-ar="آخر 30 يوم">Last 30 days</button>
       </div>
       <div class="trends-empty" id="trendsEmpty" style="display:none;">
-        <span data-en="Save some days first to view trends" data-ar="احفظ أيام أولاً لرؤية الاتجاهات">Save some days first to view trends</span>
+        <span data-en="Save some days first to view trends" data-ar="احفظ بضعة أيام أولاً لعرض الإحصائيات">Save some days first to view trends</span>
       </div>
       <div class="trends-charts" id="trendsCharts"></div>
     </div>
@@ -3797,6 +4200,13 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+function fadeAndRemove(el, doRemove) {
+  if (!el || !window.matchMedia || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    doRemove(); return;
+  }
+  el.classList.add('removing');
+  el.addEventListener('animationend', doRemove, { once: true });
+}
 function todayStr() {
   const d = new Date();
   return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
@@ -4219,7 +4629,7 @@ function renderSection(catDef, foods) {
         e.stopPropagation();
         const presetId = item.dataset.preset || null;
         const cf = catDef.filter;
-        
+
         if (presetId) {
           smartSortState[cf] = presetId;
           delete sortState[cf]; // mutual exclusion
@@ -4228,12 +4638,29 @@ function renderSection(catDef, foods) {
         }
         persistSmartSort();
         closeAllSortMenus();
-        
-        // Re-render this section
-        const fresh = refetchFoods();
-        const rebuilt = renderSection(catDef, fresh);
-        section.replaceWith(rebuilt);
-        applyFilters();
+
+        // Animate table fade during sort
+        const targetTable = section.querySelector('table');
+        const prefersMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+        const finishRender = () => {
+          const fresh = refetchFoods();
+          const rebuilt = renderSection(catDef, fresh);
+          section.replaceWith(rebuilt);
+          applyFilters();
+          if (prefersMotion) {
+            const newTable = document.querySelector(`.category-section[data-cat="${CSS.escape(cf)}"] table`);
+            if (newTable) {
+              newTable.classList.add('sort-fade-in');
+              newTable.addEventListener('animationend', () => newTable.classList.remove('sort-fade-in'), { once: true });
+            }
+          }
+        };
+        if (prefersMotion && targetTable) {
+          targetTable.classList.add('sort-fade-out');
+          setTimeout(finishRender, 160);
+        } else {
+          finishRender();
+        }
       });
     });
     
@@ -4273,7 +4700,7 @@ function renderSection(catDef, foods) {
         delete smartSortState[cf];
         persistSmartSort();
       }
-      
+
       const key = th.dataset.sort;
       const cur = sortState[cf] || { key:null, dir:1 };
       let next;
@@ -4281,10 +4708,29 @@ function renderSection(catDef, foods) {
       else if (cur.dir === 1) next = { key, dir:-1 };
       else next = { key:null, dir:1 };
       sortState[cf] = next;
-      const fresh = refetchFoods();
-      const rebuilt = renderSection(catDef, fresh);
-      section.replaceWith(rebuilt);
-      applyFilters();
+
+      // Animate table fade during sort
+      const targetTable = section.querySelector('table');
+      const prefersMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+      const finishRender = () => {
+        const fresh = refetchFoods();
+        const rebuilt = renderSection(catDef, fresh);
+        section.replaceWith(rebuilt);
+        applyFilters();
+        if (prefersMotion) {
+          const newTable = document.querySelector(`.category-section[data-cat="${CSS.escape(cf)}"] table`);
+          if (newTable) {
+            newTable.classList.add('sort-fade-in');
+            newTable.addEventListener('animationend', () => newTable.classList.remove('sort-fade-in'), { once: true });
+          }
+        }
+      };
+      if (prefersMotion && targetTable) {
+        targetTable.classList.add('sort-fade-out');
+        setTimeout(finishRender, 160);
+      } else {
+        finishRender();
+      }
     });
   });
   return section;
@@ -4752,8 +5198,9 @@ function renderTotals() {
   document.getElementById('itemCount').textContent = dayItems.length;
 
   // Progress cards
-  updateProgress('netkcal', netKcal, goals.kcal + totalBurned);
+  updateProgress('netkcal', netKcal, goals.kcal);
   updateProgress('kcal', totals.kcal, goals.kcal);
+  document.getElementById('val-burnedkcal').textContent = fmt(totalBurned);
   updateProgress('protein', totals.p, goals.protein);
   updateProgress('fat', totals.f, goals.fat);
   updateProgress('carbs', totals.c, goals.carbs);
@@ -4762,7 +5209,7 @@ function renderTotals() {
   const tbody = document.getElementById('selectedBody');
   const tfoot = document.getElementById('selectedFoot');
   if (dayItems.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="empty-state">${lang === 'ar' ? 'لسه ما تم اختيار أي أكل · اضغط على أي صنف فوق' : "No items yet · tap any food above to add"}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="empty-state">${lang === 'ar' ? 'لم يتم اختيار أي عنصر بعد · اضغط على أي عنصر أعلاه' : "No items yet · tap any food above to add"}</td></tr>`;
     tfoot.innerHTML = '';
   } else {
     tbody.innerHTML = dayItems.map((it, idx) => {
@@ -4809,18 +5256,19 @@ function updateProgress(name, current, target) {
 
   const statusEl = document.getElementById('status-' + name);
   const overByPct = (current / safeTarget) * 100;
+  statusEl.classList.remove('over','success','warn');
   if (overByPct > 110) {
     bar.classList.add('fill-over');
+    statusEl.classList.add('over');
     statusEl.textContent = lang === 'ar' ? '⚠ زيادة' : '⚠ Over';
-    statusEl.style.color = 'var(--over)';
   } else if (overByPct >= 90 && overByPct <= 110) {
     bar.classList.remove('fill-over');
+    statusEl.classList.add('success');
     statusEl.textContent = lang === 'ar' ? '✓ ممتاز' : '✓ On target';
-    statusEl.style.color = 'var(--success)';
   } else if (overByPct >= 70) {
     bar.classList.remove('fill-over');
+    statusEl.classList.add('warn');
     statusEl.textContent = lang === 'ar' ? '~ قارب' : '~ Close';
-    statusEl.style.color = 'var(--warn)';
   } else {
     bar.classList.remove('fill-over');
     statusEl.textContent = '';
@@ -4841,7 +5289,10 @@ function removeItem(idx) {
     const rm = e.target.closest('.remove-btn');
     if (rm) {
       const idx = parseInt(rm.dataset.idx, 10);
-      if (!isNaN(idx)) removeItem(idx);
+      if (!isNaN(idx)) {
+        const rowEl = rm.closest('tr');
+        fadeAndRemove(rowEl, () => removeItem(idx));
+      }
       return;
     }
     const ed = e.target.closest('.edit-row-btn');
@@ -4909,7 +5360,7 @@ document.getElementById('clearDayBtn').addEventListener('click', () => {
 document.getElementById('loadDayBtn').addEventListener('click', () => {
   const body = document.getElementById('savedListBody');
   if (savedDays.length === 0) {
-    body.innerHTML = `<div class="empty-state">${lang === 'ar' ? 'مفيش أيام محفوظة' : 'No saved days yet'}</div>`;
+    body.innerHTML = `<div class="empty-state">${lang === 'ar' ? 'لا توجد أيام محفوظة' : 'No saved days yet'}</div>`;
   } else {
     body.innerHTML = savedDays.map((d, idx) => {
       const dt = new Date(d.date);
@@ -4984,13 +5435,29 @@ document.getElementById('saveGoalsBtn').addEventListener('click', () => {
 
 // ============ WATER TRACKER ============
 function renderWater() {
-  const currentMl = waterState.glasses * waterState.mlPerGlass;
-  const percentage = Math.min(100, (currentMl / waterState.goalMl) * 100);
+  const mlPer = waterState.mlPerGlass || 250;
+  const goalMl = waterState.goalMl || 2000;
+  const totalCups = Math.max(1, Math.round(goalMl / mlPer));
+  const glasses = Math.max(0, waterState.glasses | 0);
+  const currentMl = glasses * mlPer;
+  const pct = Math.min(100, Math.round((currentMl / goalMl) * 100));
 
-  document.getElementById('waterGlasses').textContent = waterState.glasses;
-  document.getElementById('waterMlDisplay').textContent = currentMl;
-  document.getElementById('waterMlGoal').textContent = waterState.goalMl;
-  document.getElementById('waterFill').style.width = percentage + '%';
+  const cupsEl = document.getElementById('waterCups');
+  let cupsHtml = '';
+  // Render the goal-count of cups; if glasses exceeds the goal, render extra "filled overflow" cups too
+  const displayCount = Math.max(totalCups, glasses);
+  for (let i = 0; i < displayCount; i++) {
+    const filled = i < glasses;
+    cupsHtml += `<div class="water-cup${filled ? ' filled' : ''}" data-cup-idx="${i}" role="button" aria-pressed="${filled}"></div>`;
+  }
+  cupsEl.innerHTML = cupsHtml;
+
+  const mlEl = document.getElementById('waterMlDisplay');
+  if (mlEl) mlEl.textContent = currentMl;
+  const goalEl = document.getElementById('waterMlGoal');
+  if (goalEl) goalEl.textContent = goalMl;
+  const pctEl = document.getElementById('waterPct');
+  if (pctEl) pctEl.textContent = pct;
 }
 
 function updateWater(delta) {
@@ -5005,6 +5472,20 @@ document.getElementById('waterPlusBtn').addEventListener('click', () => {
 
 document.getElementById('waterMinusBtn').addEventListener('click', () => {
   updateWater(-1);
+});
+
+document.getElementById('waterQuick250').addEventListener('click', () => updateWater(1));
+document.getElementById('waterQuick500').addEventListener('click', () => updateWater(2));
+document.getElementById('waterCups').addEventListener('click', (e) => {
+  const cup = e.target.closest('.water-cup');
+  if (!cup) return;
+  const idx = parseInt(cup.dataset.cupIdx, 10);
+  if (Number.isNaN(idx)) return;
+  // Click a filled cup → drop to that index. Click an empty cup → fill up to that index + 1.
+  const isFilled = cup.classList.contains('filled');
+  waterState.glasses = isFilled ? idx : idx + 1;
+  lsSet('mt-water', JSON.stringify(waterState));
+  renderWater();
 });
 
 document.getElementById('saveWaterSettingsBtn').addEventListener('click', () => {
@@ -5141,25 +5622,26 @@ document.getElementById('panelOverlay').addEventListener('click', closePanel);
 function renderWorkoutsList() {
   const list = document.getElementById('workoutsList');
   if (workouts.length === 0) {
-    list.innerHTML = `<div style="font-size: 13px; color: var(--text-soft); padding: 8px 0;">${lang === 'ar' ? 'لا توجد تمارين مسجلة' : 'No workouts logged'}</div>`;
+    list.innerHTML = `<div class="activity-empty">${lang === 'ar' ? 'لا توجد تمارين مسجلة' : 'No workouts logged'}</div>`;
     return;
   }
   const totalBurned = getTotalBurned();
+  const removeLabel = lang === 'ar' ? 'حذف' : 'Remove';
   list.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <span style="font-size: 12px; color: var(--text-soft);">${lang === 'ar' ? 'إجمالي' : 'Total'}</span>
-      <span style="font-weight: bold; color: var(--kcal);">${fmt(totalBurned)} kcal</span>
+    <div class="activity-total">
+      <span>${lang === 'ar' ? 'إجمالي' : 'Total'}</span>
+      <span class="val">${fmt(totalBurned)} kcal</span>
     </div>
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      ${workouts.map((w, idx) => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: var(--paper-soft); border-radius: 4px; font-size: 13px;">
-          <div style="flex: 1;">
-            <div style="font-weight: 500;">${escapeHtml(w.name ? (typeof w.name === 'string' ? w.name : w.name.en) : 'Activity')}</div>
-            <div style="font-size: 11px; color: var(--text-soft);">${fmt(w.kcalBurned || 0)} kcal</div>
-          </div>
-          <button class="remove-workout-btn" data-workout-idx="${idx}" style="padding: 4px 8px; background: var(--over); color: var(--paper); border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">${lang === 'ar' ? 'حذف' : 'Remove'}</button>
-        </div>
-      `).join('')}
+    <div class="activity-list">
+      ${workouts.map((w, idx) => {
+        const rawName = w.name ? (typeof w.name === 'string' ? w.name : w.name.en) : 'Activity';
+        return `
+        <div class="activity-row">
+          <span class="name">${escapeHtml(rawName)}</span>
+          <span class="kcal">${fmt(w.kcalBurned || 0)} kcal</span>
+          <button class="remove-workout-btn" data-workout-idx="${idx}">${removeLabel}</button>
+        </div>`;
+      }).join('')}
     </div>
   `;
 }
@@ -5199,10 +5681,13 @@ document.addEventListener('click', (e) => {
   if (!btn) return;
   const idx = parseInt(btn.dataset.workoutIdx, 10);
   if (!isNaN(idx) && idx >= 0 && idx < workouts.length) {
-    workouts.splice(idx, 1);
-    saveWorkoutState();
-    renderWorkoutsList();
-    renderTotals();
+    const rowEl = btn.closest('.activity-row');
+    fadeAndRemove(rowEl, () => {
+      workouts.splice(idx, 1);
+      saveWorkoutState();
+      renderWorkoutsList();
+      renderTotals();
+    });
   }
 });
 
@@ -6055,7 +6540,7 @@ document.getElementById('afSaveBtn').addEventListener('click', () => {
       kcal = p * 4 + f * 9 + c * 4;
       if (kcal <= 0) {
         showAddFoodError(lang === 'ar'
-          ? 'اكتب السعرات، أو أدخل ماكروز عشان تتحسب تلقائياً.'
+          ? 'أدخل السعرات، أو وفّر الماكروز لكي تُحسَب تلقائياً.'
           : 'Enter calories, or provide macros so it can be auto-computed.');
         return;
       }
@@ -6530,8 +7015,8 @@ function applyLanguage() {
       : (lang === 'ar' ? 'أضف لليوم' : 'Add to day');
     const pvLabel = document.querySelector('.preview .label');
     if (pvLabel) pvLabel.textContent = isEdit
-      ? (lang === 'ar' ? 'هيتعدل إلى:' : "You'll change to:")
-      : (lang === 'ar' ? 'هيتضاف:' : "You'll add:");
+      ? (lang === 'ar' ? 'سيتغيّر إلى:' : "You'll change to:")
+      : (lang === 'ar' ? 'سيُضاف:' : "You'll add:");
   }
 
   // Keep the API-key status label in the current language
@@ -6568,6 +7053,10 @@ applyLanguage();
 renderMealTemplates();
 saveDayState();
 renderWorkoutsList();
+
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.documentElement.classList.remove('preload');
+}));
 
 // ============ GLOBAL SORT MENU HANDLERS ============
 function closeAllSortMenus() {
@@ -6668,7 +7157,7 @@ document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
   }
   if (!key.startsWith('AIzaSy')) {
     const ok = confirm(lang === 'ar'
-      ? 'المفتاح لا يبدو كمفتاح Gemini عادي (يبدأ عادة بـ AIzaSy). حفظ على أي حال؟'
+      ? 'المفتاح لا يبدو كمفتاح Gemini عادي (يبدأ عادة ب AIzaSy). حفظ على أي حال؟'
       : 'Key does not look like a typical Gemini key (usually starts with AIzaSy). Save anyway?');
     if (!ok) return;
   }
@@ -6715,8 +7204,10 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  // Map CSS color variable name to data property name (carb → c)
+  // Map metric → data property (carb → c) and metric → CSS var name (p → protein, f → fat)
   const dataProp = metric === 'carb' ? 'c' : metric;
+  const cssVarMap = { kcal: 'kcal', p: 'protein', f: 'fat', carb: 'carb' };
+  const cssVar = cssVarMap[metric] || metric;
   const values = data.map(day => day.totals[dataProp]);
   const dates = data.map(day => formatChartDate(day.date));
 
@@ -6755,7 +7246,7 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   for (let i = 0; i <= 4; i++) {
     const yVal = minValue + (range / 4) * i;
     const y = margin.top + plotHeight - (yVal - minValue) * scaleY;
-    svg += `<text x="${margin.left - 5}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--ink-soft)" style="fill: var(--ink-soft);">${fmt(yVal)}</text>`;
+    svg += `<text x="${margin.left - 5}" y="${y + 4}" text-anchor="end" font-size="11" font-weight="600" fill="var(--ink)" style="fill: var(--ink);">${fmt(yVal)}</text>`;
   }
 
   // Data polyline
@@ -6765,13 +7256,13 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
     const y = margin.top + plotHeight - (val - minValue) * scaleY;
     polylinePoints += `${x},${y} `;
   });
-  svg += `<polyline points="${polylinePoints.trim()}" fill="none" stroke-width="2" style="stroke: var(--${metric});"/>`;
+  svg += `<polyline points="${polylinePoints.trim()}" fill="none" stroke-width="2" style="stroke: var(--${cssVar});"/>`;
 
   // Data points (circles)
   values.forEach((val, idx) => {
     const x = margin.left + idx * scaleX;
     const y = margin.top + plotHeight - (val - minValue) * scaleY;
-    svg += `<circle cx="${x}" cy="${y}" r="3" fill="var(--${metric})" style="fill: var(--${metric});"/>`;
+    svg += `<circle cx="${x}" cy="${y}" r="3" fill="var(--${cssVar})" style="fill: var(--${cssVar});"/>`;
   });
 
   // X-axis labels (every 2nd or 3rd label to avoid crowding)
@@ -6779,7 +7270,7 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   dates.forEach((date, idx) => {
     if (idx % labelStep === 0 || idx === dates.length - 1) {
       const x = margin.left + idx * scaleX;
-      svg += `<text x="${x}" y="${svgHeight - margin.bottom + 18}" text-anchor="middle" font-size="9" fill="var(--ink-soft)" style="fill: var(--ink-soft);">${date}</text>`;
+      svg += `<text x="${x}" y="${svgHeight - margin.bottom + 18}" text-anchor="middle" font-size="10" font-weight="600" fill="var(--ink)" style="fill: var(--ink);">${date}</text>`;
     }
   });
 
@@ -6902,7 +7393,7 @@ function ocrClearError() {
 function openOcrModal() {
   if (!getGeminiKey()) {
     alert(lang === 'ar'
-      ? 'محتاج تحط مفتاح Gemini API أولاً. هفتحلك الإعدادات.'
+      ? 'تحتاج إلى تعيين مفتاح Gemini API أولاً. سأفتح لك الإعدادات.'
       : 'You need to set a Gemini API key first. Opening Settings for you.');
     const section = document.getElementById('settingsSection');
     section.classList.add('open');
@@ -7077,9 +7568,9 @@ function renderOcrResult(r) {
 
   const sanity = ocrSanityCheck(r);
   const sanityEl = document.getElementById('ocrSanity');
+  sanityEl.className = 'ocr-sanity ' + sanity.level;
   sanityEl.textContent = sanity.msg;
   sanityEl.style.display = 'block';
-  sanityEl.style.borderLeftColor = sanity.level === 'ok' ? 'var(--accent)' : sanity.level === 'error' ? 'var(--over)' : 'var(--gold)';
 }
 
 document.getElementById('ocrRunBtn').addEventListener('click', async () => {
@@ -7364,9 +7855,9 @@ function renderBarcodeResult(r) {
   // Show product name if available.
   const nameNote = r.name_en || 'Product';
   const notesEl = document.getElementById('barcodeSanity');
+  notesEl.className = 'barcode-sanity';
   notesEl.textContent = nameNote;
   notesEl.style.display = 'block';
-  notesEl.style.borderLeftColor = 'var(--accent)';
 }
 
 document.getElementById('barcodeUseBtn').addEventListener('click', () => {
@@ -7452,7 +7943,7 @@ function updateAfKcalCheck() {
   } else {
     warnEl.className = 'af-kcal-warn error show';
     warnEl.textContent = lang === 'ar'
-      ? `❌ السعرات (${Math.round(kcal)}) بعيدة عن الماكروز (المحسوب ${Math.round(computed)} = بروتين×4 + دهون×9 + كارب×4، فرق ${diffPct.toFixed(0)}%). الأرجح فيه رقم غلط.`
+      ? `❌ السعرات (${Math.round(kcal)}) بعيدة عن الماكروز (المحسوب ${Math.round(computed)} = بروتين×4 + دهون×9 + كارب×4، فرق ${diffPct.toFixed(0)}%). الأرجح أن يكون هناك رقم خاطئ.`
       : `❌ Calories (${Math.round(kcal)}) are far from the macros (computed ${Math.round(computed)} = P×4 + F×9 + C×4, off by ${diffPct.toFixed(0)}%). Likely a wrong value.`;
   }
 }

@@ -154,6 +154,12 @@ This repo uses three local-only files (gitignored via `*.local.*`) as an asynchr
 - When a finding flips to `[x]` done, the executor cites the commit SHA that fixed it in the finding line.
 - Files are gitignored — they hold collaboration state, not shipped artifacts. Never commit them; never `git add -A` without checking that the `.local.` pattern is excluded.
 - **Commit attribution:** use the user's name and email (`git -c user.name="abdullah-3337" -c user.email="abdullah.ayoub2000@gmail.com" commit ...`). Never add `Co-Authored-By:` or other trailers crediting Claude/Haiku/Opus. Commits are authored by the user; AI assistance is documented in the PR/MR, not in git history.
+- **Cleanup policy:** once an entry's status becomes `done` / `shipped` / `cancelled` / `addressed` AND the relevant change has landed on `main`, delete the entry from its `.local.md` file. Git history (merge commits + commit messages) is the durable record. The `.local.md` files are a live work queue, not an archive.
+
+## Working with this file (CLAUDE.md)
+
+- **Length cap:** keep CLAUDE.md under 500 lines. The whole file is loaded into every Claude Code session — long files cost tokens on every turn. If a new section would push past 500, condense or rotate something out first.
+- **Model split:** Opus is the planner and reviewer for this repo. When a change needs more than ~2 files of edits or a long mechanical pass (CSS-variable migrations, multi-section rewrites, refactors that touch dozens of lines), Opus writes a detailed spec and spawns a Haiku agent (`Agent` tool, `subagent_type: "general-purpose"`, `model: "haiku"`) to execute. Opus stays in planning / review mode; Haiku does the typing.
 
 ### What NOT to do
 

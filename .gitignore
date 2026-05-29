@@ -3,3 +3,8 @@
 # Local-only collaboration files (Opus review pipeline)
 # Naming convention: *.local.* — never committed.
 *.local.*
+
+# Bug-report / UX-review screenshots shared by the user. Local-only.
+Screenshot_*.jpg
+Screenshot_*.jpeg
+Screenshot_*.png

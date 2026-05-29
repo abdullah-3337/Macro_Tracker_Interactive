@@ -5787,14 +5787,25 @@ function runSearchFromInput() {
   const now = searchInput.value;
   const firstVisible = applyFilters();
   _lastSearchQuery = now;
-  // Only scroll when the search actually changed and we have at least one match.
-  // Smooth-scroll the first matching category into view so the user isn't
-  // dropped to the bottom of the page after layout shrinks.
-  if (firstVisible && now !== before) {
+  // Auto-scroll to the first match — but NOT while the input still has focus.
+  // On mobile, the on-screen keyboard + smooth-scroll fight each other and the
+  // fixed bottom-dock (where this search bar lives) ends up out of the user's
+  // visible area. Skipping the scroll while typing keeps the search bar pinned.
+  // The scroll-into-view is still desirable for category-filter clicks (those
+  // do not focus the search input).
+  if (firstVisible && now !== before && document.activeElement !== searchInput) {
     firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 searchInput.addEventListener('input', debounce(runSearchFromInput, 250));
+// When the user dismisses the keyboard / blurs the input, if their last query
+// produced matches, bring the first match into view once. This recovers the
+// scroll-to-first-result UX without fighting the keyboard during typing.
+searchInput.addEventListener('blur', () => {
+  if (searchInput.value === '') return;
+  const firstVisible = document.querySelector('.category-section:not(.hidden)');
+  if (firstVisible) firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 filterBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     filterBtns.forEach(b => b.classList.remove('active'));

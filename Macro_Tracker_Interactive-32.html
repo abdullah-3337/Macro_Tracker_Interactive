@@ -6057,7 +6057,9 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const values = data.map(day => day.totals[metric]);
+  // Map CSS color variable name to data property name (carb → c)
+  const dataProp = metric === 'carb' ? 'c' : metric;
+  const values = data.map(day => day.totals[dataProp]);
   const dates = data.map(day => formatChartDate(day.date));
 
   const maxValue = Math.max(...values, goalValue) * 1.1;
@@ -6105,7 +6107,7 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
     const y = margin.top + plotHeight - (val - minValue) * scaleY;
     polylinePoints += `${x},${y} `;
   });
-  svg += `<polyline points="${polylinePoints.trim()}" fill="none" stroke="var(--kcal)" stroke-width="2" style="stroke: var(--${metric});"/>`;
+  svg += `<polyline points="${polylinePoints.trim()}" fill="none" stroke-width="2" style="stroke: var(--${metric});"/>`;
 
   // Data points (circles)
   values.forEach((val, idx) => {
@@ -6157,7 +6159,7 @@ function openTrendsModal() {
     renderTrendChart('trendsCharts', 'kcal', lang === 'ar' ? 'السعرات' : 'Calories', 'kcal', goals.kcal, data);
     renderTrendChart('trendsCharts', 'p', lang === 'ar' ? 'بروتين' : 'Protein', 'g', goals.protein, data);
     renderTrendChart('trendsCharts', 'f', lang === 'ar' ? 'دهون' : 'Fat', 'g', goals.fat, data);
-    renderTrendChart('trendsCharts', 'c', lang === 'ar' ? 'كارب' : 'Carbs', 'g', goals.carbs, data);
+    renderTrendChart('trendsCharts', 'carb', lang === 'ar' ? 'كارب' : 'Carbs', 'g', goals.carbs, data);
   }
 
   document.getElementById('trendsOverlay').classList.add('active');

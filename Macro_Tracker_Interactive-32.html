@@ -1418,6 +1418,70 @@ body.ar .selected-table td.num { text-align: center; }
 }
 .edit-row-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
+/* ============ MEAL TEMPLATES ============ */
+.templates-pane {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.templates-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.templates-header h4 {
+  margin: 0; font-size: 14px; font-weight: 600;
+}
+body.ar .templates-header h4 { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.template-action-btn {
+  padding: 6px 12px; font-size: 11px; font-weight: 600;
+  background: var(--accent); color: var(--on-accent);
+  border: 1px solid var(--accent); border-radius: 3px;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'JetBrains Mono', monospace;
+}
+body.ar .template-action-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+.template-action-btn:hover { background: var(--accent-dk); border-color: var(--accent-dk); }
+.templates-list {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.template-item {
+  padding: 10px 12px; background: var(--paper); border: 1px solid var(--line);
+  border-radius: 3px; display: flex; justify-content: space-between; align-items: center;
+  gap: 8px;
+}
+.template-item-info {
+  flex: 1; min-width: 0;
+}
+.template-item-name {
+  font-size: 13px; font-weight: 500; color: var(--ink);
+  word-break: break-word; margin-bottom: 3px;
+}
+.template-item-count {
+  font-size: 11px; color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+}
+.template-item-actions {
+  display: flex; gap: 6px; flex-shrink: 0;
+}
+.template-apply-btn, .template-delete-btn {
+  padding: 4px 8px; font-size: 11px; font-weight: 600;
+  border: 1px solid var(--line); border-radius: 2px; cursor: pointer;
+  transition: all 0.15s; font-family: 'JetBrains Mono', monospace;
+}
+body.ar .template-apply-btn, body.ar .template-delete-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
+.template-apply-btn {
+  background: var(--accent); color: var(--on-accent); border-color: var(--accent);
+}
+.template-apply-btn:hover { background: var(--accent-dk); border-color: var(--accent-dk); }
+.template-delete-btn {
+  background: transparent; color: var(--ink-soft); border-color: var(--line);
+}
+.template-delete-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--ink); }
+.templates-empty {
+  padding: 12px; text-align: center; color: var(--ink-soft); font-size: 13px;
+}
+body.ar .templates-empty { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.templates-empty p { margin: 0; }
+
 /* ============ DATA TOOLS (export / import) ============ */
 .data-tools {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -2431,6 +2495,19 @@ body.ar .footer li::before {
           <span class="remaining" id="rem-carbs"></span>
         </div>
         <div class="progress-bar"><div class="fill fill-carb" id="bar-carbs" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- ============ MEAL TEMPLATES PANE ============ -->
+    <div class="templates-pane" id="templatesPane" style="display:none;">
+      <div class="templates-header">
+        <h4 data-en="💾 Saved Meal Templates" data-ar="💾 قوالب الوجبات المحفوظة">💾 Saved Meal Templates</h4>
+        <button class="template-action-btn" id="saveCurrentDayBtn" title="Save current day as a template"
+                data-en="💾 Save as template" data-ar="💾 احفظ كقالب">💾 Save as template</button>
+      </div>
+      <div class="templates-list" id="templatesList"></div>
+      <div class="templates-empty" id="templatesEmpty" style="display:none;">
+        <p data-en="No templates yet. Save your first meal above." data-ar="لا توجد قوالب بعد. احفظ وجبتك الأولى أعلاه.">No templates yet. Save your first meal above.</p>
       </div>
     </div>
 
@@ -4624,6 +4701,144 @@ document.getElementById('fab').addEventListener('click', openPanel);
 document.getElementById('panelClose').addEventListener('click', closePanel);
 document.getElementById('panelOverlay').addEventListener('click', closePanel);
 
+// ============ MEAL TEMPLATES ============
+let mealTemplates = lsGet('mt-templates', []);
+if (!Array.isArray(mealTemplates)) mealTemplates = [];
+
+// Helper to generate unique ID for templates
+function genTemplateId() {
+  return 'tpl-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+}
+
+// Render the meal templates list in the side panel
+function renderMealTemplates() {
+  const pane = document.getElementById('templatesPane');
+  const list = document.getElementById('templatesList');
+  const empty = document.getElementById('templatesEmpty');
+
+  if (mealTemplates.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.innerHTML = mealTemplates.map(tpl => {
+    const name = escapeHtml(lang === 'ar' ? (tpl.name.ar || tpl.name.en) : (tpl.name.en || tpl.name.ar));
+    const itemCount = (tpl.items || []).length;
+    const countLabel = lang === 'ar' ? 'عنصر' : 'item';
+    const itemsText = itemCount === 1 ? `1 ${countLabel}` : `${itemCount} ${countLabel + (lang === 'ar' ? '' : 's')}`;
+    return `
+      <div class="template-item">
+        <div class="template-item-info">
+          <div class="template-item-name">${name}</div>
+          <div class="template-item-count">${itemsText}</div>
+        </div>
+        <div class="template-item-actions">
+          <button class="template-apply-btn" data-template-id="${escapeHtml(tpl.id)}"
+                  data-en="Apply" data-ar="تطبيق">Apply</button>
+          <button class="template-delete-btn" data-template-id="${escapeHtml(tpl.id)}"
+                  data-en="Delete" data-ar="حذف">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Wire up event listeners for apply/delete buttons
+  list.querySelectorAll('.template-apply-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tplId = btn.dataset.templateId;
+      applyMealTemplate(tplId);
+    });
+  });
+  list.querySelectorAll('.template-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tplId = btn.dataset.templateId;
+      deleteMealTemplate(tplId);
+    });
+  });
+}
+
+// Save current day as a meal template
+function saveCurrentDayAsTemplate() {
+  if (dayItems.length === 0) {
+    alert(lang === 'ar'
+      ? 'لا توجد عناصر في اليوم لحفظها كقالب'
+      : 'No items in today\'s meal to save as template');
+    return;
+  }
+
+  const prompt_en = 'Name for this meal template:';
+  const prompt_ar = 'اسم قالب الوجبة:';
+  const name = window.prompt(lang === 'ar' ? prompt_ar : prompt_en);
+
+  if (name === null || !name.trim()) return; // User cancelled
+
+  const trimmedName = name.trim();
+  const newTemplate = {
+    id: genTemplateId(),
+    name: {
+      en: lang === 'ar' ? trimmedName : trimmedName,
+      ar: lang === 'ar' ? trimmedName : trimmedName
+    },
+    items: dayItems.map(item => ({
+      foodId: item.id,
+      grams: item.grams || 100
+    }))
+  };
+
+  mealTemplates.push(newTemplate);
+  lsSet('mt-templates', JSON.stringify(mealTemplates));
+  renderMealTemplates();
+  alert((lang === 'ar' ? 'تم حفظ القالب: ' : 'Template saved: ') + escapeHtml(trimmedName));
+}
+
+// Apply a meal template to today's meal
+function applyMealTemplate(tplId) {
+  const tpl = mealTemplates.find(t => t.id === tplId);
+  if (!tpl) {
+    alert(lang === 'ar' ? 'لم يتم العثور على القالب' : 'Template not found');
+    return;
+  }
+
+  // Add each item in the template to dayItems
+  (tpl.items || []).forEach(item => {
+    const food = getDB(item.foodId);
+    if (food) {
+      dayItems.push({
+        ...food,
+        grams: item.grams || 100
+      });
+    }
+  });
+
+  saveDayState();
+  renderTotals();
+
+  const tplName = escapeHtml(lang === 'ar' ? (tpl.name.ar || tpl.name.en) : (tpl.name.en || tpl.name.ar));
+  alert((lang === 'ar' ? 'تم إضافة القالب: ' : 'Template applied: ') + tplName);
+}
+
+// Delete a meal template
+function deleteMealTemplate(tplId) {
+  const tpl = mealTemplates.find(t => t.id === tplId);
+  if (!tpl) return;
+
+  const tplName = escapeHtml(lang === 'ar' ? (tpl.name.ar || tpl.name.en) : (tpl.name.en || tpl.name.ar));
+  const msg = lang === 'ar'
+    ? `هل متأكد من حذف القالب "${tplName}"؟`
+    : `Delete template "${tplName}"?`;
+
+  if (!confirm(msg)) return;
+
+  mealTemplates = mealTemplates.filter(t => t.id !== tplId);
+  lsSet('mt-templates', JSON.stringify(mealTemplates));
+  renderMealTemplates();
+}
+
+// Show/hide templates pane
+document.getElementById('saveCurrentDayBtn').addEventListener('click', saveCurrentDayAsTemplate);
+
 // ============ DATA EXPORT / IMPORT (food database) ============
 // Schema columns — this exact order must be preserved for re-import
 const SCHEMA = ['id','category','en','ar','base_amount','basis_en','basis_ar','easy_en','easy_ar','protein_g','fat_g','carbs_g','kcal','badges','units_json'];
@@ -5605,7 +5820,8 @@ function buildBackupObject() {
       goals: goals,
       lang: lang,
       theme: currentTheme,
-      scheme: currentScheme
+      scheme: currentScheme,
+      templates: mealTemplates
     }
   };
 }
@@ -5689,6 +5905,8 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (Array.isArray(payload.day)) willRestore.push(lang === 'ar' ? 'يوم اليوم' : "today's items");
       if (Array.isArray(payload.saved)) willRestore.push(lang === 'ar' ? 'الأيام المحفوظة' : 'saved days');
       if (payload.goals) willRestore.push(lang === 'ar' ? 'الأهداف' : 'goals');
+      if (Array.isArray(payload.templates) && payload.templates.length)
+        willRestore.push(lang === 'ar' ? `قوالب الوجبات (${payload.templates.length})` : `meal templates (${payload.templates.length})`);
 
       const msg = (lang === 'ar'
         ? 'سيتم استرجاع: '
@@ -5740,10 +5958,15 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         currentTheme = payload.theme;
         lsSet('mt-theme', currentTheme);
       }
+      if (Array.isArray(payload.templates) && payload.templates.length) {
+        mealTemplates = payload.templates;
+        lsSet('mt-templates', JSON.stringify(mealTemplates));
+      }
 
       applyTheme();
       renderGoals();
       applyLanguage();   // re-renders tables + filters + totals
+      renderMealTemplates();
       saveDayState();
       renderTotals();
 
@@ -5822,6 +6045,7 @@ document.getElementById('langToggle').addEventListener('click', () => {
 applyTheme();
 renderGoals();
 applyLanguage();
+renderMealTemplates();
 saveDayState();
 
 // ============ GLOBAL SORT MENU HANDLERS ============

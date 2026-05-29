@@ -1854,6 +1854,29 @@ body.ar .selected-table td.num { text-align: center; }
 }
 .edit-row-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
+/* ============ SEARCH EMPTY STATE ============ */
+.search-empty {
+  text-align: center;
+  padding: 28px 20px;
+  background: var(--paper);
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  margin-bottom: 18px;
+  color: var(--ink);
+  font-size: 14px;
+  font-style: italic;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+body.ar .search-empty {
+  font-style: normal;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 15px;
+}
+.search-empty[hidden] { display: none; }
+.search-empty-icon {
+  font-size: 28px; opacity: 0.55;
+}
+
 /* ============ FEATURE TOGGLES ============ */
 .feat-help {
   font-size: 12px; color: var(--ink-soft); margin: 4px 0 12px;
@@ -2997,6 +3020,10 @@ body.ar .footer li::before {
   </span>
 </div>
 
+<div class="search-empty" id="searchEmpty" hidden>
+  <span class="search-empty-icon" aria-hidden="true">🔍</span>
+  <span class="search-empty-msg" data-en="No matches. Try a different word." data-ar="لا توجد نتائج. جرّب كلمة أخرى.">No matches. Try a different word.</span>
+</div>
 <div id="foodTablesContainer"></div>
 
 <div class="footer">
@@ -5687,6 +5714,7 @@ function applyFilters() {
     });
   }
 
+  let firstVisible = null;
   document.querySelectorAll('.category-section').forEach(sec => {
     const cat = sec.dataset.cat;
     const matchesCat = currentFilter === 'all' || currentFilter === cat;
@@ -5695,6 +5723,7 @@ function applyFilters() {
 
     if (matchIds === null) {
       sec.querySelectorAll('tbody tr').forEach(r => r.classList.remove('hidden'));
+      if (!firstVisible) firstVisible = sec;
       return;
     }
     let any = false;
@@ -5703,9 +5732,33 @@ function applyFilters() {
       else row.classList.add('hidden');
     });
     if (!any) sec.classList.add('hidden');
+    else if (!firstVisible) firstVisible = sec;
   });
+
+  // Empty-state visibility — show when a non-empty query produces zero matches.
+  const emptyEl = document.getElementById('searchEmpty');
+  if (emptyEl) {
+    const showEmpty = (query !== '' || currentFilter !== 'all') && !firstVisible;
+    emptyEl.hidden = !showEmpty;
+  }
+
+  return firstVisible;
 }
-searchInput.addEventListener('input', debounce(applyFilters, 80));
+
+let _lastSearchQuery = searchInput.value;
+function runSearchFromInput() {
+  const before = _lastSearchQuery;
+  const now = searchInput.value;
+  const firstVisible = applyFilters();
+  _lastSearchQuery = now;
+  // Only scroll when the search actually changed and we have at least one match.
+  // Smooth-scroll the first matching category into view so the user isn't
+  // dropped to the bottom of the page after layout shrinks.
+  if (firstVisible && now !== before) {
+    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+searchInput.addEventListener('input', debounce(runSearchFromInput, 250));
 filterBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     filterBtns.forEach(b => b.classList.remove('active'));

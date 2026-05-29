@@ -1304,6 +1304,70 @@ body.ar .popup-actions button { font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 .btn-add:hover { background: var(--accent); color: var(--on-accent); }
 
+/* ============ ADD METHOD CHOOSER ============ */
+.add-method-modal {
+  background: var(--paper);
+  border-radius: 4px;
+  max-width: 400px; width: 100%;
+  max-height: 90vh; overflow-y: auto; overflow-x: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  padding: 24px;
+  box-sizing: border-box;
+}
+.add-method-modal h3 {
+  font-size: 18px; font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--ink);
+  font-style: italic;
+}
+body.ar .add-method-modal h3 { font-style: normal; }
+.add-method-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.add-method-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-sizing: border-box;
+}
+body.ar .add-method-btn {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 15px;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+.add-method-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.add-method-label {
+  flex: 1;
+}
+.add-method-btn:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--ink);
+}
+.add-method-modal .popup-actions {
+  margin-top: 0;
+}
+
 /* ============ FLOATING ACTION BUTTON ============ */
 .fab-row {
   display: flex; align-items: stretch; gap: 12px;
@@ -2590,14 +2654,6 @@ body.ar .footer li::before {
       <span class="fab-add-icon">➕</span>
       <span class="fab-add-text" data-en="Add food" data-ar="إضافة عنصر">Add food</span>
     </button>
-    <button class="fab-add" id="ocrFoodBtn" aria-label="Extract from photo">
-      <span class="fab-add-icon">📸</span>
-      <span class="fab-add-text" data-en="OCR" data-ar="استخراج">OCR</span>
-    </button>
-    <button class="fab-add" id="barcodeBtn" aria-label="Scan barcode">
-      <span class="fab-add-icon">📷</span>
-      <span class="fab-add-text" data-en="Scan" data-ar="ماسح">Scan</span>
-    </button>
     <button class="fab" id="fab">
       <span class="fab-icon">🍽</span>
       <span class="fab-info">
@@ -3127,6 +3183,30 @@ body.ar .footer li::before {
     </div>
     <div class="popup-actions">
       <button class="btn-cancel" id="trendsCloseBtn" data-en="Close" data-ar="إغلاق">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADD METHOD CHOOSER ============ -->
+<div class="popup-overlay" id="addMethodOverlay">
+  <div class="add-method-modal">
+    <h3 data-en="How would you like to add a food?" data-ar="كيف تريد إضافة الطعام؟">How would you like to add a food?</h3>
+    <div class="add-method-buttons">
+      <button class="add-method-btn" id="addMethodManualBtn">
+        <span class="add-method-icon">✏</span>
+        <span class="add-method-label" data-en="Enter manually" data-ar="إدخال يدوي">Enter manually</span>
+      </button>
+      <button class="add-method-btn" id="addMethodOcrBtn">
+        <span class="add-method-icon">📸</span>
+        <span class="add-method-label" data-en="Extract from photo" data-ar="استخراج من صورة">Extract from photo</span>
+      </button>
+      <button class="add-method-btn" id="addMethodBarcodeBtn">
+        <span class="add-method-icon">📷</span>
+        <span class="add-method-label" data-en="Scan barcode" data-ar="مسح الباركود">Scan barcode</span>
+      </button>
+    </div>
+    <div class="popup-actions">
+      <button class="btn-cancel" id="addMethodCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
     </div>
   </div>
 </div>
@@ -4935,6 +5015,36 @@ document.getElementById('saveWaterSettingsBtn').addEventListener('click', () => 
   alert(lang === 'ar' ? 'تم حفظ إعدادات الماء ✓' : 'Water settings saved ✓');
 });
 
+// ============ ADD METHOD CHOOSER ============
+function openAddMethodSheet() {
+  document.getElementById('addMethodOverlay').classList.add('active');
+}
+
+function closeAddMethodSheet() {
+  document.getElementById('addMethodOverlay').classList.remove('active');
+}
+
+document.getElementById('addMethodManualBtn').addEventListener('click', () => {
+  closeAddMethodSheet();
+  openAddFood();
+});
+
+document.getElementById('addMethodOcrBtn').addEventListener('click', () => {
+  closeAddMethodSheet();
+  openOcrModal();
+});
+
+document.getElementById('addMethodBarcodeBtn').addEventListener('click', () => {
+  closeAddMethodSheet();
+  openBarcodeModal();
+});
+
+document.getElementById('addMethodCancelBtn').addEventListener('click', closeAddMethodSheet);
+
+document.getElementById('addMethodOverlay').addEventListener('click', e => {
+  if (e.target.id === 'addMethodOverlay') closeAddMethodSheet();
+});
+
 // ============ SEARCH & FILTER ============
 const searchInput = document.getElementById('searchInput');
 const filterBtns = document.querySelectorAll('.filter-btn');
@@ -5868,7 +5978,7 @@ function showAddFoodError(msg) {
   el.classList.add('show');
 }
 
-document.getElementById('fabAdd').addEventListener('click', openAddFood);
+document.getElementById('fabAdd').addEventListener('click', openAddMethodSheet);
 document.getElementById('afCancelBtn').addEventListener('click', closeAddFood);
 document.getElementById('addFoodOverlay').addEventListener('click', e => {
   if (e.target.id === 'addFoodOverlay') closeAddFood();
@@ -6817,8 +6927,6 @@ function closeOcrModal() {
   document.getElementById('ocrOverlay').classList.remove('active');
 }
 
-const ocrFoodBtnEl = document.getElementById('ocrFoodBtn');
-if (ocrFoodBtnEl) ocrFoodBtnEl.addEventListener('click', openOcrModal);
 const afModeOcrBtn = document.getElementById('afModeOcrBtn');
 if (afModeOcrBtn) afModeOcrBtn.addEventListener('click', openOcrModal);
 document.getElementById('ocrCancelBtn').addEventListener('click', closeOcrModal);
@@ -7304,9 +7412,6 @@ function openAddFoodFromBarcode(r) {
   }, 100);
 }
 
-// Wire up the barcode button.
-const barcodeBtnEl = document.getElementById('barcodeBtn');
-if (barcodeBtnEl) barcodeBtnEl.addEventListener('click', openBarcodeModal);
 document.getElementById('barcodeCancelBtn').addEventListener('click', closeBarcodeModal);
 document.getElementById('barcodeOverlay').addEventListener('click', e => {
   if (e.target.id === 'barcodeOverlay') closeBarcodeModal();

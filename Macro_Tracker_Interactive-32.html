@@ -4145,7 +4145,11 @@ function lsGet(key, fallback) {
 }
 
 // Safe localStorage write: alerts user if quota exceeded so data loss is visible, not silent.
-function lsSet(key, value) {
+// Trailing-edge throttled per key: rapid successive writes (e.g. typing into goals
+// inputs) collapse into one localStorage write 250 ms after the last call.
+const _lsPending = new Map();
+const _lsTimers = new Map();
+function _lsWriteImmediate(key, value) {
   try {
     localStorage.setItem(key, value);
   } catch (e) {
@@ -4160,6 +4164,32 @@ function lsSet(key, value) {
     alert(msg);
     console.error('localStorage write failed for "' + key + '":', e);
   }
+}
+function flushLsKey(key) {
+  if (!_lsPending.has(key)) return;
+  const value = _lsPending.get(key);
+  _lsPending.delete(key);
+  const t = _lsTimers.get(key);
+  if (t !== undefined) { clearTimeout(t); _lsTimers.delete(key); }
+  _lsWriteImmediate(key, value);
+}
+function flushLsAll() { Array.from(_lsPending.keys()).forEach(flushLsKey); }
+window.addEventListener('beforeunload', flushLsAll);
+window.addEventListener('pagehide', flushLsAll);
+function lsSet(key, value) {
+  _lsPending.set(key, value);
+  if (_lsTimers.has(key)) return;
+  const t = setTimeout(() => { _lsTimers.delete(key); flushLsKey(key); }, 250);
+  _lsTimers.set(key, t);
+}
+// Synchronous variant for critical paths (e.g. one-shot writes during a
+// confirmed destructive operation). Use sparingly — throttled lsSet is the
+// default.
+function lsSetNow(key, value) {
+  _lsPending.delete(key);
+  const t = _lsTimers.get(key);
+  if (t !== undefined) { clearTimeout(t); _lsTimers.delete(key); }
+  _lsWriteImmediate(key, value);
 }
 
 let lang = localStorage.getItem('mt-lang') || 'en';
@@ -5554,23 +5584,34 @@ function debounce(fn, ms) {
   };
 }
 
+// Pre-computed haystack per food.id. Built once per DB change, reused on every
+// keystroke — saves recomputing normalizeSearch() across 500+ foods on every
+// keypress.
+const searchIndex = new Map();
+function rebuildSearchIndex() {
+  searchIndex.clear();
+  DB.forEach(f => {
+    const hay = normalizeSearch(
+      [f.en, f.ar,
+       f.basis && f.basis.en, f.basis && f.basis.ar,
+       f.easy && f.easy.en, f.easy && f.easy.ar,
+       (f.badges || []).join(' ')
+      ].filter(Boolean).join(' ')
+    );
+    searchIndex.set(f.id, hay);
+  });
+}
+
 function applyFilters() {
   const query = normalizeSearch(searchInput.value);
 
-  // Build a per-id match set from the DATA (not DOM text), so numbers in
-  // the basis/macros can't cause false positives and language is irrelevant.
+  // Build a per-id match set from the pre-computed search index.
   let matchIds = null;
   if (query !== '') {
+    if (searchIndex.size === 0) rebuildSearchIndex();
     matchIds = new Set();
-    DB.forEach(f => {
-      const hay = normalizeSearch(
-        [f.en, f.ar,
-         f.basis && f.basis.en, f.basis && f.basis.ar,
-         f.easy && f.easy.en, f.easy && f.easy.ar,
-         (f.badges || []).join(' ')
-        ].filter(Boolean).join(' ')
-      );
-      if (hay.includes(query)) matchIds.add(f.id);
+    searchIndex.forEach((hay, id) => {
+      if (hay.includes(query)) matchIds.add(id);
     });
   }
 
@@ -6007,6 +6048,7 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
 
       DB = newDb;
       lsSet('mt-db', JSON.stringify(DB));
+      rebuildSearchIndex();
       renderTables();
       applyFilters();
       alert((lang === 'ar' ? 'تم الاستيراد بنجاح! ' : 'Imported successfully! ') + DB.length + (lang === 'ar' ? ' صنف' : ' items'));
@@ -6919,6 +6961,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         }
         DB = payload.db;
         lsSet('mt-db', JSON.stringify(DB));
+        rebuildSearchIndex();
       }
       if (Array.isArray(payload.day)) {
         dayItems = payload.day;
@@ -7046,6 +7089,7 @@ document.getElementById('langToggle').addEventListener('click', () => {
 });
 
 // ============ INIT ============
+rebuildSearchIndex();
 applyTheme();
 renderGoals();
 renderWater();

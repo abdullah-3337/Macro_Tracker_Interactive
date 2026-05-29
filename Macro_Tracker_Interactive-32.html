@@ -4717,19 +4717,20 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
       head: [['Food','Category','Base','Easy measure','Protein','Fat','Carbs','kcal','Tags']],
       body: body,
       startY: 25,
-      styles: { fontSize: 7, cellPadding: 1.5 },
+      margin: { top: 25, left: 10, right: 10 },
+      styles: { fontSize: 7, cellPadding: 1.2, overflow: 'linebreak' },
       headStyles: { fillColor: [26,26,26], textColor: [245,237,224], fontSize: 7 },
       alternateRowStyles: { fillColor: [250,247,242] },
       columnStyles: {
-        0: { cellWidth: 55 },
-        1: { cellWidth: 28 },
-        2: { cellWidth: 16, halign: 'right' },
-        3: { cellWidth: 50 },
-        4: { cellWidth: 18, halign: 'right' },
-        5: { cellWidth: 16, halign: 'right' },
-        6: { cellWidth: 16, halign: 'right' },
-        7: { cellWidth: 16, halign: 'right' },
-        8: { cellWidth: 25 }
+        0: { cellWidth: 48 },
+        1: { cellWidth: 24 },
+        2: { cellWidth: 14, halign: 'right' },
+        3: { cellWidth: 44 },
+        4: { cellWidth: 16, halign: 'right' },
+        5: { cellWidth: 14, halign: 'right' },
+        6: { cellWidth: 14, halign: 'right' },
+        7: { cellWidth: 14, halign: 'right' },
+        8: { cellWidth: 22 }
       }
     });
     doc.save('food_database.pdf');

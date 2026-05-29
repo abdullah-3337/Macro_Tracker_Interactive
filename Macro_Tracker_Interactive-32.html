@@ -451,8 +451,7 @@ body.ar {
 .preview-row span:last-child,
 .pc-values,
 .fab .fab-kcal,
-.fab .fab-count,
-.summary-pill .v {
+.fab .fab-count {
   unicode-bidi: isolate;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
@@ -1323,10 +1322,6 @@ body.ar .badge-key-label {
   font-style: italic;
 }
 body.ar .badge-key-text { font-style: normal; }
-@media (max-width: 700px) {
-  .badge-key { gap: 8px 12px; padding: 10px 12px; }
-  .badge-key-text { font-size: 11px; }
-}
 
 .col-protein { color: var(--protein); }
 .col-fat { color: var(--fat); }
@@ -2054,11 +2049,6 @@ body.ar .dt-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 .dt-btn.json:hover { background: var(--accent-dk); border-color: var(--accent-dk); }
-.dt-sep {
-  display: inline-block; width: 1px; align-self: stretch;
-  min-height: 24px; background: var(--line); margin: 0 4px;
-}
-
 /* ============ QUICK ACTIONS BAR (always visible) ============ */
 .quick-actions {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -2300,9 +2290,6 @@ body.ar .ocr-progress-text { font-family: 'IBM Plex Sans Arabic', sans-serif; fo
   font-size: 10px; font-weight: 700; text-transform: uppercase;
   margin-bottom: 12px;
 }
-.ocr-badge-high { background: var(--accent-soft); color: var(--accent-dk); }
-.ocr-badge-medium { background: var(--warn-bg); color: var(--warn-fg); }
-.ocr-badge-low { background: var(--error-bg); color: var(--error-fg); }
 .ocr-notes {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; color: var(--ink-soft);
@@ -2347,59 +2334,6 @@ body.ar .ocr-err { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 1
 .ocr-actions button { flex: 1; }
 
 /* ============ DELETE FOOD MODAL ============ */
-.del-search-row { margin-bottom: 12px; }
-.del-search-input {
-  width: 100%; padding: 10px 12px;
-  border: 1px solid var(--line); border-radius: 3px;
-  background: var(--bg); color: var(--ink);
-  font-family: 'JetBrains Mono', monospace; font-size: 13px;
-}
-body.ar .del-search-input { font-family: 'IBM Plex Sans Arabic', sans-serif; text-align: right; }
-.del-count {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--ink-soft); margin-bottom: 8px;
-}
-body.ar .del-count { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; text-transform: none; }
-.del-list {
-  max-height: 50vh; overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  border: 1px solid var(--line); border-radius: 3px;
-}
-.del-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--line-soft);
-}
-.del-row:last-child { border-bottom: none; }
-.del-row-info { flex: 1; min-width: 0; }
-.del-row-name {
-  font-size: 13px; font-weight: 600; color: var(--ink);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.del-row-meta {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--ink-soft); margin-top: 2px;
-}
-body.ar .del-row-meta { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 11px; }
-.del-row-btn {
-  flex-shrink: 0;
-  padding: 7px 12px; border-radius: 3px;
-  border: 1px solid var(--over);
-  background: var(--bg); color: var(--over);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 600; cursor: pointer;
-  transition: all 0.15s;
-}
-body.ar .del-row-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
-.del-row-btn:hover { background: var(--over); color: #fff; }
-.del-row.confirming .del-row-btn { background: var(--over); color: #fff; }
-.del-empty {
-  padding: 24px; text-align: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; color: var(--ink-soft);
-}
-body.ar .del-empty { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
 
 /* Add-food modal — reuses goals-modal shell, adds a scrollable body
    and a two-column grid for the macro inputs on wider screens */

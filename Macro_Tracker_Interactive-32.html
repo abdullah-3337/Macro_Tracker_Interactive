@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com https://fonts.gstatic.com https://world.openfoodfacts.org; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com">
 <script>
 /* Set theme + scheme on <html> before first paint to avoid any flash.
    Theme: 'light' | 'dark' | 'system' (system follows the OS).
@@ -2590,6 +2590,14 @@ body.ar .footer li::before {
       <span class="fab-add-icon">➕</span>
       <span class="fab-add-text" data-en="Add food" data-ar="إضافة عنصر">Add food</span>
     </button>
+    <button class="fab-add" id="ocrFoodBtn" aria-label="Extract from photo">
+      <span class="fab-add-icon">📸</span>
+      <span class="fab-add-text" data-en="OCR" data-ar="استخراج">OCR</span>
+    </button>
+    <button class="fab-add" id="barcodeBtn" aria-label="Scan barcode">
+      <span class="fab-add-icon">📷</span>
+      <span class="fab-add-text" data-en="Scan" data-ar="ماسح">Scan</span>
+    </button>
     <button class="fab" id="fab">
       <span class="fab-icon">🍽</span>
       <span class="fab-info">
@@ -3029,6 +3037,56 @@ body.ar .footer li::before {
       <button class="btn-cancel" id="ocrCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
       <button class="btn-add" id="ocrRunBtn" data-en="Extract" data-ar="استخراج" style="display:none;">Extract</button>
       <button class="btn-add" id="ocrUseBtn" data-en="Review &amp; add →" data-ar="مراجعة وإضافة →" style="display:none;">Review &amp; add →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BARCODE SCANNER MODAL ============ -->
+<div class="popup-overlay" id="barcodeOverlay">
+  <div class="ocr-modal">
+    <h3 data-en="📷 Scan barcode" data-ar="📷 ماسح الرموز">📷 Scan barcode</h3>
+    <div class="ocr-body">
+
+      <div class="ocr-err" id="barcodeErr"></div>
+
+      <!-- Step 1: check support or show camera -->
+      <div class="ocr-step" id="barcodeStepCheck">
+        <div class="ocr-dropzone" id="barcodeCheckMsg">
+          <div class="dz-icon">⚠️</div>
+          <div class="dz-text" id="barcodeCheckText">Checking device support...</div>
+        </div>
+      </div>
+
+      <!-- Step 2: camera preview (hidden until device supports BarcodeDetector) -->
+      <div class="ocr-step" id="barcodeStepStream" style="display:none;">
+        <div id="barcodeCameraContainer" style="position:relative; width:100%; max-width:400px; margin:0 auto; background:#000; border-radius:8px; overflow:hidden;">
+          <video id="barcodeVideo" style="width:100%; height:auto; display:block;"></video>
+          <div style="text-align:center; color:#999; font-size:12px; padding:8px;">
+            <span data-en="Point camera at barcode" data-ar="وجّه الكاميرا نحو الرمز">Point camera at barcode</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: processing -->
+      <div class="ocr-step" id="barcodeStepProgress" style="display:none;">
+        <div class="ocr-progress">
+          <div class="ocr-spinner"></div>
+          <div class="ocr-progress-text" id="barcodeProgressText"
+               data-en="Looking up product…"
+               data-ar="جاري البحث عن المنتج...">Looking up product…</div>
+        </div>
+      </div>
+
+      <!-- Step 4: results -->
+      <div class="ocr-step" id="barcodeStepResult" style="display:none;">
+        <div class="ocr-values-preview" id="barcodeValuesPreview"></div>
+        <div class="ocr-notes" id="barcodeSanity" style="display:none;"></div>
+      </div>
+
+    </div>
+    <div class="ocr-actions">
+      <button class="btn-cancel" id="barcodeCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+      <button class="btn-add" id="barcodeUseBtn" data-en="Review &amp; add →" data-ar="مراجعة وإضافة →" style="display:none;">Review &amp; add →</button>
     </div>
   </div>
 </div>
@@ -7006,6 +7064,253 @@ function openAddFoodFromOCR(r) {
     if (nameField && !nameField.value) nameField.focus();
   }, 100);
 }
+
+// ============ BARCODE SCANNER FEATURE ============
+let barcodeDetector = null;
+let barcodeCameraStream = null;
+let barcodeLastResult = null;
+let barcodeReqId = 0;  // Incremented on each lookup to detect stale in-flight responses.
+
+// Check if BarcodeDetector is supported and initialize it.
+async function initBarcodeDetector() {
+  if (!('BarcodeDetector' in window)) {
+    return false;
+  }
+  try {
+    const formats = await window.BarcodeDetector.getSupportedFormats();
+    if (formats.length === 0) return false;
+    barcodeDetector = new window.BarcodeDetector({ formats });
+    return true;
+  } catch (e) {
+    console.error('BarcodeDetector init failed:', e);
+    return false;
+  }
+}
+
+function barcodeShowStep(step) {
+  ['barcodeStepCheck', 'barcodeStepStream', 'barcodeStepProgress', 'barcodeStepResult'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  if (step === 'check') document.getElementById('barcodeStepCheck').style.display = 'block';
+  else if (step === 'stream') document.getElementById('barcodeStepStream').style.display = 'block';
+  else if (step === 'progress') document.getElementById('barcodeStepProgress').style.display = 'block';
+  else if (step === 'result') document.getElementById('barcodeStepResult').style.display = 'block';
+}
+
+function barcodeShowError(msg) {
+  const el = document.getElementById('barcodeErr');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function barcodeClearError() {
+  document.getElementById('barcodeErr').classList.remove('show');
+}
+
+async function openBarcodeModal() {
+  barcodeLastResult = null;
+  barcodeClearError();
+  barcodeShowStep('check');
+  document.getElementById('barcodeOverlay').classList.add('active');
+
+  // Check if device supports BarcodeDetector.
+  const supported = await initBarcodeDetector();
+
+  if (!supported) {
+    const checkMsg = document.getElementById('barcodeCheckMsg');
+    const checkText = document.getElementById('barcodeCheckText');
+    checkMsg.classList.add('unsupported');
+    checkText.textContent = lang === 'ar'
+      ? 'متصفحك لا يدعم ماسح الرموز. جرّب متصفح آخر أو استخدم ميزة استخراج الصورة.'
+      : 'This browser does not support barcode scanning. Try a different browser or use the photo extraction feature.';
+    return;
+  }
+
+  // Try to get camera access.
+  try {
+    barcodeCameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' }
+    });
+    const video = document.getElementById('barcodeVideo');
+    video.srcObject = barcodeCameraStream;
+    video.play();
+    barcodeShowStep('stream');
+    startBarcodeScan();
+  } catch (err) {
+    barcodeShowError(lang === 'ar'
+      ? `خطأ الكاميرا: ${err.message}`
+      : `Camera error: ${err.message}`);
+  }
+}
+
+function closeBarcodeModal() {
+  document.getElementById('barcodeOverlay').classList.remove('active');
+  if (barcodeCameraStream) {
+    barcodeCameraStream.getTracks().forEach(track => track.stop());
+    barcodeCameraStream = null;
+  }
+}
+
+async function startBarcodeScan() {
+  if (!barcodeDetector || !barcodeCameraStream) return;
+
+  const video = document.getElementById('barcodeVideo');
+  const myReq = ++barcodeReqId;
+
+  // Poll the video frame for barcodes every 500ms.
+  const scanInterval = setInterval(async () => {
+    // Stop scanning if modal was closed or another request started.
+    if (myReq !== barcodeReqId || !document.getElementById('barcodeOverlay').classList.contains('active')) {
+      clearInterval(scanInterval);
+      return;
+    }
+
+    try {
+      const barcodes = await barcodeDetector.detect(video);
+      if (barcodes.length > 0 && myReq === barcodeReqId) {
+        // Found a barcode.
+        clearInterval(scanInterval);
+        const barcode = barcodes[0].rawValue;
+        await lookupBarcode(barcode);
+      }
+    } catch (err) {
+      console.error('Barcode detection error:', err);
+    }
+  }, 500);
+}
+
+async function lookupBarcode(barcode) {
+  barcodeShowStep('progress');
+  const myReq = ++barcodeReqId;
+
+  try {
+    const resp = await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json`);
+
+    // Ignore stale responses.
+    if (myReq !== barcodeReqId) return;
+
+    if (!resp.ok) {
+      barcodeShowStep('stream');
+      barcodeShowError(lang === 'ar'
+        ? 'لم يتم العثور على المنتج. جرّب رمز آخر.'
+        : 'Product not found. Try another barcode.');
+      return;
+    }
+
+    const data = await resp.json();
+    if (!data.product) {
+      barcodeShowStep('stream');
+      barcodeShowError(lang === 'ar'
+        ? 'بيانات المنتج ناقصة.'
+        : 'Incomplete product data.');
+      return;
+    }
+
+    const product = data.product;
+    const nutriments = product.nutriments || {};
+
+    // Extract macros: OpenFoodFacts stores these per 100g.
+    const result = {
+      name_en: escapeHtml(product.product_name_en || product.product_name || 'Unknown'),
+      name_ar: product.product_name_ar ? escapeHtml(product.product_name_ar) : null,
+      kcal: nutriments['energy-kcal_100g'] || null,
+      protein: nutriments['proteins_100g'] || null,
+      fat: nutriments['fat_100g'] || null,
+      carbs: nutriments['carbohydrates_100g'] || null,
+      base_unit: 'per_100g',
+      confidence: 'high',
+      notes: lang === 'ar'
+        ? 'مصدر البيانات: OpenFoodFacts'
+        : 'Data source: OpenFoodFacts'
+    };
+
+    barcodeLastResult = result;
+    barcodeShowStep('result');
+    renderBarcodeResult(result);
+    document.getElementById('barcodeUseBtn').style.display = 'block';
+  } catch (err) {
+    if (myReq !== barcodeReqId) return;
+    barcodeShowStep('stream');
+    const msg = (lang === 'ar' ? 'خطأ: ' : 'Error: ') + err.message;
+    barcodeShowError(msg);
+    console.error(err);
+  }
+}
+
+function renderBarcodeResult(r) {
+  const fields = [
+    { k: 'kcal', en: 'Calories', ar: 'سعرات', round: true },
+    { k: 'protein', en: 'Protein', ar: 'بروتين', round: false },
+    { k: 'fat', en: 'Fat', ar: 'دهون', round: false },
+    { k: 'carbs', en: 'Carbs', ar: 'كارب', round: false }
+  ];
+  document.getElementById('barcodeValuesPreview').innerHTML = fields.map(f => {
+    const val = r[f.k];
+    const label = lang === 'ar' ? f.ar : f.en;
+    if (val == null) {
+      return `<div class="ocr-val-chip"><div class="ovc-label">${label}</div><div class="ovc-num missing">N/A</div></div>`;
+    }
+    const num = f.round ? Math.round(val) : Number(val).toFixed(1);
+    return `<div class="ocr-val-chip"><div class="ovc-label">${label}</div><div class="ovc-num">${num}</div></div>`;
+  }).join('');
+
+  // Show product name if available.
+  const nameNote = r.name_en || 'Product';
+  const notesEl = document.getElementById('barcodeSanity');
+  notesEl.textContent = nameNote;
+  notesEl.style.display = 'block';
+  notesEl.style.borderLeftColor = 'var(--accent)';
+}
+
+document.getElementById('barcodeUseBtn').addEventListener('click', () => {
+  if (!barcodeLastResult) return;
+  const r = barcodeLastResult;
+  closeBarcodeModal();
+  openAddFoodFromBarcode(r);
+});
+
+function openAddFoodFromBarcode(r) {
+  openAddFood();
+
+  if (r.name_en) document.getElementById('afEn').value = r.name_en;
+  if (r.name_ar) document.getElementById('afAr').value = r.name_ar;
+
+  // OpenFoodFacts data is already per 100g, so no scaling needed.
+  const scale = (v) => (v == null ? null : Math.round(v));
+
+  const kcal = scale(r.kcal);
+  const protein = scale(r.protein);
+  const fat = scale(r.fat);
+  const carbs = scale(r.carbs);
+
+  if (kcal != null) document.getElementById('afKcal').value = kcal;
+  if (protein != null) document.getElementById('afP').value = protein;
+  if (fat != null) document.getElementById('afF').value = fat;
+  if (carbs != null) document.getElementById('afC').value = carbs;
+
+  // Always per 100 g.
+  document.getElementById('afBase').value = 100;
+  document.getElementById('afBasisEn').value = 'per 100 g';
+  document.getElementById('afBasisAr').value = 'لكل 100 جم';
+
+  const titleEl = document.querySelector('.popup-modal h3');
+  if (titleEl) titleEl.textContent = lang === 'ar' ? '📷 مراجعة الصنف من الرمز' : '📷 Review product from barcode';
+
+  // Run the live calorie check on the freshly-filled values.
+  if (typeof updateAfKcalCheck === 'function') updateAfKcalCheck();
+
+  setTimeout(() => {
+    const nameField = document.getElementById('afEn');
+    if (nameField && !nameField.value) nameField.focus();
+  }, 100);
+}
+
+// Wire up the barcode button.
+const barcodeBtnEl = document.getElementById('barcodeBtn');
+if (barcodeBtnEl) barcodeBtnEl.addEventListener('click', openBarcodeModal);
+document.getElementById('barcodeCancelBtn').addEventListener('click', closeBarcodeModal);
+document.getElementById('barcodeOverlay').addEventListener('click', e => {
+  if (e.target.id === 'barcodeOverlay') closeBarcodeModal();
+});
 
 // ============ LIVE CALORIE-MISMATCH CHECK (Add Food modal) ============
 // Compares the entered Calories against P×4 + F×9 + C×4 and shows a live

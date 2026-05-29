@@ -1861,6 +1861,56 @@ body.ar .selected-table td.num { text-align: center; }
 }
 .edit-row-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
+/* ============ FEATURE TOGGLES ============ */
+.feat-help {
+  font-size: 12px; color: var(--ink-soft); margin: 4px 0 12px;
+  line-height: 1.5;
+}
+body.ar .feat-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+@media (max-width: 480px) {
+  .feat-grid { grid-template-columns: 1fr; }
+}
+.feat-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer; user-select: none;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--ink);
+  font-size: 13px;
+}
+.feat-row:hover { background: var(--accent-soft); border-color: var(--accent); }
+.feat-row input[type="checkbox"] {
+  width: 18px; height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer; flex-shrink: 0;
+}
+.feat-icon { font-size: 16px; flex-shrink: 0; }
+.feat-name { flex: 1; }
+body.ar .feat-name { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
+
+/* Feature-disabled visibility rules.
+   body.feat-off-X hides the matching panels + entry-point buttons.
+   Saved state stays in localStorage so toggling back on restores everything. */
+body.feat-off-water .water-widget,
+body.feat-off-water .feat-water-config { display: none !important; }
+body.feat-off-training .activity-section { display: none !important; }
+body.feat-off-smartSort .sort-menu-wrap { display: none !important; }
+body.feat-off-trends #trendsBtn { display: none !important; }
+body.feat-off-ocr .am-btn-photo { display: none !important; }
+body.feat-off-barcode .am-btn-barcode { display: none !important; }
+body.feat-off-recipes [data-tab="recipe"],
+body.feat-off-recipes #recipeTab { display: none !important; }
+body.feat-off-mealTemplates #templatesPane,
+body.feat-off-mealTemplates #saveCurrentDayBtn { display: none !important; }
+
 /* ============ ACTIVITY SECTION ============ */
 .activity-section {
   padding: 16px;
@@ -2969,7 +3019,7 @@ body.ar .footer li::before {
     </div>
 
     <!-- Water tracker settings group -->
-    <div class="settings-group">
+    <div class="settings-group feat-water-config">
       <div class="settings-group-label">
         <span>💧</span>
         <span data-en="Water Tracker" data-ar="متتبع المياه">Water Tracker</span>
@@ -2977,6 +3027,27 @@ body.ar .footer li::before {
       <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="number" id="waterMlPerGlass" min="100" max="500" value="250"></div>
       <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="number" id="waterGoalMl" min="500" max="5000" value="2000"></div>
       <button class="dt-btn primary" id="saveWaterSettingsBtn" data-en="Save" data-ar="حفظ">Save</button>
+    </div>
+
+    <!-- Feature toggles group -->
+    <div class="settings-group">
+      <div class="settings-group-label">
+        <span>🎛</span>
+        <span data-en="Features" data-ar="المميزات">Features</span>
+      </div>
+      <div class="feat-help"
+           data-en="Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched."
+           data-ar="عطّل المميزات التي لا تستخدمها. ستختفي اللوحات والأزرار المرتبطة بها مع الإبقاء على بياناتك المحفوظة.">Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched.</div>
+      <div class="feat-grid">
+        <label class="feat-row"><input type="checkbox" data-feat="water"><span class="feat-icon">💧</span><span class="feat-name" data-en="Water tracker" data-ar="متتبع المياه">Water tracker</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="training"><span class="feat-icon">🏋</span><span class="feat-name" data-en="Training / activity" data-ar="التمارين / النشاط">Training / activity</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="smartSort"><span class="feat-icon">🔀</span><span class="feat-name" data-en="Smart sort" data-ar="الترتيب الذكي">Smart sort</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="trends"><span class="feat-icon">📈</span><span class="feat-name" data-en="Statistics / charts" data-ar="الإحصائيات / المخططات">Statistics / charts</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="ocr"><span class="feat-icon">📷</span><span class="feat-name" data-en="Photo extraction (OCR)" data-ar="استخراج الصور (OCR)">Photo extraction (OCR)</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="barcode"><span class="feat-icon">🧾</span><span class="feat-name" data-en="Barcode scanner" data-ar="ماسح الباركود">Barcode scanner</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="recipes"><span class="feat-icon">🥘</span><span class="feat-name" data-en="Recipe builder" data-ar="منشئ الوصفات">Recipe builder</span></label>
+        <label class="feat-row"><input type="checkbox" data-feat="mealTemplates"><span class="feat-icon">💾</span><span class="feat-name" data-en="Meal templates" data-ar="قوالب الوجبات">Meal templates</span></label>
+      </div>
     </div>
 
   </div>
@@ -4174,6 +4245,21 @@ let savedDays = lsGet('mt-saved', []);
 if (!Array.isArray(savedDays)) savedDays = [];
 let waterState = lsGet('mt-water', {glasses:0, mlPerGlass:250, goalMl:2000});
 if (!waterState || typeof waterState !== 'object') waterState = {glasses:0, mlPerGlass:250, goalMl:2000};
+
+const FEATURE_KEYS = ['water','training','smartSort','trends','ocr','barcode','recipes','mealTemplates'];
+const DEFAULT_FEATURES = FEATURE_KEYS.reduce((acc, k) => (acc[k] = true, acc), {});
+let featureFlags = lsGet('mt-features', DEFAULT_FEATURES);
+if (!featureFlags || typeof featureFlags !== 'object') featureFlags = { ...DEFAULT_FEATURES };
+FEATURE_KEYS.forEach(k => { if (typeof featureFlags[k] !== 'boolean') featureFlags[k] = true; });
+function applyFeatures() {
+  FEATURE_KEYS.forEach(k => {
+    document.body.classList.toggle('feat-off-' + k, !featureFlags[k]);
+  });
+}
+function saveFeatures() {
+  lsSet('mt-features', JSON.stringify(featureFlags));
+  applyFeatures();
+}
 let currentFood = null;
 // When set (>=0), the popup is editing an existing day item at this index
 // instead of adding a new one.
@@ -5496,6 +5582,23 @@ document.getElementById('saveWaterSettingsBtn').addEventListener('click', () => 
   alert(lang === 'ar' ? 'تم حفظ إعدادات الماء ✓' : 'Water settings saved ✓');
 });
 
+function syncFeatureCheckboxes() {
+  document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
+    const key = cb.dataset.feat;
+    if (FEATURE_KEYS.indexOf(key) === -1) return;
+    cb.checked = !!featureFlags[key];
+  });
+}
+document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const key = cb.dataset.feat;
+    if (FEATURE_KEYS.indexOf(key) === -1) return;
+    featureFlags[key] = !!cb.checked;
+    saveFeatures();
+  });
+});
+syncFeatureCheckboxes();
+
 // ============ ADD METHOD CHOOSER ============
 function openAddMethodSheet() {
   document.getElementById('addMethodOverlay').classList.add('active');
@@ -6813,7 +6916,8 @@ function buildBackupObject() {
       lang: lang,
       theme: currentTheme,
       scheme: currentScheme,
-      templates: mealTemplates
+      templates: mealTemplates,
+      features: featureFlags
     }
   };
 }
@@ -6963,6 +7067,13 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         mealTemplates = payload.templates;
         lsSet('mt-templates', JSON.stringify(mealTemplates));
       }
+      if (payload.features && typeof payload.features === 'object') {
+        FEATURE_KEYS.forEach(k => {
+          if (typeof payload.features[k] === 'boolean') featureFlags[k] = payload.features[k];
+        });
+        saveFeatures();
+        syncFeatureCheckboxes();
+      }
 
       applyTheme();
       renderGoals();
@@ -7047,6 +7158,7 @@ document.getElementById('langToggle').addEventListener('click', () => {
 
 // ============ INIT ============
 applyTheme();
+applyFeatures();
 renderGoals();
 renderWater();
 applyLanguage();

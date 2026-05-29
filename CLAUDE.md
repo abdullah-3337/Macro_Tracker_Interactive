@@ -66,7 +66,7 @@ The hard-coded `DB` array, the imported `food_database-7.json`, and individual d
 
 ## State (localStorage keys)
 
-All keys are `mt-`-prefixed: `mt-db`, `mt-day`, `mt-saved`, `mt-goals`, `mt-lang`, `mt-theme`, `mt-scheme`, `mt-display-modes`, `mt-smart-sort`, `mt-settings-open`, `mt-gemini-key`.
+All keys are `mt-`-prefixed: `mt-db`, `mt-day`, `mt-saved`, `mt-goals`, `mt-lang`, `mt-theme`, `mt-scheme`, `mt-display-modes`, `mt-smart-sort`, `mt-settings-open`, `mt-gemini-key`, `mt-water`, `mt-workouts`, `mt-templates`, `mt-features`.
 
 - `lsGet(key, fallback)` (in the STATE section) is the safe JSON-read helper — use it for any new key so a corrupt value can't crash startup.
 - The sample `DB` array is overwritten on load if `mt-db` is present. New seed data must go through the JSON import path, not by editing the hard-coded `DB`.

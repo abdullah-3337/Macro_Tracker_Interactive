@@ -60,10 +60,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 /* ============================================================
    THEME SYSTEM
@@ -4200,6 +4198,43 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+// ============ LAZY-LOAD CDN SCRIPTS ============
+const CDN = {
+  xlsx:        'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  jspdf:       'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+  jspdfTable:  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js',
+};
+
+const _loadedScripts = new Map();
+function loadScript(url) {
+  if (_loadedScripts.has(url)) return _loadedScripts.get(url);
+  const p = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.async = true;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('Failed to load ' + url));
+    document.head.appendChild(s);
+  });
+  _loadedScripts.set(url, p);
+  return p;
+}
+
+async function withButtonBusy(btn, fn) {
+  if (!btn) return await fn();
+  const orig = btn.textContent;
+  const wasDisabled = btn.disabled;
+  btn.disabled = true;
+  btn.textContent = lang === 'ar' ? '⏳ جاري التحميل…' : '⏳ Loading…';
+  try {
+    await fn();
+  } finally {
+    btn.textContent = orig;
+    btn.disabled = wasDisabled;
+  }
+}
+
 function fadeAndRemove(el, doRemove) {
   if (!el || !window.matchMedia || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
     doRemove(); return;
@@ -5877,26 +5912,32 @@ function rowsToDb(rows) {
 }
 
 // ---- Export Excel ----
-document.getElementById('exportExcelBtn').addEventListener('click', () => {
-  try {
-    const rows = dbToRows();
-    const ws = XLSX.utils.json_to_sheet(rows, { header: SCHEMA });
-    // Column widths for readability
-    ws['!cols'] = [
-      {wch:18},{wch:14},{wch:32},{wch:32},{wch:11},{wch:22},{wch:24},
-      {wch:24},{wch:24},{wch:10},{wch:9},{wch:9},{wch:8},{wch:12},{wch:50}
-    ];
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'FoodDatabase');
-    XLSX.writeFile(wb, 'food_database.xlsx');
-  } catch(e) {
-    alert((lang === 'ar' ? 'خطأ في التصدير: ' : 'Export error: ') + e.message);
-  }
+document.getElementById('exportExcelBtn').addEventListener('click', async function() {
+  await withButtonBusy(this, async () => {
+    try {
+      await loadScript(CDN.xlsx);
+      const rows = dbToRows();
+      const ws = XLSX.utils.json_to_sheet(rows, { header: SCHEMA });
+      // Column widths for readability
+      ws['!cols'] = [
+        {wch:18},{wch:14},{wch:32},{wch:32},{wch:11},{wch:22},{wch:24},
+        {wch:24},{wch:24},{wch:10},{wch:9},{wch:9},{wch:8},{wch:12},{wch:50}
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'FoodDatabase');
+      XLSX.writeFile(wb, 'food_database.xlsx');
+    } catch(e) {
+      alert((lang === 'ar' ? 'خطأ في التصدير: ' : 'Export error: ') + e.message);
+    }
+  });
 });
 
 // ---- Export PDF ----
-document.getElementById('exportPdfBtn').addEventListener('click', () => {
+document.getElementById('exportPdfBtn').addEventListener('click', async function () {
+  await withButtonBusy(this, async () => {
   try {
+    await loadScript(CDN.jspdf);
+    await loadScript(CDN.jspdfTable);
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
     doc.setFontSize(16);
@@ -5942,11 +5983,19 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
   } catch(e) {
     alert((lang === 'ar' ? 'خطأ في تصدير PDF: ' : 'PDF export error: ') + e.message);
   }
+  });
 });
 
 // ---- Import Excel ----
-document.getElementById('importExcelBtn').addEventListener('click', () => {
-  document.getElementById('importFileInput').click();
+document.getElementById('importExcelBtn').addEventListener('click', async function () {
+  await withButtonBusy(this, async () => {
+    try {
+      await loadScript(CDN.xlsx);
+      document.getElementById('importFileInput').click();
+    } catch (e) {
+      alert((lang === 'ar' ? 'فشل تحميل المكتبة: ' : 'Library load failed: ') + e.message);
+    }
+  });
 });
 
 document.getElementById('importFileInput').addEventListener('change', (e) => {

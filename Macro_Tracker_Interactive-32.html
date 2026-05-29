@@ -517,33 +517,7 @@ body.ar header.cover .sub { font-family: 'JetBrains Mono', monospace; }
 .hdr-btn:hover { background: var(--on-grad-veil-hover); transform: translateY(-1px); }
 .hdr-btn:active { transform: translateY(0); }
 
-/* Scheme picker modal */
-.scheme-modal {
-  background: var(--paper); border-radius: 4px;
-  max-width: 460px; width: 100%;
-  border: 1px solid var(--line);
-  max-height: 90vh; display: flex; flex-direction: column;
-}
-.scheme-modal h3 {
-  padding: 18px 24px;
-  background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
-  color: var(--on-grad); font-size: 18px;
-  font-style: italic; font-weight: 600;
-  border-bottom: 3px solid var(--gold);
-  flex-shrink: 0;
-}
-body.ar .scheme-modal h3 { font-style: normal; }
-.scheme-body { padding: 18px 22px; overflow-y: auto; }
-.scheme-section-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--ink-soft); margin: 4px 0 10px;
-}
-body.ar .scheme-section-label {
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  font-size: 12px; text-transform: none; letter-spacing: 0;
-}
+/* Scheme picker modal (retired — now in #settingsOverlay) */
 .theme-seg {
   display: flex; gap: 0; margin-bottom: 22px;
   border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
@@ -578,10 +552,6 @@ body.ar .scheme-card { text-align: right; }
 .scheme-swatches span {
   width: 100%; height: 26px; border-radius: 3px;
   border: 1px solid rgba(0,0,0,0.08);
-}
-.scheme-modal .popup-actions {
-  padding: 14px 24px; border-top: 1px solid var(--line);
-  flex-shrink: 0;
 }
 
 /* ============ TREND CHARTS ============ */
@@ -1543,6 +1513,124 @@ body.ar .popup-actions button { font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 .btn-add:hover { background: var(--accent); color: var(--on-accent); }
 
+/* ============ UNIFIED SETTINGS MODAL ============ */
+.settings-modal {
+  background: var(--paper);
+  border-radius: 8px;
+  width: min(640px, 94vw);
+  max-height: 86vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+.settings-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-soft);
+}
+.settings-modal-head h3 {
+  margin: 0; font-family: 'Fraunces', serif; font-size: 20px;
+  color: var(--ink);
+}
+body.ar .settings-modal-head h3 { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.settings-modal-close {
+  background: transparent; border: 1px solid var(--line);
+  color: var(--ink); font-size: 22px; line-height: 1;
+  width: 34px; height: 34px; border-radius: 4px;
+  cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.settings-modal-close:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+.settings-tabs {
+  display: flex; flex-wrap: wrap; gap: 2px;
+  padding: 8px 8px 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.settings-tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 14px;
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  color: var(--ink-soft);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer; white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  border-radius: 4px 4px 0 0;
+}
+.settings-tab:hover { color: var(--ink); background: var(--veil-hi); }
+.settings-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: var(--paper);
+}
+.settings-tab-icon { font-size: 15px; line-height: 1; }
+body.ar .settings-tab-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
+
+.settings-modal-body {
+  padding: 18px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+.settings-pane { display: none; }
+.settings-pane.active { display: block; }
+.settings-pane-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 0 0 10px;
+}
+body.ar .settings-pane-label {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 12px;
+  text-transform: none; letter-spacing: 0;
+  font-weight: 700;
+}
+.settings-pane > .settings-pane-label + * { margin-bottom: 16px; }
+.settings-help {
+  font-size: 12px; color: var(--ink-soft); line-height: 1.5;
+  margin-top: 12px;
+}
+body.ar .settings-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+
+.lang-radio-row {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 6px;
+}
+.lang-radio {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer; user-select: none;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--ink);
+  font-size: 14px;
+}
+.lang-radio:hover { background: var(--accent-soft); border-color: var(--accent); }
+.lang-radio input[type="radio"] {
+  width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer;
+}
+.lr-flag { font-size: 20px; line-height: 1; }
+.lr-label { font-weight: 500; }
+body.ar .lr-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 15px; }
+
+@media (max-width: 480px) {
+  .settings-tab { padding: 10px 10px; font-size: 12px; }
+  .settings-tab-icon { font-size: 14px; }
+  .settings-modal-body { padding: 14px; }
+}
+
+/* RTL adjustments */
+[dir="rtl"] .settings-tabs { padding: 8px 8px 0; }
+
 /* ============ ADD METHOD CHOOSER ============ */
 .add-method-modal {
   background: var(--paper);
@@ -2147,63 +2235,7 @@ body.ar .db-empty-title { font-family: 'IBM Plex Sans Arabic', sans-serif; font-
 }
 body.ar .db-empty-sub { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
 
-/* ============ COLLAPSIBLE SETTINGS SECTION ============ */
-.settings-section {
-  margin-bottom: 14px;
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  background: var(--paper);
-  overflow: hidden;
-}
-.settings-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 14px;
-  cursor: pointer;
-  user-select: none;
-  background: var(--paper-soft);
-  transition: background 0.15s;
-}
-.settings-header:hover { background: var(--accent-soft); }
-.settings-header .sh-title {
-  display: flex; align-items: center; gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--ink);
-}
-body.ar .settings-header .sh-title {
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  font-size: 13px; text-transform: none; letter-spacing: 0;
-}
-.settings-header .sh-chevron {
-  font-size: 14px; color: var(--ink-soft);
-  transition: transform 0.25s ease;
-}
-.settings-section.open .sh-chevron { transform: rotate(180deg); }
-.settings-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-  padding: 0 14px;
-}
-.settings-section.open .settings-body {
-  max-height: 1200px;
-  padding: 14px;
-  border-top: 1px solid var(--line);
-}
-.settings-group { margin-bottom: 18px; }
-.settings-group:last-child { margin-bottom: 0; }
-.settings-group-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; text-transform: uppercase;
-  letter-spacing: 0.12em; color: var(--ink-soft);
-  margin-bottom: 8px;
-  display: flex; align-items: center; gap: 6px;
-}
-body.ar .settings-group-label {
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  font-size: 12px; text-transform: none; letter-spacing: 0;
-}
+/* Dead CSS removed (settings-section/header/body/group moved to unified modal) */
 .settings-btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* ============ API KEY FIELD ============ */
@@ -2801,8 +2833,7 @@ body.ar .footer li::before {
     </div>
     <div class="header-tools">
       <button class="hdr-btn" id="themeToggle" title="Toggle light / dark" aria-label="Toggle light or dark mode">🌙</button>
-      <button class="hdr-btn" id="schemeBtn" title="Color scheme" aria-label="Choose color scheme">🎨</button>
-      <button class="lang-toggle" id="langToggle">عربي</button>
+      <button class="hdr-btn" id="settingsBtn" title="Settings" aria-label="Open settings">⚙</button>
     </div>
   </div>
 </header>
@@ -2910,103 +2941,7 @@ body.ar .footer li::before {
   </div>
 </div>
 
-<!-- Collapsible settings & data tools (rare use) -->
-<div class="settings-section" id="settingsSection">
-  <div class="settings-header" id="settingsHeader">
-    <span class="sh-title">
-      <span>⚙</span>
-      <span data-en="Settings &amp; Data Tools" data-ar="الإعدادات وأدوات البيانات">Settings &amp; Data Tools</span>
-    </span>
-    <span class="sh-chevron">▾</span>
-  </div>
-  <div class="settings-body">
-
-    <!-- API Key group -->
-    <div class="settings-group">
-      <div class="settings-group-label">
-        <span>🔑</span>
-        <span data-en="Gemini API Key (for 📷 photo extraction)" data-ar="مفتاح Gemini API (لاستخراج البيانات من الصور 📷)">Gemini API Key (for 📷 photo extraction)</span>
-      </div>
-      <div class="apikey-row">
-        <input type="password" class="apikey-input" id="apiKeyInput"
-               placeholder="AIzaSy..."
-               data-placeholder-en="AIzaSy..." data-placeholder-ar="AIzaSy...">
-        <button class="dt-btn primary" id="saveApiKeyBtn" data-en="Save" data-ar="حفظ">Save</button>
-        <button class="dt-btn warn" id="clearApiKeyBtn" data-en="Clear" data-ar="مسح">Clear</button>
-      </div>
-      <div class="apikey-status disconnected" id="apiKeyStatus">
-        <span data-en="No key saved — photo extraction disabled" data-ar="لا يوجد مفتاح محفوظ — استخراج الصور معطّل">No key saved — photo extraction disabled</span>
-      </div>
-      <div class="apikey-help"
-           data-en="Get a free key at aistudio.google.com/app/apikey. Free tier: 1,500 requests/day, no credit card needed."
-           data-ar="احصل على مفتاح مجاني من aistudio.google.com/app/apikey. الباقة المجانية: 1500 طلب يومياً، بدون بطاقة ائتمان.">Get a free key at aistudio.google.com/app/apikey. Free tier: 1,500 requests/day, no credit card needed.</div>
-      <div class="apikey-privacy"
-           data-en="⚠ Privacy: photos you extract are sent to Google for processing. Google may use free-tier data for model training. Your key is stored only in this browser."
-           data-ar="⚠ الخصوصية: الصور التي تستخرجها تُرسَل إلى جوجل للمعالجة. قد تستخدم جوجل بيانات الباقة المجانية لتدريب النماذج. مفتاحك محفوظ في هذا المتصفح فقط.">⚠ Privacy: photos you extract are sent to Google for processing. Google may use free-tier data for model training. Your key is stored only in this browser.</div>
-    </div>
-
-    <!-- Export group -->
-    <div class="settings-group">
-      <div class="settings-group-label">
-        <span>⬇</span>
-        <span data-en="Export &amp; Backup" data-ar="تصدير ونسخ احتياطي">Export &amp; Backup</span>
-      </div>
-      <div class="settings-btn-row">
-        <button class="dt-btn primary" id="exportExcelBtn" data-en="⬇ Export Excel" data-ar="⬇ تصدير Excel">⬇ Export Excel</button>
-        <button class="dt-btn" id="exportPdfBtn" data-en="⬇ Export PDF" data-ar="⬇ تصدير PDF">⬇ Export PDF</button>
-        <button class="dt-btn json" id="exportJsonBtn" data-en="⬇ Backup (JSON)" data-ar="⬇ نسخة احتياطية (JSON)">⬇ Backup (JSON)</button>
-        <button class="dt-btn" id="exportDbJsonBtn" data-en="⬇ DB as JSON" data-ar="⬇ القاعدة JSON">⬇ DB as JSON</button>
-      </div>
-    </div>
-
-    <!-- Import group -->
-    <div class="settings-group">
-      <div class="settings-group-label">
-        <span>⬆</span>
-        <span data-en="Import &amp; Restore" data-ar="استيراد واسترجاع">Import &amp; Restore</span>
-      </div>
-      <div class="settings-btn-row">
-        <button class="dt-btn warn" id="importExcelBtn" data-en="⬆ Import Excel" data-ar="⬆ استيراد Excel">⬆ Import Excel</button>
-        <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none">
-        <button class="dt-btn warn" id="importJsonBtn" data-en="⬆ Restore JSON" data-ar="⬆ استرجاع JSON">⬆ Restore JSON</button>
-        <input type="file" id="importJsonInput" accept=".json,application/json" style="display:none">
-      </div>
-    </div>
-
-    <!-- Water tracker settings group -->
-    <div class="settings-group feat-water-config">
-      <div class="settings-group-label">
-        <span>💧</span>
-        <span data-en="Water Tracker" data-ar="متتبع المياه">Water Tracker</span>
-      </div>
-      <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="number" id="waterMlPerGlass" min="100" max="500" value="250"></div>
-      <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="number" id="waterGoalMl" min="500" max="5000" value="2000"></div>
-      <button class="dt-btn primary" id="saveWaterSettingsBtn" data-en="Save" data-ar="حفظ">Save</button>
-    </div>
-
-    <!-- Feature toggles group -->
-    <div class="settings-group">
-      <div class="settings-group-label">
-        <span>🎛</span>
-        <span data-en="Features" data-ar="المميزات">Features</span>
-      </div>
-      <div class="feat-help"
-           data-en="Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched."
-           data-ar="عطّل المميزات التي لا تستخدمها. ستختفي اللوحات والأزرار المرتبطة بها مع الإبقاء على بياناتك المحفوظة.">Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched.</div>
-      <div class="feat-grid">
-        <label class="feat-row"><input type="checkbox" data-feat="water"><span class="feat-icon">💧</span><span class="feat-name" data-en="Water tracker" data-ar="متتبع المياه">Water tracker</span></label>
-        <label class="feat-row"><input type="checkbox" data-feat="training"><span class="feat-icon">🏋</span><span class="feat-name" data-en="Training / activity" data-ar="التمارين / النشاط">Training / activity</span></label>
-        <label class="feat-row"><input type="checkbox" data-feat="smartSort"><span class="feat-icon">🔀</span><span class="feat-name" data-en="Smart sort" data-ar="الترتيب الذكي">Smart sort</span></label>
-        <label class="feat-row"><input type="checkbox" data-feat="trends"><span class="feat-icon">📈</span><span class="feat-name" data-en="Statistics / charts" data-ar="الإحصائيات / المخططات">Statistics / charts</span></label>
-        <label class="feat-row"><input type="checkbox" data-feat="ocr"><span class="feat-icon">📷</span><span class="feat-name" data-en="Photo extraction (OCR)" data-ar="استخراج الصور (OCR)">Photo extraction (OCR)</span></label>
-        <label class="feat-row"><input type="checkbox" data-feat="barcode"><span class="feat-icon">🧾</span><span class="feat-name" data-en="Barcode scanner" data-ar="ماسح الباركود">Barcode scanner</span></label>
-        <label class="feat-row"><input type="checkbox" data-feat="recipes"><span class="feat-icon">🥘</span><span class="feat-name" data-en="Recipe builder" data-ar="منشئ الوصفات">Recipe builder</span></label>
-        <label class="feat-row"><input type="checkbox" data-feat="mealTemplates"><span class="feat-icon">💾</span><span class="feat-name" data-en="Meal templates" data-ar="قوالب الوجبات">Meal templates</span></label>
-      </div>
-    </div>
-
-  </div>
-</div>
+<!-- Settings moved to #settingsOverlay (opens via #settingsBtn in header) -->
 
 <div class="badge-key">
   <span class="badge-key-label" data-en="Markers:" data-ar="العلامات:">Markers:</span>
@@ -3580,22 +3515,123 @@ body.ar .footer li::before {
   </div>
 </div>
 
-<!-- ============ SCHEME / THEME PICKER MODAL ============ -->
-<div class="popup-overlay" id="schemeOverlay">
-  <div class="scheme-modal">
-    <h3 data-en="Appearance" data-ar="المظهر">Appearance</h3>
-    <div class="scheme-body">
-      <div class="scheme-section-label" data-en="Mode" data-ar="الوضع">Mode</div>
-      <div class="theme-seg" id="themeSeg">
-        <button data-theme-choice="light"  data-en="☀ Light"  data-ar="☀ نهاري">☀ Light</button>
-        <button data-theme-choice="dark"   data-en="🌙 Dark"   data-ar="🌙 ليلي">🌙 Dark</button>
-        <button data-theme-choice="system" data-en="⚙ System" data-ar="⚙ النظام">⚙ System</button>
-      </div>
-      <div class="scheme-section-label" data-en="Color scheme" data-ar="نظام الألوان">Color scheme</div>
-      <div class="scheme-grid" id="schemeGrid"><!-- cards injected by JS --></div>
+<!-- ============ UNIFIED SETTINGS MODAL ============ -->
+<div class="popup-overlay" id="settingsOverlay">
+  <div class="settings-modal">
+    <div class="settings-modal-head">
+      <h3 data-en="Settings" data-ar="الإعدادات">Settings</h3>
+      <button class="settings-modal-close" id="settingsCloseBtn" aria-label="Close settings">×</button>
     </div>
-    <div class="popup-actions">
-      <button class="btn-cancel" id="schemeCloseBtn" data-en="Done" data-ar="تم">Done</button>
+
+    <nav class="settings-tabs" role="tablist">
+      <button class="settings-tab active" data-tab="lang"     role="tab" aria-selected="true">
+        <span class="settings-tab-icon">🌐</span><span class="settings-tab-label" data-en="Language" data-ar="اللغة">Language</span>
+      </button>
+      <button class="settings-tab" data-tab="appearance" role="tab" aria-selected="false">
+        <span class="settings-tab-icon">🎨</span><span class="settings-tab-label" data-en="Appearance" data-ar="المظهر">Appearance</span>
+      </button>
+      <button class="settings-tab" data-tab="features"   role="tab" aria-selected="false">
+        <span class="settings-tab-icon">🎛</span><span class="settings-tab-label" data-en="Features" data-ar="المميزات">Features</span>
+      </button>
+      <button class="settings-tab" data-tab="water"      role="tab" aria-selected="false">
+        <span class="settings-tab-icon">💧</span><span class="settings-tab-label" data-en="Water" data-ar="الماء">Water</span>
+      </button>
+      <button class="settings-tab" data-tab="apikey"     role="tab" aria-selected="false">
+        <span class="settings-tab-icon">🔑</span><span class="settings-tab-label" data-en="API Key" data-ar="مفتاح API">API Key</span>
+      </button>
+      <button class="settings-tab" data-tab="data"       role="tab" aria-selected="false">
+        <span class="settings-tab-icon">📁</span><span class="settings-tab-label" data-en="Data" data-ar="البيانات">Data</span>
+      </button>
+    </nav>
+
+    <div class="settings-modal-body">
+
+      <!-- LANGUAGE TAB -->
+      <div class="settings-pane active" data-pane="lang" role="tabpanel">
+        <div class="settings-pane-label" data-en="App language" data-ar="لغة التطبيق">App language</div>
+        <div class="lang-radio-row">
+          <label class="lang-radio"><input type="radio" name="settingsLang" value="en"><span class="lr-flag">🇬🇧</span><span class="lr-label">English</span></label>
+          <label class="lang-radio"><input type="radio" name="settingsLang" value="ar"><span class="lr-flag">🇸🇦</span><span class="lr-label">العربية</span></label>
+        </div>
+        <div class="settings-help"
+             data-en="Switching language flips the layout direction (LTR/RTL) and updates all labels."
+             data-ar="تغيير اللغة يقلب اتجاه التخطيط (LTR/RTL) ويحدّث كل النصوص.">Switching language flips the layout direction (LTR/RTL) and updates all labels.</div>
+      </div>
+
+      <!-- APPEARANCE TAB -->
+      <div class="settings-pane" data-pane="appearance" role="tabpanel">
+        <div class="settings-pane-label" data-en="Mode" data-ar="الوضع">Mode</div>
+        <div class="theme-seg" id="themeSeg">
+          <button data-theme-choice="light"  data-en="☀ Light"  data-ar="☀ نهاري">☀ Light</button>
+          <button data-theme-choice="dark"   data-en="🌙 Dark"   data-ar="🌙 ليلي">🌙 Dark</button>
+          <button data-theme-choice="system" data-en="⚙ System" data-ar="⚙ النظام">⚙ System</button>
+        </div>
+        <div class="settings-pane-label" data-en="Color scheme" data-ar="نظام الألوان">Color scheme</div>
+        <div class="scheme-grid" id="schemeGrid"><!-- cards injected by JS --></div>
+      </div>
+
+      <!-- FEATURES TAB -->
+      <div class="settings-pane" data-pane="features" role="tabpanel">
+        <div class="feat-help"
+             data-en="Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched."
+             data-ar="عطّل المميزات التي لا تستخدمها. ستختفي اللوحات والأزرار المرتبطة بها مع الإبقاء على بياناتك المحفوظة.">Turn off features you don't use. The matching panels and buttons disappear; saved data stays untouched.</div>
+        <div class="feat-grid">
+          <label class="feat-row"><input type="checkbox" data-feat="water"><span class="feat-icon">💧</span><span class="feat-name" data-en="Water tracker" data-ar="متتبع المياه">Water tracker</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="training"><span class="feat-icon">🏋</span><span class="feat-name" data-en="Training / activity" data-ar="التمارين / النشاط">Training / activity</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="smartSort"><span class="feat-icon">🔀</span><span class="feat-name" data-en="Smart sort" data-ar="الترتيب الذكي">Smart sort</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="trends"><span class="feat-icon">📈</span><span class="feat-name" data-en="Statistics / charts" data-ar="الإحصائيات / المخططات">Statistics / charts</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="ocr"><span class="feat-icon">📷</span><span class="feat-name" data-en="Photo extraction (OCR)" data-ar="استخراج الصور (OCR)">Photo extraction (OCR)</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="barcode"><span class="feat-icon">🧾</span><span class="feat-name" data-en="Barcode scanner" data-ar="ماسح الباركود">Barcode scanner</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="recipes"><span class="feat-icon">🥘</span><span class="feat-name" data-en="Recipe builder" data-ar="منشئ الوصفات">Recipe builder</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="mealTemplates"><span class="feat-icon">💾</span><span class="feat-name" data-en="Meal templates" data-ar="قوالب الوجبات">Meal templates</span></label>
+        </div>
+      </div>
+
+      <!-- WATER TAB -->
+      <div class="settings-pane" data-pane="water" role="tabpanel">
+        <div class="settings-pane-label" data-en="Water tracker config" data-ar="إعدادات متتبع المياه">Water tracker config</div>
+        <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="number" id="waterMlPerGlass" min="100" max="500" value="250"></div>
+        <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="number" id="waterGoalMl" min="500" max="5000" value="2000"></div>
+        <button class="dt-btn primary" id="saveWaterSettingsBtn" data-en="Save" data-ar="حفظ">Save</button>
+      </div>
+
+      <!-- API KEY TAB -->
+      <div class="settings-pane" data-pane="apikey" role="tabpanel">
+        <div class="settings-pane-label" data-en="Gemini API key (for 📷 photo extraction)" data-ar="مفتاح Gemini API (لاستخراج البيانات من الصور 📷)">Gemini API key (for 📷 photo extraction)</div>
+        <div class="apikey-row">
+          <input type="password" class="apikey-input" id="apiKeyInput" placeholder="AIzaSy...">
+          <button class="dt-btn primary" id="saveApiKeyBtn" data-en="Save" data-ar="حفظ">Save</button>
+          <button class="dt-btn warn" id="clearApiKeyBtn" data-en="Clear" data-ar="مسح">Clear</button>
+        </div>
+        <div class="apikey-status disconnected" id="apiKeyStatus">
+          <span data-en="No key saved — photo extraction disabled" data-ar="لا يوجد مفتاح محفوظ — استخراج الصور معطّل">No key saved — photo extraction disabled</span>
+        </div>
+        <div class="apikey-help"
+             data-en="Get a free key at aistudio.google.com/app/apikey. Free tier: 1,500 requests/day, no credit card needed."
+             data-ar="احصل على مفتاح مجاني من aistudio.google.com/app/apikey. الباقة المجانية: 1500 طلب يومياً، بدون بطاقة ائتمان.">Get a free key at aistudio.google.com/app/apikey. Free tier: 1,500 requests/day, no credit card needed.</div>
+        <div class="apikey-privacy"
+             data-en="⚠ Privacy: photos you extract are sent to Google for processing. Google may use free-tier data for model training. Your key is stored only in this browser."
+             data-ar="⚠ الخصوصية: الصور التي تستخرجها تُرسَل إلى جوجل للمعالجة. قد تستخدم جوجل بيانات الباقة المجانية لتدريب النماذج. مفتاحك محفوظ في هذا المتصفح فقط.">⚠ Privacy: photos you extract are sent to Google for processing. Google may use free-tier data for model training. Your key is stored only in this browser.</div>
+      </div>
+
+      <!-- DATA TAB -->
+      <div class="settings-pane" data-pane="data" role="tabpanel">
+        <div class="settings-pane-label" data-en="Export &amp; backup" data-ar="تصدير ونسخ احتياطي">Export &amp; backup</div>
+        <div class="settings-btn-row">
+          <button class="dt-btn primary" id="exportExcelBtn" data-en="⬇ Export Excel" data-ar="⬇ تصدير Excel">⬇ Export Excel</button>
+          <button class="dt-btn" id="exportPdfBtn" data-en="⬇ Export PDF" data-ar="⬇ تصدير PDF">⬇ Export PDF</button>
+          <button class="dt-btn json" id="exportJsonBtn" data-en="⬇ Backup (JSON)" data-ar="⬇ نسخة احتياطية (JSON)">⬇ Backup (JSON)</button>
+          <button class="dt-btn" id="exportDbJsonBtn" data-en="⬇ DB as JSON" data-ar="⬇ القاعدة JSON">⬇ DB as JSON</button>
+        </div>
+        <div class="settings-pane-label" data-en="Import &amp; restore" data-ar="استيراد واسترجاع" style="margin-top:18px;">Import &amp; restore</div>
+        <div class="settings-btn-row">
+          <button class="dt-btn warn" id="importExcelBtn" data-en="⬆ Import Excel" data-ar="⬆ استيراد Excel">⬆ Import Excel</button>
+          <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none">
+          <button class="dt-btn warn" id="importJsonBtn" data-en="⬆ Restore JSON" data-ar="⬆ استرجاع JSON">⬆ Restore JSON</button>
+          <input type="file" id="importJsonInput" accept=".json,application/json" style="display:none">
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -6956,17 +6992,7 @@ function syncSchemeModalUI() {
   });
 }
 
-document.getElementById('schemeBtn').addEventListener('click', () => {
-  buildSchemeCards();
-  syncSchemeModalUI();
-  document.getElementById('schemeOverlay').classList.add('active');
-});
-document.getElementById('schemeCloseBtn').addEventListener('click', () => {
-  document.getElementById('schemeOverlay').classList.remove('active');
-});
-document.getElementById('schemeOverlay').addEventListener('click', e => {
-  if (e.target.id === 'schemeOverlay') e.currentTarget.classList.remove('active');
-});
+// Scheme modal retired — Appearance now lives in #settingsOverlay (see settingsBtn handler).
 document.querySelectorAll('#themeSeg button').forEach(btn => {
   btn.addEventListener('click', () => {
     currentTheme = btn.dataset.themeChoice;
@@ -7178,7 +7204,9 @@ function applyLanguage() {
   document.body.classList.add(lang);
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  document.getElementById('langToggle').textContent = lang === 'en' ? 'عربي' : 'English';
+
+  // Sync language radios in the settings modal if present
+  document.querySelectorAll('input[name="settingsLang"]').forEach(r => { r.checked = (r.value === lang); });
 
   document.querySelectorAll('[data-en][data-ar]').forEach(el => {
     if (el.tagName === 'INPUT') return;
@@ -7213,27 +7241,7 @@ function applyLanguage() {
   if (typeof refreshApiKeyStatus === 'function') refreshApiKeyStatus();
 }
 
-document.getElementById('langToggle').addEventListener('click', () => {
-  // Suppress slide transitions on the panel/FAB while direction flips
-  const panel = document.getElementById('sidePanel');
-  const fab = document.getElementById('fab');
-  panel.style.transition = 'none';
-  fab.style.transition = 'none';
-  // Make sure the panel is closed so it doesn't slide across the screen
-  closePanel();
-
-  lang = lang === 'en' ? 'ar' : 'en';
-  lsSet('mt-lang', lang);
-  applyLanguage();
-
-  // Re-enable transitions on the next frame, after the direction change is painted
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      panel.style.transition = '';
-      fab.style.transition = '';
-    });
-  });
-});
+// Language toggle moved into Settings → Language tab (see settingsLang radios).
 
 // ============ INIT ============
 rebuildSearchIndex();
@@ -7284,25 +7292,73 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAllSortMenus();
 });
 
-// ============ COLLAPSIBLE SETTINGS SECTION ============
-(function initSettingsCollapse() {
-  const section = document.getElementById('settingsSection');
-  const header = document.getElementById('settingsHeader');
-  if (!section || !header) return;
+// Settings collapse retired — see #settingsOverlay (initSettingsModal below).
 
-  // Restore last open/closed state (default: closed)
-  if (localStorage.getItem('mt-settings-open') === '1') {
-    section.classList.add('open');
+// ============ UNIFIED SETTINGS MODAL ============
+(function initSettingsModal() {
+  const overlay = document.getElementById('settingsOverlay');
+  const openBtn = document.getElementById('settingsBtn');
+  const closeBtn = document.getElementById('settingsCloseBtn');
+  if (!overlay || !openBtn || !closeBtn) return;
+
+  const tabs = Array.from(overlay.querySelectorAll('.settings-tab'));
+  const panes = Array.from(overlay.querySelectorAll('.settings-pane'));
+
+  function selectTab(id) {
+    tabs.forEach(t => {
+      const on = t.dataset.tab === id;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panes.forEach(p => p.classList.toggle('active', p.dataset.pane === id));
+    try { localStorage.setItem('mt-settings-tab', id); } catch(e) {}
   }
 
-  header.addEventListener('click', () => {
-    section.classList.toggle('open');
-    lsSet('mt-settings-open', section.classList.contains('open') ? '1' : '0');
-    if (section.classList.contains('open')) {
-      refreshApiKeyStatus();
-      refreshWaterSettingsUI();
-    }
+  let lastTab = 'lang';
+  try { lastTab = localStorage.getItem('mt-settings-tab') || 'lang'; } catch(e) {}
+  if (!tabs.some(t => t.dataset.tab === lastTab)) lastTab = 'lang';
+  selectTab(lastTab);
+
+  tabs.forEach(t => t.addEventListener('click', () => selectTab(t.dataset.tab)));
+
+  function openSettings(targetTab) {
+    if (targetTab) selectTab(targetTab);
+    // Refresh dynamic content
+    if (typeof refreshApiKeyStatus === 'function') refreshApiKeyStatus();
+    if (typeof refreshWaterSettingsUI === 'function') refreshWaterSettingsUI();
+    if (typeof buildSchemeCards === 'function') buildSchemeCards();
+    if (typeof syncSchemeModalUI === 'function') syncSchemeModalUI();
+    if (typeof syncFeatureCheckboxes === 'function') syncFeatureCheckboxes();
+    document.querySelectorAll('input[name="settingsLang"]').forEach(r => { r.checked = (r.value === lang); });
+    overlay.classList.add('active');
+  }
+  function closeSettings() { overlay.classList.remove('active'); }
+
+  openBtn.addEventListener('click', () => openSettings());
+  closeBtn.addEventListener('click', closeSettings);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeSettings(); });
+
+  // Language radios — same effect as the old #langToggle
+  overlay.querySelectorAll('input[name="settingsLang"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked || radio.value === lang) return;
+      const panel = document.getElementById('sidePanel');
+      const fab = document.getElementById('fab');
+      if (panel) panel.style.transition = 'none';
+      if (fab) fab.style.transition = 'none';
+      if (typeof closePanel === 'function') closePanel();
+      lang = radio.value;
+      lsSet('mt-lang', lang);
+      applyLanguage();
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (panel) panel.style.transition = '';
+        if (fab) fab.style.transition = '';
+      }));
+    });
   });
+
+  // Expose for OCR fallback to deep-link to API tab
+  window.openSettingsAt = openSettings;
 })();
 
 // ============ GEMINI API KEY MANAGEMENT ============
@@ -7587,11 +7643,10 @@ function openOcrModal() {
     alert(lang === 'ar'
       ? 'تحتاج إلى تعيين مفتاح Gemini API أولاً. سأفتح لك الإعدادات.'
       : 'You need to set a Gemini API key first. Opening Settings for you.');
-    const section = document.getElementById('settingsSection');
-    section.classList.add('open');
-    lsSet('mt-settings-open', '1');
-    document.getElementById('apiKeyInput').focus();
-    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (typeof window.openSettingsAt === 'function') {
+      window.openSettingsAt('apikey');
+      setTimeout(() => { const el = document.getElementById('apiKeyInput'); if (el) el.focus(); }, 50);
+    }
     return;
   }
 

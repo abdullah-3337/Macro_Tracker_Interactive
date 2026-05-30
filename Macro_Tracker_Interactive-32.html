@@ -5787,25 +5787,11 @@ function runSearchFromInput() {
   const now = searchInput.value;
   const firstVisible = applyFilters();
   _lastSearchQuery = now;
-  // Auto-scroll to the first match — but NOT while the input still has focus.
-  // On mobile, the on-screen keyboard + smooth-scroll fight each other and the
-  // fixed bottom-dock (where this search bar lives) ends up out of the user's
-  // visible area. Skipping the scroll while typing keeps the search bar pinned.
-  // The scroll-into-view is still desirable for category-filter clicks (those
-  // do not focus the search input).
-  if (firstVisible && now !== before && document.activeElement !== searchInput) {
+  if (firstVisible && now !== before) {
     firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 searchInput.addEventListener('input', debounce(runSearchFromInput, 250));
-// When the user dismisses the keyboard / blurs the input, if their last query
-// produced matches, bring the first match into view once. This recovers the
-// scroll-to-first-result UX without fighting the keyboard during typing.
-searchInput.addEventListener('blur', () => {
-  if (searchInput.value === '') return;
-  const firstVisible = document.querySelector('.category-section:not(.hidden)');
-  if (firstVisible) firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
 filterBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     filterBtns.forEach(b => b.classList.remove('active'));
@@ -7268,6 +7254,27 @@ renderWorkoutsList();
 requestAnimationFrame(() => requestAnimationFrame(() => {
   document.documentElement.classList.remove('preload');
 }));
+
+// ============ DOCK ABOVE KEYBOARD ============
+// On Android, `position: fixed; bottom: 0` anchors to the layout viewport so
+// the bottom dock disappears under the soft keyboard whenever the page scrolls
+// (e.g. the search auto-scroll). Track the VisualViewport and translate the
+// dock up by the keyboard-occluded amount so it stays just above the keyboard.
+// No-op when the keyboard is closed and on browsers without the VisualViewport
+// API.
+(function initDockKeyboardTracking() {
+  if (!window.visualViewport) return;
+  const dock = document.getElementById('bottomDock');
+  if (!dock) return;
+  const vv = window.visualViewport;
+  function sync() {
+    const hidden = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    dock.style.transform = hidden > 0 ? `translateY(-${hidden}px)` : '';
+  }
+  vv.addEventListener('resize', sync);
+  vv.addEventListener('scroll', sync);
+  sync();
+})();
 
 // ============ GLOBAL SORT MENU HANDLERS ============
 function closeAllSortMenus() {

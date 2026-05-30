@@ -1308,7 +1308,9 @@ body.ar .badge-key-text { font-style: normal; }
   background: var(--paper);
   border-radius: 4px;
   max-width: 500px; width: 100%;
-  max-height: 90vh; overflow-y: auto; overflow-x: hidden;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto; overflow-x: hidden;
   border: 1px solid var(--line);
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
@@ -2444,7 +2446,13 @@ body.ar .ocr-err { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 1
   background: var(--paper); border-radius: 4px;
   max-width: 560px; width: 100%;
   border: 1px solid var(--line);
-  max-height: 92vh; display: flex; flex-direction: column;
+  /* Cap to the visible viewport minus the .popup-overlay 16 px padding
+     top + bottom. dvh tracks the actually-visible area on mobile (vh
+     can exceed it when the browser URL bar is showing). vh fallback
+     for browsers without dvh. */
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  display: flex; flex-direction: column;
 }
 .addfood-modal h3 {
   padding: 18px 24px;
@@ -3109,7 +3117,7 @@ body.ar .footer li::before {
     </div>
 
     <!-- ============ MEAL TEMPLATES PANE ============ -->
-    <div class="templates-pane" id="templatesPane" style="display:none;">
+    <div class="templates-pane" id="templatesPane">
       <div class="templates-header">
         <h4 data-en="💾 Saved Meal Templates" data-ar="💾 قوالب الوجبات المحفوظة">💾 Saved Meal Templates</h4>
         <button class="template-action-btn" id="saveCurrentDayBtn" title="Save current day as a template"

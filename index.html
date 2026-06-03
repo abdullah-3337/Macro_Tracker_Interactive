@@ -1393,6 +1393,33 @@ body.ar .popup-header h3 { font-style: normal; }
   font-size: 10px; opacity: 0.7;
   margin-top: 6px; letter-spacing: 0.1em; text-transform: uppercase;
 }
+/* Per-food actions inside the popup header — replaces the old in-row
+   Edit/Share/Delete icons that ate horizontal space in every table row. */
+.popup-food-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 12px;
+}
+.popup-food-action {
+  background: var(--on-grad-veil);
+  border: 1px solid var(--on-grad-bd);
+  color: var(--on-grad);
+  padding: 6px 12px; border-radius: 6px;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.popup-food-action:hover { background: var(--on-grad-veil-hover); }
+.popup-food-action:active { transform: scale(0.97); }
+.popup-food-action.danger {
+  border-color: var(--over);
+}
+.popup-food-action.danger:hover {
+  background: var(--over); color: #fff; border-color: var(--over);
+}
+.popup-food-action.confirming {
+  background: var(--over); color: #fff; border-color: var(--over);
+}
+body.ar .popup-food-action { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 .popup-body { padding: 24px; box-sizing: border-box; overflow-x: hidden; }
 .popup-macros {
   display: grid;
@@ -3248,6 +3275,17 @@ body.ar .footer li::before {
     <div class="popup-header">
       <h3 id="popupTitle">Food</h3>
       <div class="per100" id="popupPer100">per 100 g raw</div>
+      <div class="popup-food-actions" id="popupFoodActions">
+        <button type="button" class="popup-food-action" id="popupEditFoodBtn"
+                data-title-en="Edit this food" data-title-ar="تعديل هذا الصنف"
+                aria-label="Edit food">✏ <span data-en="Edit" data-ar="تعديل">Edit</span></button>
+        <button type="button" class="popup-food-action" id="popupShareFoodBtn"
+                data-title-en="Share this food" data-title-ar="مشاركة هذا الصنف"
+                aria-label="Share food">🔗 <span data-en="Share" data-ar="مشاركة">Share</span></button>
+        <button type="button" class="popup-food-action danger" id="popupDeleteFoodBtn"
+                data-title-en="Delete this food from your database" data-title-ar="حذف هذا الصنف من قاعدة بياناتك"
+                aria-label="Delete food">🗑 <span data-en="Delete" data-ar="حذف">Delete</span></button>
+      </div>
     </div>
     <div class="popup-body">
       <div class="popup-macros-wrap">
@@ -4770,15 +4808,6 @@ function buildRowHtml(f) {
   return `<tr data-food-id="${escapeHtml(f.id)}">
     <td><div class="food-name">
       <div class="food-name-text">${escapeHtml(f[lang])}${badges}<span class="alt">${escapeHtml(basisShown)}</span></div>
-      <button type="button" class="row-edit-btn" data-edit-id="${escapeHtml(f.id)}"
-              title="${lang === 'ar' ? 'تعديل هذا الصنف' : 'Edit this food'}"
-              aria-label="${lang === 'ar' ? 'تعديل' : 'Edit'}">✏</button>
-      <button type="button" class="row-share-btn" data-share-id="${escapeHtml(f.id)}"
-              title="${lang === 'ar' ? 'مشاركة هذا الصنف' : 'Share this food'}"
-              aria-label="${lang === 'ar' ? 'مشاركة' : 'Share'}">🔗</button>
-      <button type="button" class="row-del-btn" data-del-id="${escapeHtml(f.id)}"
-              title="${lang === 'ar' ? 'حذف هذا الصنف' : 'Delete this food'}"
-              aria-label="${lang === 'ar' ? 'حذف' : 'Delete'}">🗑</button>
     </div></td>
     <td class="num col-protein">${fmt(f.p * k)}</td>
     <td class="num col-fat">${fmt(f.f * k)}</td>
@@ -5150,29 +5179,6 @@ function attachRowClickHandlers() {
   if (!container || container.dataset.rowDelegation === '1') return;
   container.dataset.rowDelegation = '1';
   container.addEventListener('click', e => {
-    // Delete trash icon — two-tap confirm, highest priority.
-    const delBtn = e.target.closest('.row-del-btn');
-    if (delBtn) {
-      e.stopPropagation();
-      handleRowDelete(delBtn);
-      return;
-    }
-    // Edit pencil takes priority over the row-tap-to-track behaviour.
-    const editBtn = e.target.closest('.row-edit-btn');
-    if (editBtn) {
-      e.stopPropagation();
-      const id = editBtn.dataset.editId;
-      if (id) openEditFood(id);
-      return;
-    }
-    const shareBtn = e.target.closest('.row-share-btn');
-    if (shareBtn) {
-      e.stopPropagation();
-      const id = shareBtn.dataset.shareId;
-      const food = id && DB.find(x => x.id === id);
-      if (food) shareFood(food);
-      return;
-    }
     const row = e.target.closest('tr[data-food-id]');
     if (!row || !container.contains(row)) return;
     openPopup(row.dataset.foodId);
@@ -5468,6 +5474,7 @@ function closePopup() {
   editingIndex = -1;
   popupOverride = null;
   setMacroEditMode(false);
+  if (typeof resetPopupDelArm === 'function') resetPopupDelArm();
 }
 
 function getCurrentGrams() {
@@ -5523,6 +5530,58 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 document.getElementById('cancelBtn').addEventListener('click', closePopup);
 document.getElementById('popupOverlay').addEventListener('click', e => {
   if (e.target.id === 'popupOverlay') closePopup();
+});
+
+// Per-food action handlers in the popup header — Edit / Share / Delete.
+// Reuses the same primitives the old in-row buttons called: openEditFood,
+// shareFood, and a DB.splice + re-render pair. Delete uses a two-tap
+// confirm pattern (mirrors the old row-del-btn UX) since closing the
+// popup is destructive enough on its own.
+let popupDelArmed = false;
+let popupDelArmTimer = null;
+function resetPopupDelArm() {
+  popupDelArmed = false;
+  if (popupDelArmTimer) { clearTimeout(popupDelArmTimer); popupDelArmTimer = null; }
+  const btn = document.getElementById('popupDeleteFoodBtn');
+  if (btn) {
+    btn.classList.remove('confirming');
+    const span = btn.querySelector('span');
+    if (span) span.textContent = lang === 'ar' ? 'حذف' : 'Delete';
+  }
+}
+document.getElementById('popupEditFoodBtn').addEventListener('click', () => {
+  if (!currentFood) return;
+  const id = currentFood.id;
+  closePopup();
+  if (typeof openEditFood === 'function') openEditFood(id);
+});
+document.getElementById('popupShareFoodBtn').addEventListener('click', () => {
+  if (!currentFood) return;
+  shareFood(currentFood);
+});
+document.getElementById('popupDeleteFoodBtn').addEventListener('click', () => {
+  if (!currentFood) return;
+  const id = currentFood.id;
+  const btn = document.getElementById('popupDeleteFoodBtn');
+  if (!popupDelArmed) {
+    popupDelArmed = true;
+    btn.classList.add('confirming');
+    const span = btn.querySelector('span');
+    if (span) span.textContent = lang === 'ar' ? 'تأكيد؟' : 'Confirm?';
+    popupDelArmTimer = setTimeout(resetPopupDelArm, 3000);
+    return;
+  }
+  resetPopupDelArm();
+  const idx = DB.findIndex(x => x.id === id);
+  if (idx >= 0) {
+    DB.splice(idx, 1);
+    lsSet('mt-db', JSON.stringify(DB));
+    if (typeof rebuildSearchIndex === 'function') rebuildSearchIndex();
+    renderTables();
+    applyFilters();
+    renderTotals();
+  }
+  closePopup();
 });
 
 document.getElementById('addBtn').addEventListener('click', () => {

@@ -3591,6 +3591,9 @@ body.ar .footer li::before {
       <button class="settings-tab" data-tab="water"      role="tab" aria-selected="false">
         <span class="settings-tab-icon">💧</span><span class="settings-tab-label" data-en="Water" data-ar="الماء">Water</span>
       </button>
+      <button class="settings-tab" data-tab="reminders"  role="tab" aria-selected="false">
+        <span class="settings-tab-icon">🔔</span><span class="settings-tab-label" data-en="Reminders" data-ar="التذكيرات">Reminders</span>
+      </button>
       <button class="settings-tab" data-tab="apikey"     role="tab" aria-selected="false">
         <span class="settings-tab-icon">🔑</span><span class="settings-tab-label" data-en="API Key" data-ar="مفتاح API">API Key</span>
       </button>
@@ -3648,6 +3651,27 @@ body.ar .footer li::before {
         <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="number" id="waterMlPerGlass" min="100" max="500" value="250"></div>
         <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="number" id="waterGoalMl" min="500" max="5000" value="2000"></div>
         <button class="dt-btn primary" id="saveWaterSettingsBtn" data-en="Save" data-ar="حفظ">Save</button>
+      </div>
+
+      <!-- REMINDERS TAB -->
+      <div class="settings-pane" data-pane="reminders" role="tabpanel">
+        <div class="settings-pane-label" data-en="Daily reminder" data-ar="تذكير يومي">Daily reminder</div>
+        <label class="feat-row" style="margin:8px 0">
+          <input type="checkbox" id="reminderEnabled">
+          <span class="feat-icon">🔔</span>
+          <span class="feat-name" data-en="Remind me to log meals" data-ar="ذكّرني بتسجيل الوجبات">Remind me to log meals</span>
+        </label>
+        <div class="input-row">
+          <label data-en="Time:" data-ar="الوقت:">Time:</label>
+          <input type="time" id="reminderTime" value="20:00">
+        </div>
+        <button class="dt-btn primary" id="saveReminderBtn" data-en="Save" data-ar="حفظ">Save</button>
+        <div class="settings-help" id="reminderStatus" style="margin-top:8px"
+             data-en="Off — toggle on to enable daily reminders"
+             data-ar="معطّل — فعّله لتشغيل التذكيرات اليومية">Off — toggle on to enable daily reminders</div>
+        <div class="settings-help" style="margin-top:12px"
+             data-en="Reminders fire while the app is open in your browser. For background reminders, keep the PWA installed and the tab open or pinned."
+             data-ar="تعمل التذكيرات أثناء فتح التطبيق في المتصفح. للحصول على تذكيرات بالخلفية، احتفظ بتثبيت التطبيق وأبق التبويب مفتوحًا أو مثبّتًا.">Reminders fire while the app is open in your browser. For background reminders, keep the PWA installed and the tab open or pinned.</div>
       </div>
 
       <!-- API KEY TAB -->
@@ -6941,17 +6965,122 @@ document.getElementById('afSaveBtn').addEventListener('click', () => {
   applyFilters();
   closeAddFood();
 
-  // Brief confirmation
+  // Brief confirmation. On NEW items, also offer to copy a share link.
   if (isEditing) {
     alert(lang === 'ar'
       ? `تم تعديل "${ar}".`
       : `Updated "${en}".`);
   } else {
-    alert(lang === 'ar'
+    var addedMsg = lang === 'ar'
       ? `تمت إضافة "${ar}" لقاعدة البيانات (${DB.length} صنف).`
-      : `Added "${en}" to the database (${DB.length} items).`);
+      : `Added "${en}" to the database (${DB.length} items).`;
+    var sharePrompt = lang === 'ar'
+      ? '\n\nنسخ رابط مشاركة هذا الصنف؟'
+      : '\n\nCopy a share link for this food?';
+    if (confirm(addedMsg + sharePrompt)) {
+      shareFood(newItem);
+    }
   }
 });
+
+// ============ FOOD SHARE / IMPORT (URL hash) ============
+// Encodes a single food item into a base64-in-hash URL so users can swap
+// recipes via any chat app. Receiver opens the link → confirm → item added
+// to their local DB. UTF-8-safe encoding handles Arabic names.
+function utf8ToB64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64ToUtf8(b64) {
+  return decodeURIComponent(escape(atob(b64)));
+}
+function buildShareUrl(food) {
+  // Strip __composition references that won't resolve in another user's DB
+  // unless we also embed them — and we don't, to keep payloads small.
+  var clean = {
+    en: food.en, ar: food.ar, cat: food.cat,
+    base: food.base, basis: food.basis, easy: food.easy,
+    p: food.p, f: food.f, c: food.c, kcal: food.kcal,
+    badges: food.badges, units: food.units
+  };
+  var payload = utf8ToB64(JSON.stringify({ v: 1, food: clean }));
+  var base = window.location.origin + window.location.pathname;
+  return base + '#share=' + payload;
+}
+function shareFood(food) {
+  var url = buildShareUrl(food);
+  var done = function (ok) {
+    var msg;
+    if (ok) {
+      msg = lang === 'ar' ? 'تم نسخ الرابط ✓' : 'Link copied ✓';
+    } else {
+      msg = (lang === 'ar' ? 'انسخ الرابط:\n\n' : 'Copy this link:\n\n') + url;
+    }
+    alert(msg);
+  };
+  if (navigator.share) {
+    navigator.share({
+      title: food.en || food.ar || 'Food',
+      text: lang === 'ar' ? 'صنف من Macro Tracker' : 'Food from Macro Tracker',
+      url: url
+    }).catch(function () {
+      copyToClipboard(url, done);
+    });
+    return;
+  }
+  copyToClipboard(url, done);
+}
+function copyToClipboard(text, cb) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { cb(true); }, function () { cb(false); });
+    return;
+  }
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    cb(ok);
+  } catch (e) { cb(false); }
+}
+function handleShareHash() {
+  try {
+    var h = window.location.hash || '';
+    if (h.indexOf('#share=') !== 0) return;
+    var b64 = h.slice('#share='.length);
+    if (!b64) return;
+    var json = b64ToUtf8(b64);
+    var parsed = JSON.parse(json);
+    if (!parsed || parsed.v !== 1 || !parsed.food) return;
+    var f = parsed.food;
+    if (!validateFood(Object.assign({ id: 'shared' }, f))) return;
+    var name = (lang === 'ar' ? f.ar : f.en) || f.en || f.ar || 'Untitled';
+    var dupName = DB.find(x => (x.en && x.en === f.en) || (x.ar && x.ar === f.ar));
+    var msg = (lang === 'ar'
+      ? `تم استلام صنف مشارك:\n\n"${name}"\nبروتين ${f.p} · دهون ${f.f} · كارب ${f.c} · ${f.kcal} kcal لكل ${f.base}جم\n\n${dupName ? 'صنف بنفس الاسم موجود بالفعل.\n' : ''}إضافة لقاعدة بياناتك؟`
+      : `Shared food received:\n\n"${name}"\nProtein ${f.p} · Fat ${f.f} · Carbs ${f.c} · ${f.kcal} kcal per ${f.base}g\n\n${dupName ? 'A food with the same name already exists.\n' : ''}Add to your database?`);
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    if (!confirm(msg)) return;
+    var newItem = Object.assign({}, f, {
+      id: (f.en || f.ar || 'shared').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now()
+    });
+    if (!Array.isArray(newItem.badges)) newItem.badges = [];
+    DB.push(newItem);
+    lsSet('mt-db', JSON.stringify(DB));
+    if (typeof rebuildSearchIndex === 'function') rebuildSearchIndex();
+    renderTables();
+    applyFilters();
+    renderTotals();
+    alert(lang === 'ar' ? 'تم الإضافة ✓' : 'Added ✓');
+  } catch (e) {
+    console.warn('share-hash parse failed:', e);
+  }
+}
+handleShareHash();
 
 // ============ THEME & COLOR SCHEME ============
 const SCHEMES = [
@@ -7073,7 +7202,9 @@ function buildBackupObject() {
       theme: currentTheme,
       scheme: currentScheme,
       templates: mealTemplates,
-      features: featureFlags
+      features: featureFlags,
+      notifEnabled: localStorage.getItem('mt-notif-enabled') || '0',
+      notifTime: localStorage.getItem('mt-notif-time') || '20:00'
     }
   };
 }
@@ -7231,6 +7362,14 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         saveFeatures();
         syncFeatureCheckboxes();
       }
+      if (payload.notifEnabled === '0' || payload.notifEnabled === '1') {
+        localStorage.setItem('mt-notif-enabled', payload.notifEnabled);
+      }
+      if (typeof payload.notifTime === 'string' && /^\d{2}:\d{2}$/.test(payload.notifTime)) {
+        localStorage.setItem('mt-notif-time', payload.notifTime);
+      }
+      if (typeof initReminderUI === 'function') initReminderUI();
+      if (typeof scheduleReminder === 'function') scheduleReminder();
 
       applyTheme();
       renderGoals();
@@ -8289,6 +8428,146 @@ function updateDbEmptyNotice() {
 refreshApiKeyStatus();
 
 renderTotals();
+
+// ============ DAILY REMINDERS (LOCAL NOTIFICATIONS) ============
+// Stores `mt-notif-enabled` ('1'|'0') and `mt-notif-time` ('HH:MM'). When
+// enabled and permission is granted, a one-shot setTimeout fires the next
+// notification at the configured time, then reschedules itself for the day
+// after. Notifications fire via the active service worker so they can survive
+// brief tab backgrounding; if no SW is available we fall back to a plain
+// `new Notification(...)` from the page.
+var reminderTimerId = null;
+var REMINDER_DEFAULT_TIME = '20:00';
+
+function reminderEnabled() { return localStorage.getItem('mt-notif-enabled') === '1'; }
+function reminderTime()    { return localStorage.getItem('mt-notif-time') || REMINDER_DEFAULT_TIME; }
+
+function nextReminderDelay(hhmm) {
+  var parts = (hhmm || REMINDER_DEFAULT_TIME).split(':');
+  var h = parseInt(parts[0], 10) || 20;
+  var m = parseInt(parts[1], 10) || 0;
+  var now = new Date();
+  var next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+  if (next.getTime() <= now.getTime()) next.setDate(next.getDate() + 1);
+  return next.getTime() - now.getTime();
+}
+
+function fireReminder() {
+  var lang = localStorage.getItem('mt-lang') === 'ar' ? 'ar' : 'en';
+  var title = lang === 'ar' ? 'تذكير الماكروز' : 'Macro reminder';
+  var body  = lang === 'ar'
+    ? 'لا تنسَ تسجيل وجباتك اليوم'
+    : "Don't forget to log today's meals";
+  var options = {
+    body: body,
+    icon: 'icons/icon-192.png',
+    badge: 'icons/favicon-32.png',
+    tag: 'mt-daily-reminder',
+    renotify: true,
+    data: { url: './index.html' }
+  };
+  try {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+      navigator.serviceWorker.ready.then(function (reg) {
+        reg.showNotification(title, options).catch(function () {
+          try { new Notification(title, options); } catch (e) {}
+        });
+      });
+    } else if ('Notification' in window) {
+      new Notification(title, options);
+    }
+  } catch (e) { console.warn('reminder fire failed:', e); }
+}
+
+function scheduleReminder() {
+  if (reminderTimerId) { clearTimeout(reminderTimerId); reminderTimerId = null; }
+  if (!reminderEnabled()) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  var delay = nextReminderDelay(reminderTime());
+  // setTimeout max is ~24.8 days; daily delay is always well under that.
+  reminderTimerId = setTimeout(function () {
+    fireReminder();
+    scheduleReminder();
+  }, delay);
+}
+
+function updateReminderStatusUI() {
+  var statusEl = document.getElementById('reminderStatus');
+  if (!statusEl) return;
+  var lang = localStorage.getItem('mt-lang') === 'ar' ? 'ar' : 'en';
+  if (!('Notification' in window)) {
+    statusEl.textContent = lang === 'ar'
+      ? 'هذا المتصفح لا يدعم التذكيرات'
+      : 'This browser does not support notifications';
+    return;
+  }
+  if (!reminderEnabled()) {
+    statusEl.textContent = lang === 'ar'
+      ? 'معطّل — فعّله لتشغيل التذكيرات اليومية'
+      : 'Off — toggle on to enable daily reminders';
+    return;
+  }
+  if (Notification.permission === 'denied') {
+    statusEl.textContent = lang === 'ar'
+      ? 'مرفوض — اسمح بالإشعارات من إعدادات المتصفح'
+      : 'Blocked — allow notifications in your browser settings';
+    return;
+  }
+  if (Notification.permission !== 'granted') {
+    statusEl.textContent = lang === 'ar'
+      ? 'بانتظار إذن الإشعارات'
+      : 'Awaiting notification permission';
+    return;
+  }
+  statusEl.textContent = lang === 'ar'
+    ? 'مفعّل — التذكير القادم الساعة ' + reminderTime()
+    : 'On — next reminder at ' + reminderTime();
+}
+
+function initReminderUI() {
+  var enabledEl = document.getElementById('reminderEnabled');
+  var timeEl    = document.getElementById('reminderTime');
+  var saveBtn   = document.getElementById('saveReminderBtn');
+  if (!enabledEl || !timeEl || !saveBtn) return;
+  enabledEl.checked = reminderEnabled();
+  timeEl.value = reminderTime();
+  saveBtn.addEventListener('click', function () {
+    var want = enabledEl.checked;
+    var t    = timeEl.value || REMINDER_DEFAULT_TIME;
+    localStorage.setItem('mt-notif-time', t);
+    if (!want) {
+      localStorage.setItem('mt-notif-enabled', '0');
+      scheduleReminder();
+      updateReminderStatusUI();
+      return;
+    }
+    if (!('Notification' in window)) {
+      enabledEl.checked = false;
+      updateReminderStatusUI();
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      localStorage.setItem('mt-notif-enabled', '1');
+      scheduleReminder();
+      updateReminderStatusUI();
+      return;
+    }
+    Notification.requestPermission().then(function (perm) {
+      if (perm === 'granted') {
+        localStorage.setItem('mt-notif-enabled', '1');
+        scheduleReminder();
+      } else {
+        localStorage.setItem('mt-notif-enabled', '0');
+        enabledEl.checked = false;
+      }
+      updateReminderStatusUI();
+    });
+  });
+  updateReminderStatusUI();
+}
+
+initReminderUI();
+scheduleReminder();
 
 // ============ PWA: service worker, install prompts, persistence, shortcuts ============
 

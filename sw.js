@@ -11,7 +11,7 @@
 //   - Other cross-origin (Gemini, CDN libs, OpenFoodFacts): pass through.
 //
 // Bump CACHE_VERSION whenever shell files change to invalidate old caches.
-const CACHE_VERSION = 'mt-v3';
+const CACHE_VERSION = 'mt-v4';
 const FONT_CACHE    = 'mt-fonts-v1';
 const SHELL = [
   './',
@@ -50,6 +50,24 @@ self.addEventListener('activate', (event) => {
 // the "new version" prompt. The page posts {type:'SKIP_WAITING'}.
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
+// Daily-reminder notifications are shown via registration.showNotification()
+// from the page. When the user taps the notification, focus the existing tab
+// if there is one, otherwise open a new one at the stored URL.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = (event.notification.data && event.notification.data.url) || './index.html';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((wins) => {
+      for (const w of wins) {
+        if ('focus' in w) {
+          if (w.url.indexOf(target) !== -1) return w.focus();
+        }
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(target);
+    })
+  );
 });
 
 self.addEventListener('fetch', (event) => {

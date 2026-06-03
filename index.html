@@ -8376,40 +8376,83 @@ window.addEventListener('beforeinstallprompt', function (e) {
 });
 window.addEventListener('appinstalled', function () {
   deferredInstallPrompt = null;
-  var btn = document.getElementById('pwa-install-btn');
-  if (btn) btn.remove();
+  var b = document.getElementById('pwa-install-banner');
+  if (b) b.remove();
 });
 
+// Inline install banner: rendered inside #bottomDock between the FAB row and
+// the search input so it never overlaps the food list or the floating action
+// buttons. One slot serves both Android/desktop (beforeinstallprompt → real
+// button) and iOS Safari (text-only "Share → Add to Home Screen" hint).
 function showInstallButton() {
-  if (document.getElementById('pwa-install-btn')) return;
-  if (window.matchMedia('(display-mode: standalone)').matches) return;
-  var lang = localStorage.getItem('mt-lang') === 'ar' ? 'ar' : 'en';
-  var b = document.createElement('button');
-  b.id = 'pwa-install-btn';
-  b.type = 'button';
-  b.textContent = lang === 'ar' ? '⤓ تثبيت التطبيق' : '⤓ Install app';
-  b.style.cssText = [
-    'position:fixed', 'right:12px',
-    'bottom:calc(140px + env(safe-area-inset-bottom, 0px))',
-    'z-index:9000', 'background:#1b4332', 'color:#fff',
-    'border:0', 'padding:10px 14px', 'border-radius:999px',
-    'box-shadow:0 6px 18px rgba(0,0,0,.3)',
-    'font-family:system-ui,sans-serif', 'font-size:13px',
-    'font-weight:600', 'cursor:pointer'
-  ].join(';');
-  b.addEventListener('click', function () {
-    if (!deferredInstallPrompt) { b.remove(); return; }
-    deferredInstallPrompt.prompt();
-    deferredInstallPrompt.userChoice.finally(function () {
-      deferredInstallPrompt = null;
-      b.remove();
-    });
-  });
-  document.body.appendChild(b);
+  renderInstallBanner('prompt');
 }
 
-// iOS Safari never fires beforeinstallprompt. Show a one-time hint pointing
-// to the Share → Add to Home Screen path, dismissable and remembered.
+function renderInstallBanner(kind) {
+  if (document.getElementById('pwa-install-banner')) return;
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  if (localStorage.getItem('mt-install-dismissed') === '1') return;
+  var dock = document.getElementById('bottomDock');
+  if (!dock) return;
+
+  var lang = localStorage.getItem('mt-lang') === 'ar' ? 'ar' : 'en';
+  var banner = document.createElement('div');
+  banner.id = 'pwa-install-banner';
+  banner.setAttribute('role', 'note');
+  banner.style.cssText = [
+    'display:flex', 'gap:10px', 'align-items:center',
+    'margin:8px 6px 0', 'padding:8px 12px', 'border-radius:10px',
+    'background:#1b4332', 'color:#fff',
+    'font-family:system-ui,sans-serif', 'font-size:12.5px',
+    'line-height:1.35', 'box-shadow:0 4px 14px rgba(0,0,0,.25)'
+  ].join(';');
+
+  var msg = document.createElement('span');
+  msg.style.flex = '1';
+  if (kind === 'prompt') {
+    msg.textContent = lang === 'ar' ? 'ثبّت التطبيق على شاشتك الرئيسية' : 'Install this app on your home screen';
+  } else {
+    msg.textContent = lang === 'ar'
+      ? 'للتثبيت: زر المشاركة ↑ ← "إضافة إلى الشاشة الرئيسية"'
+      : 'Install: Share button ↑ → "Add to Home Screen"';
+  }
+  banner.appendChild(msg);
+
+  if (kind === 'prompt') {
+    var install = document.createElement('button');
+    install.type = 'button';
+    install.textContent = lang === 'ar' ? 'تثبيت' : 'Install';
+    install.style.cssText = 'background:#fff;color:#1b4332;border:0;padding:6px 12px;border-radius:8px;font-weight:600;cursor:pointer;font-size:12.5px;';
+    install.addEventListener('click', function () {
+      if (!deferredInstallPrompt) { banner.remove(); return; }
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.finally(function () {
+        deferredInstallPrompt = null;
+        banner.remove();
+      });
+    });
+    banner.appendChild(install);
+  }
+
+  var x = document.createElement('button');
+  x.type = 'button';
+  x.textContent = '×';
+  x.setAttribute('aria-label', lang === 'ar' ? 'إغلاق' : 'Dismiss');
+  x.style.cssText = 'background:transparent;color:#fff;border:0;font-size:20px;line-height:1;cursor:pointer;padding:0 4px;';
+  x.addEventListener('click', function () {
+    localStorage.setItem('mt-install-dismissed', '1');
+    banner.remove();
+  });
+  banner.appendChild(x);
+
+  // Insert above the search input but below the FAB row.
+  var searchWrap = dock.querySelector('.dock-search');
+  if (searchWrap) dock.insertBefore(banner, searchWrap);
+  else dock.appendChild(banner);
+}
+
+// iOS Safari never fires beforeinstallprompt. Show the same inline banner
+// in hint mode after a short delay so the user has time to see the app first.
 (function iosInstallHint() {
   var ua = navigator.userAgent || '';
   var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
@@ -8417,39 +8460,9 @@ function showInstallButton() {
   var inStandalone = window.navigator.standalone === true
     || window.matchMedia('(display-mode: standalone)').matches;
   if (!isIOS || !isSafari || inStandalone) return;
-  if (localStorage.getItem('mt-ios-install-dismissed') === '1') return;
+  if (localStorage.getItem('mt-install-dismissed') === '1') return;
   window.addEventListener('load', function () {
-    setTimeout(function () {
-      var lang = localStorage.getItem('mt-lang') === 'ar' ? 'ar' : 'en';
-      var hint = document.createElement('div');
-      hint.id = 'pwa-ios-hint';
-      hint.setAttribute('role', 'note');
-      hint.style.cssText = [
-        'position:fixed', 'left:8px', 'right:8px',
-        'bottom:calc(12px + env(safe-area-inset-bottom, 0px))',
-        'z-index:99998', 'background:#1b4332', 'color:#fff',
-        'padding:12px 14px', 'border-radius:12px',
-        'box-shadow:0 8px 24px rgba(0,0,0,.35)',
-        'font-family:system-ui,sans-serif', 'font-size:13px',
-        'display:flex', 'gap:10px', 'align-items:center',
-        'line-height:1.4'
-      ].join(';');
-      var msg = document.createElement('div');
-      msg.style.flex = '1';
-      msg.textContent = lang === 'ar'
-        ? 'لتثبيت التطبيق: اضغط زر المشاركة ↑ ثم اختر "إضافة إلى الشاشة الرئيسية".'
-        : 'Install this app: tap the Share button ↑ then "Add to Home Screen".';
-      var x = document.createElement('button');
-      x.textContent = '×';
-      x.setAttribute('aria-label', lang === 'ar' ? 'إغلاق' : 'Dismiss');
-      x.style.cssText = 'background:transparent;color:#fff;border:0;font-size:22px;line-height:1;cursor:pointer;padding:0 4px;';
-      x.addEventListener('click', function () {
-        localStorage.setItem('mt-ios-install-dismissed', '1');
-        hint.remove();
-      });
-      hint.appendChild(msg); hint.appendChild(x);
-      document.body.appendChild(hint);
-    }, 3000);
+    setTimeout(function () { renderInstallBanner('ios-hint'); }, 3000);
   });
 })();
 

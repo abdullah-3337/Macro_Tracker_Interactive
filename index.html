@@ -4320,6 +4320,9 @@ const _lsTimers = new Map();
 function _lsWriteImmediate(key, value) {
   try {
     localStorage.setItem(key, value);
+    if (typeof key === 'string' && key.indexOf('mt-') === 0 && typeof idbPut === 'function') {
+      idbPut(key, value).catch(function () {});
+    }
   } catch (e) {
     const isQuota = e.name === 'QuotaExceededError' || e.code === 22;
     const msg = isQuota
@@ -4359,6 +4362,106 @@ function lsSetNow(key, value) {
   if (t !== undefined) { clearTimeout(t); _lsTimers.delete(key); }
   _lsWriteImmediate(key, value);
 }
+
+// ============ INDEXEDDB BACKUP (LS EVICTION RESISTANCE) ============
+// Mirror every mt-* localStorage write into IndexedDB. iOS Safari evicts
+// localStorage after 7 days of disuse but is more lenient with IDB, so this
+// is a silent safety net — all sync lsGet readers stay sync, lsSet stays
+// sync, and IDB writes fire-and-forget alongside.
+const IDB_NAME = 'mt-backup';
+const IDB_VERSION = 1;
+const IDB_STORE = 'kv';
+let _idbDbPromise = null;
+
+function idbOpen() {
+  if (_idbDbPromise) return _idbDbPromise;
+  if (!('indexedDB' in window)) {
+    _idbDbPromise = Promise.reject(new Error('IndexedDB unavailable'));
+    return _idbDbPromise;
+  }
+  _idbDbPromise = new Promise(function (resolve, reject) {
+    var req;
+    try { req = indexedDB.open(IDB_NAME, IDB_VERSION); }
+    catch (e) { reject(e); return; }
+    req.onupgradeneeded = function () {
+      var db = req.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = function () { resolve(req.result); };
+    req.onerror   = function () { reject(req.error); };
+    req.onblocked = function () { reject(new Error('IDB open blocked')); };
+  });
+  // If the open fails (private mode, quota, etc.) clear the cached rejection
+  // so we don't keep handing back the same failure forever.
+  _idbDbPromise.catch(function () { _idbDbPromise = null; });
+  return _idbDbPromise;
+}
+
+function idbPut(key, value) {
+  return idbOpen().then(function (db) {
+    return new Promise(function (resolve, reject) {
+      var tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, key);
+      tx.oncomplete = function () { resolve(); };
+      tx.onerror    = function () { reject(tx.error); };
+      tx.onabort    = function () { reject(tx.error || new Error('IDB tx aborted')); };
+    });
+  });
+}
+
+function idbDel(key) {
+  return idbOpen().then(function (db) {
+    return new Promise(function (resolve, reject) {
+      var tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(key);
+      tx.oncomplete = function () { resolve(); };
+      tx.onerror    = function () { reject(tx.error); };
+    });
+  });
+}
+
+function idbGetAll() {
+  return idbOpen().then(function (db) {
+    return new Promise(function (resolve, reject) {
+      var tx = db.transaction(IDB_STORE, 'readonly');
+      var store = tx.objectStore(IDB_STORE);
+      var keysReq = store.getAllKeys();
+      var valsReq = store.getAll();
+      var keys = null, vals = null;
+      function maybeDone() {
+        if (keys === null || vals === null) return;
+        var out = {};
+        for (var i = 0; i < keys.length; i++) out[keys[i]] = vals[i];
+        resolve(out);
+      }
+      keysReq.onsuccess = function () { keys = keysReq.result || []; maybeDone(); };
+      valsReq.onsuccess = function () { vals = valsReq.result || []; maybeDone(); };
+      tx.onerror        = function () { reject(tx.error); };
+    });
+  });
+}
+
+// One-time forward-fill: users upgrading from a pre-IDB build have data only
+// in LS. Mirror every existing mt-* into IDB so the safety net is armed.
+(function idbForwardFill() {
+  if (typeof idbPut !== 'function') return;
+  if (localStorage.getItem('mt-idb-filled') === '1') return;
+  setTimeout(function () {
+    try {
+      var promises = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf('mt-') !== 0) continue;
+        var v = localStorage.getItem(k);
+        if (typeof v !== 'string') continue;
+        promises.push(idbPut(k, v).catch(function () {}));
+      }
+      Promise.all(promises).then(function () {
+        localStorage.setItem('mt-idb-filled', '1');
+      }).catch(function () {});
+    } catch (e) { /* noop */ }
+  }, 200);
+})();
 
 let lang = localStorage.getItem('mt-lang') || 'en';
 const MT_API_KEY = 'mt-gemini-key';
@@ -7393,9 +7496,11 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       }
       if (payload.notifEnabled === '0' || payload.notifEnabled === '1') {
         localStorage.setItem('mt-notif-enabled', payload.notifEnabled);
+        idbPut('mt-notif-enabled', payload.notifEnabled).catch(function(){});
       }
       if (typeof payload.notifTime === 'string' && /^\d{2}:\d{2}$/.test(payload.notifTime)) {
         localStorage.setItem('mt-notif-time', payload.notifTime);
+        idbPut('mt-notif-time', payload.notifTime).catch(function(){});
       }
       if (typeof initReminderUI === 'function') initReminderUI();
       if (typeof scheduleReminder === 'function') scheduleReminder();
@@ -7555,7 +7660,7 @@ document.addEventListener('keydown', e => {
       t.setAttribute('aria-selected', on ? 'true' : 'false');
     });
     panes.forEach(p => p.classList.toggle('active', p.dataset.pane === id));
-    try { localStorage.setItem('mt-settings-tab', id); } catch(e) {}
+    try { localStorage.setItem('mt-settings-tab', id); idbPut('mt-settings-tab', id).catch(function(){}); } catch(e) {}
   }
 
   let lastTab = 'lang';
@@ -7665,6 +7770,7 @@ document.getElementById('clearApiKeyBtn').addEventListener('click', () => {
     : 'Remove the saved key from this browser?');
   if (!ok) return;
   localStorage.removeItem(MT_API_KEY);
+  idbDel(MT_API_KEY).catch(function(){});
   document.getElementById('apiKeyInput').value = '';
   refreshApiKeyStatus();
 });
@@ -8567,8 +8673,10 @@ function initReminderUI() {
     var want = enabledEl.checked;
     var t    = timeEl.value || REMINDER_DEFAULT_TIME;
     localStorage.setItem('mt-notif-time', t);
+    idbPut('mt-notif-time', t).catch(function(){});
     if (!want) {
       localStorage.setItem('mt-notif-enabled', '0');
+      idbPut('mt-notif-enabled', '0').catch(function(){});
       scheduleReminder();
       updateReminderStatusUI();
       return;
@@ -8580,6 +8688,7 @@ function initReminderUI() {
     }
     if (Notification.permission === 'granted') {
       localStorage.setItem('mt-notif-enabled', '1');
+      idbPut('mt-notif-enabled', '1').catch(function(){});
       scheduleReminder();
       updateReminderStatusUI();
       return;
@@ -8587,9 +8696,11 @@ function initReminderUI() {
     Notification.requestPermission().then(function (perm) {
       if (perm === 'granted') {
         localStorage.setItem('mt-notif-enabled', '1');
+        idbPut('mt-notif-enabled', '1').catch(function(){});
         scheduleReminder();
       } else {
         localStorage.setItem('mt-notif-enabled', '0');
+        idbPut('mt-notif-enabled', '0').catch(function(){});
         enabledEl.checked = false;
       }
       updateReminderStatusUI();
@@ -8752,6 +8863,7 @@ function renderInstallBanner(kind) {
   x.style.cssText = 'background:transparent;color:#fff;border:0;font-size:20px;line-height:1;cursor:pointer;padding:0 4px;';
   x.addEventListener('click', function () {
     localStorage.setItem('mt-install-dismissed', '1');
+    idbPut('mt-install-dismissed', '1').catch(function(){});
     banner.remove();
   });
   banner.appendChild(x);
@@ -8799,6 +8911,37 @@ function renderInstallBanner(kind) {
     if (document.readyState === 'complete') run();
     else window.addEventListener('load', run);
   } catch (e) { /* noop */ }
+})();
+
+// IDB → LS restore: on every boot, asynchronously pull all mt-* keys from
+// IndexedDB and seed any that are missing from localStorage. Handles iOS
+// Safari's 7-day localStorage eviction (IDB survives longer / is harder to
+// evict). If we actually restore anything, reload once so all the sync
+// hydration code reruns against the now-populated LS.
+(function idbRestore() {
+  if (typeof idbGetAll !== 'function') return;
+  // Skip if we just restored on this session — avoids reload loop if some
+  // mt-* key fails to write back to LS (e.g. quota exhaustion).
+  if (sessionStorage.getItem('mt-idb-restored') === '1') return;
+  setTimeout(function () {
+    idbGetAll().then(function (all) {
+      var restored = 0;
+      Object.keys(all).forEach(function (k) {
+        if (k.indexOf('mt-') !== 0) return;
+        if (localStorage.getItem(k) !== null) return;
+        var v = all[k];
+        if (typeof v !== 'string') return;
+        try { localStorage.setItem(k, v); restored++; }
+        catch (e) { /* quota exceeded — leave in IDB */ }
+      });
+      if (restored > 0) {
+        sessionStorage.setItem('mt-idb-restored', '1');
+        window.location.reload();
+      }
+    }).catch(function (e) {
+      console.warn('IDB restore failed:', e);
+    });
+  }, 50);
 })();
 </script>
 

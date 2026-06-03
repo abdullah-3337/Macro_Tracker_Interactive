@@ -4,7 +4,7 @@ A single-file, offline-first daily macro and calorie tracker. Open one HTML file
 
 > No build, no install, no account. Your food log lives in your browser's `localStorage` and never leaves your device, except when *you* click the OCR button.
 
-**Live source:** [`Macro_Tracker_Interactive-32.html`](./Macro_Tracker_Interactive-32.html) · 378 KB · ~6,300 lines of inline HTML/CSS/JS.
+**Live source:** [`index.html`](./index.html) · 378 KB · ~6,300 lines of inline HTML/CSS/JS.
 
 ---
 
@@ -56,11 +56,11 @@ A single-file, offline-first daily macro and calorie tracker. Open one HTML file
 git clone https://github.com/abdullah-3337/Macro_Tracker_Interactive.git
 cd Macro_Tracker_Interactive
 # Open directly:
-xdg-open Macro_Tracker_Interactive-32.html      # Linux
-open Macro_Tracker_Interactive-32.html          # macOS
+xdg-open index.html      # Linux
+open index.html          # macOS
 # Or serve:
 python3 -m http.server 8000
-# then visit http://localhost:8000/Macro_Tracker_Interactive-32.html
+# then visit http://localhost:8000/index.html
 ```
 
 First run shows 11 sample foods. To load the full catalog, open the side panel → **⬆ Restore JSON** → pick `food_database-7.json`.
@@ -76,7 +76,7 @@ DevTools → Console → `localStorage.clear()` → reload. Or use **🗑 Clear 
 
 | Path | Purpose |
 |------|---------|
-| `Macro_Tracker_Interactive-32.html` | The whole app: inline HTML + CSS + JS. |
+| `index.html` | The whole app: inline HTML + CSS + JS. |
 | `food_database-7.json` | Seed food catalog. Load via the Restore JSON button. |
 | `CLAUDE.md` | Architecture map, conventions, and `*.local.*` collaboration workflow for AI-assisted edits. |
 | `.gitignore` | Excludes `*.local.*` collaboration files. |
@@ -134,7 +134,7 @@ Read [`CLAUDE.md`](./CLAUDE.md) before editing. It documents:
 After any change to the main `<script>` block, run the smoke test from `CLAUDE.md`:
 
 ```bash
-node -e "const m=require('fs').readFileSync('Macro_Tracker_Interactive-32.html','utf8').match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)||[];const main=m.filter(s=>!/\ssrc=/.test(s)).pop();new Function(main.replace(/^<script[^>]*>|<\/script>$/g,''));console.log('OK')"
+node -e "const m=require('fs').readFileSync('index.html','utf8').match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)||[];const main=m.filter(s=>!/\ssrc=/.test(s)).pop();new Function(main.replace(/^<script[^>]*>|<\/script>$/g,''));console.log('OK')"
 ```
 
 3 seconds. Catches parse errors before they ship.

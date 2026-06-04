@@ -523,7 +523,9 @@ header.cover::before {
 header.cover .row {
   display: flex; justify-content: space-between; align-items: flex-start;
   flex-wrap: wrap; gap: 16px; position: relative;
+  direction: ltr;
 }
+body.ar header.cover .row > div:first-child { direction: rtl; text-align: right; }
 header.cover h1 {
   font-size: clamp(26px, 4vw, 42px);
   font-weight: 800; font-style: italic;
@@ -550,7 +552,7 @@ body.ar header.cover .sub { font-family: 'JetBrains Mono', monospace; }
 }
 .lang-toggle:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-.header-tools { display: flex; gap: 8px; align-items: center; }
+.header-tools { display: flex; gap: 8px; align-items: center; direction: ltr; }
 .hdr-btn {
   background: var(--on-grad-veil);
   border: 1px solid var(--on-grad-bd);

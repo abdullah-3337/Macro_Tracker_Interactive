@@ -4814,12 +4814,14 @@ const PRESET_SCORERS = {
   'kcal-high': f =>  kcalShown(f),
 };
 
+// Score a food list against a preset id (e.g. 'p-high', 'kcal-low') and return the sorted copy.
 function applyPresetScore(foods, presetId) {
   const scorer = PRESET_SCORERS[presetId];
   if (!scorer) return foods;
   return [...foods].sort((a, b) => scorer(b) - scorer(a));
 }
 
+// Return the display label for a smart sort preset id, with LRM to preserve RTL order in Arabic.
 function smartSortButtonLabel(presetId) {
   if (!presetId) return lang === 'ar' ? '↕ ترتيب' : '↕ Sort';
   // Use \u200E (Left-to-Right Mark) to force LTR rendering of arrow+letter
@@ -4842,6 +4844,7 @@ function smartSortButtonLabel(presetId) {
   return map[presetId] || '↕';
 }
 
+// Build the HTML for a single food row, including badges and scaled macros for the current display mode.
 function buildRowHtml(f) {
   let badges = '';
   if (f.badges?.includes('iron')) badges += `<span class="badge badge-iron"><span class="dot"></span>${lang === 'ar' ? 'حديد' : 'IRON'}</span>`;
@@ -4893,6 +4896,7 @@ function sortFoods(foods, st, catFilter) {
   });
 }
 
+// Render a full category section with header, smart-sort popover, table, and event listeners.
 function renderSection(catDef, foods) {
   const section = document.createElement('section');
   section.className = 'category-section';
@@ -5264,6 +5268,7 @@ function attachRowClickHandlers() {
 // second tap within 3s deletes the food from DB and re-renders.
 let rowDelArmedId = null;
 let rowDelArmTimer = null;
+// Two-tap delete: first tap arms (shows "Confirm?"), second tap deletes the food from DB after 3s timeout.
 function handleRowDelete(btn) {
   const id = btn.dataset.delId;
   if (!id) return;
@@ -5481,6 +5486,7 @@ function commitMacroEdit() {
   });
 })();
 
+// Open the food popup. When editIdx >= 0, editing existing dayItems[editIdx]; when omitted, adding new dayItem.
 function openPopup(id, editIdx) {
   const f = getDB(id);
   if (!f) return;
@@ -5548,6 +5554,7 @@ function openPopup(id, editIdx) {
   document.getElementById('popupOverlay').classList.add('active');
 }
 
+// Close the popup, reset currentFood/editingIndex/popupOverride, and hide the overlay.
 function closePopup() {
   document.getElementById('popupOverlay').classList.remove('active');
   currentFood = null;
@@ -5557,6 +5564,7 @@ function closePopup() {
   if (typeof resetPopupDelArm === 'function') resetPopupDelArm();
 }
 
+// Return the current portion weight in grams based on the active tab (grams/multiples/easy).
 function getCurrentGrams() {
   if (!currentFood) return 0;
   if (activeTab === 'grams') {
@@ -5572,6 +5580,7 @@ function getCurrentGrams() {
   return 0;
 }
 
+// Update the preview macros and portion subtitle in the popup based on the current selection.
 function updatePopupPreview() {
   if (!currentFood) return;
   const grams = getCurrentGrams();
@@ -5619,6 +5628,7 @@ document.getElementById('popupOverlay').addEventListener('click', e => {
 // popup is destructive enough on its own.
 let popupDelArmed = false;
 let popupDelArmTimer = null;
+// Reset the two-tap delete state for the popup's delete button (mirrors row delete behavior).
 function resetPopupDelArm() {
   popupDelArmed = false;
   if (popupDelArmTimer) { clearTimeout(popupDelArmTimer); popupDelArmTimer = null; }
@@ -6036,6 +6046,7 @@ document.getElementById('saveWaterSettingsBtn').addEventListener('click', () => 
   alert(lang === 'ar' ? 'تم حفظ إعدادات الماء ✓' : 'Water settings saved ✓');
 });
 
+// Sync all feature flag checkboxes with their current values from the featureFlags object.
 function syncFeatureCheckboxes() {
   document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
     const key = cb.dataset.feat;
@@ -6054,10 +6065,12 @@ document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
 syncFeatureCheckboxes();
 
 // ============ ADD METHOD CHOOSER ============
+// Open the add-method modal (manual entry, OCR, or barcode).
 function openAddMethodSheet() {
   document.getElementById('addMethodOverlay').classList.add('active');
 }
 
+// Close the add-method modal overlay.
 function closeAddMethodSheet() {
   document.getElementById('addMethodOverlay').classList.remove('active');
 }
@@ -6138,6 +6151,7 @@ function rebuildSearchIndex() {
   });
 }
 
+// Apply search and category filters; show/hide rows and sections in-DOM. Returns first visible section.
 function applyFilters() {
   const query = normalizeSearch(searchInput.value);
 
@@ -6183,6 +6197,7 @@ function applyFilters() {
 }
 
 let _lastSearchQuery = searchInput.value;
+// Auto-scroll to the first visible section after search input changes (debounced).
 function runSearchFromInput() {
   const before = _lastSearchQuery;
   const now = searchInput.value;
@@ -6442,6 +6457,7 @@ document.getElementById('saveCurrentDayBtn').addEventListener('click', saveCurre
 // Schema columns — this exact order must be preserved for re-import
 const SCHEMA = ['id','category','en','ar','base_amount','basis_en','basis_ar','easy_en','easy_ar','protein_g','fat_g','carbs_g','kcal','badges','units_json'];
 
+// Convert DB items to CSV export rows (flat object with schema-ordered keys).
 function dbToRows() {
   return DB.map(f => ({
     id: f.id,
@@ -6462,6 +6478,7 @@ function dbToRows() {
   }));
 }
 
+// Convert CSV import rows back to DB food items, parsing macro units and badges.
 function rowsToDb(rows) {
   return rows.map(r => {
     let units = [];
@@ -6818,6 +6835,7 @@ function recipeTotals() {
   return { p, f, c, kcal, totalG: g };
 }
 
+// Re-render the per-recipe picked-list panel; pulls from recipePicked and wires qty/unit/remove events.
 function recipeRenderPicked() {
   const box = document.getElementById('afRecipePicked');
   if (!box) return;
@@ -6878,6 +6896,7 @@ function recipeRenderPicked() {
   });
 }
 
+// Render recipe totals (macros + portion weight); optionally applies portion override multiplier.
 function recipeRenderTotals() {
   const t = recipeTotals();
   const box = document.getElementById('afRecipeTotals');
@@ -6905,6 +6924,7 @@ function recipeRenderTotals() {
   `;
 }
 
+// Search recipes and display matching items up to 30 results; wires pick events to add to recipePicked.
 function recipeRenderSearchResults(query) {
   const box = document.getElementById('afRecipeResults');
   if (!box) return;
@@ -6971,6 +6991,7 @@ function recipeRenderSearchResults(query) {
 let editingFoodIdx = -1;
 let editingFoodId = null;
 
+// Reset add-food mode: clear all fields, populate categories, set "Add" title and button.
 function openAddFood() {
   // Clear "editing" state — we're adding a fresh item.
   editingFoodIdx = -1;
@@ -7080,10 +7101,12 @@ function openEditFood(foodId) {
   document.getElementById('addFoodOverlay').classList.add('active');
 }
 
+// Close the add-food modal overlay.
 function closeAddFood() {
   document.getElementById('addFoodOverlay').classList.remove('active');
 }
 
+// Display error message in the add-food modal's error element.
 function showAddFoodError(msg) {
   const el = document.getElementById('addFoodErr');
   el.textContent = msg;
@@ -7319,9 +7342,11 @@ document.getElementById('afSaveBtn').addEventListener('click', () => {
 function utf8ToB64(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
+// Decode base64 UTF-8 string (inverse of utf8ToB64).
 function b64ToUtf8(b64) {
   return decodeURIComponent(escape(atob(b64)));
 }
+// Build a shareable URL with base64-encoded food item in the hash (#share=...).
 function buildShareUrl(food) {
   // Strip __composition references that won't resolve in another user's DB
   // unless we also embed them — and we don't, to keep payloads small.
@@ -7335,6 +7360,7 @@ function buildShareUrl(food) {
   var base = window.location.origin + window.location.pathname;
   return base + '#share=' + payload;
 }
+// Share a food item via navigator.share() or fallback to clipboard copy.
 function shareFood(food) {
   var url = buildShareUrl(food);
   var done = function (ok) {
@@ -7358,6 +7384,7 @@ function shareFood(food) {
   }
   copyToClipboard(url, done);
 }
+// Copy text to clipboard using navigator.clipboard or fallback textarea/execCommand.
 function copyToClipboard(text, cb) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(function () { cb(true); }, function () { cb(false); });
@@ -7374,6 +7401,7 @@ function copyToClipboard(text, cb) {
     cb(ok);
   } catch (e) { cb(false); }
 }
+// Check for #share= in the URL hash, decode and validate the food, confirm with user, then add to DB.
 function handleShareHash() {
   try {
     var h = window.location.hash || '';
@@ -7430,10 +7458,12 @@ let currentTheme = localStorage.getItem('mt-theme') || 'system'; // light|dark|s
 const prefersDark = () =>
   window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+// Resolve the current theme (light/dark/system) to a concrete light or dark string.
 function resolvedTheme() {
   return currentTheme === 'system' ? (prefersDark() ? 'dark' : 'light') : currentTheme;
 }
 
+// Apply the current theme and scheme to the <html> element; sync mobile status-bar color.
 function applyTheme() {
   const root = document.documentElement;
   root.setAttribute('data-scheme', currentScheme);
@@ -7493,6 +7523,7 @@ function buildSchemeCards() {
   });
 }
 
+// Update the appearance modal UI (scheme and theme controls) to reflect current selections.
 function syncSchemeModalUI() {
   document.querySelectorAll('#schemeGrid .scheme-card').forEach(c => {
     c.classList.toggle('active', c.dataset.scheme === currentScheme);
@@ -7544,6 +7575,7 @@ function buildBackupObject() {
   };
 }
 
+// Create and download a blob as a file with the given filename and MIME type.
 function downloadBlob(content, filename, type) {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
@@ -7950,10 +7982,12 @@ document.addEventListener('keydown', e => {
 
 // ============ GEMINI API KEY MANAGEMENT ============
 
+// Return the saved Gemini API key from localStorage (used for photo extraction).
 function getGeminiKey() {
   return localStorage.getItem(MT_API_KEY) || '';
 }
 
+// Update the API key status indicator showing "connected" or "disconnected" and next reminder time.
 function refreshApiKeyStatus() {
   const key = getGeminiKey();
   const input = document.getElementById('apiKeyInput');
@@ -7976,6 +8010,7 @@ function refreshApiKeyStatus() {
   }
 }
 
+// Refresh water intake settings UI inputs from the waterState object.
 function refreshWaterSettingsUI() {
   const mlPerGlassInput = document.getElementById('waterMlPerGlass');
   const goalMlInput = document.getElementById('waterGoalMl');
@@ -8016,6 +8051,7 @@ document.getElementById('clearApiKeyBtn').addEventListener('click', () => {
 // ============ TREND CHART ============
 let currentTrendWindow = 30; // days
 
+// Fetch filtered saved days within windowDays, or return null if no data.
 function getTrendData(windowDays) {
   if (savedDays.length === 0) return null;
 
@@ -8031,11 +8067,13 @@ function getTrendData(windowDays) {
   return filtered.length === 0 ? null : filtered;
 }
 
+// Format a date string (YYYY-MM-DD) as a short month-day label for chart axes.
 function formatChartDate(dateStr) {
   const d = new Date(dateStr);
   return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', {month:'short', day:'numeric'});
 }
 
+// Render a line chart (SVG) showing trend data for a metric (kcal/protein/fat/carbs).
 function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -8125,6 +8163,7 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   container.insertAdjacentHTML('beforeend', chartHtml);
 }
 
+// Open the trends modal and render charts for the current window of saved days.
 function openTrendsModal() {
   const data = getTrendData(currentTrendWindow);
 
@@ -8150,6 +8189,7 @@ function openTrendsModal() {
   document.getElementById('trendsOverlay').classList.add('active');
 }
 
+// Close the trends modal overlay.
 function closeTrendsModal() {
   document.getElementById('trendsOverlay').classList.remove('active');
 }
@@ -8237,6 +8277,7 @@ function ocrClearError() {
   document.getElementById('ocrErr').classList.remove('show');
 }
 
+// Open the OCR modal, check for Gemini API key, and show the file picker step.
 function openOcrModal() {
   if (!getGeminiKey()) {
     alert(lang === 'ar'
@@ -8465,6 +8506,7 @@ document.getElementById('ocrUseBtn').addEventListener('click', () => {
   openAddFoodFromOCR(r);
 });
 
+// Pre-fill the add-food modal with OCR-extracted values and scale per-serving to per-100g basis.
 function openAddFoodFromOCR(r) {
   openAddFood();
 
@@ -8556,11 +8598,13 @@ function barcodeShowStep(step) {
   else if (step === 'result') document.getElementById('barcodeStepResult').style.display = 'block';
 }
 
+// Show error message in the barcode modal.
 function barcodeShowError(msg) {
   const el = document.getElementById('barcodeErr');
   el.textContent = msg;
   el.classList.add('show');
 }
+// Hide the error message in the barcode modal.
 function barcodeClearError() {
   document.getElementById('barcodeErr').classList.remove('show');
 }
@@ -8601,6 +8645,7 @@ async function openBarcodeModal() {
   }
 }
 
+// Close the barcode modal and stop the camera stream.
 function closeBarcodeModal() {
   document.getElementById('barcodeOverlay').classList.remove('active');
   if (barcodeCameraStream) {
@@ -8695,6 +8740,7 @@ async function lookupBarcode(barcode) {
   }
 }
 
+// Render the barcode result (lookup product macros from OpenFoodFacts and show extracted values).
 function renderBarcodeResult(r) {
   const fields = [
     { k: 'kcal', en: 'Calories', ar: 'سعرات', round: true },
@@ -8727,6 +8773,7 @@ document.getElementById('barcodeUseBtn').addEventListener('click', () => {
   openAddFoodFromBarcode(r);
 });
 
+// Pre-fill the add-food modal with barcode-looked-up product macros (already per 100g).
 function openAddFoodFromBarcode(r) {
   openAddFood();
 
@@ -8905,6 +8952,7 @@ function scheduleReminder() {
   }, delay);
 }
 
+// Update the daily reminder status text to show enabled/disabled/blocked/awaiting permission.
 function updateReminderStatusUI() {
   var statusEl = document.getElementById('reminderStatus');
   if (!statusEl) return;
@@ -8938,6 +8986,7 @@ function updateReminderStatusUI() {
     : 'On — next reminder at ' + reminderTime();
 }
 
+// Initialize reminder UI checkboxes and event listeners, sync state from localStorage.
 function initReminderUI() {
   var enabledEl = document.getElementById('reminderEnabled');
   var timeEl    = document.getElementById('reminderTime');
@@ -9034,6 +9083,7 @@ if (navigator.storage && navigator.storage.persist) {
   });
 })();
 
+// Create and display a non-blocking toast prompting the user to accept a new PWA version.
 function showUpdateToast(onAccept) {
   if (document.getElementById('pwa-update-toast')) return;
   var lang = localStorage.getItem('mt-lang') === 'ar' ? 'ar' : 'en';
@@ -9087,6 +9137,7 @@ function showInstallButton() {
   renderInstallBanner('prompt');
 }
 
+// Render an install banner (prompt for beforeinstallprompt, or hint for iOS Safari).
 function renderInstallBanner(kind) {
   if (document.getElementById('pwa-install-banner')) return;
   if (window.matchMedia('(display-mode: standalone)').matches) return;

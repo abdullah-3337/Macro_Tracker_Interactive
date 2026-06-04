@@ -702,6 +702,63 @@ body.ar .trend-chart-title {
   flex-shrink: 0;
 }
 
+/* ============ ANALYTICS HUB ============ */
+/* Three-tab modal that hosts macro trends, weight history, and activity
+   stats under one entry point so the main page exposes a single analytics
+   button instead of three scattered triggers. */
+.analytics-modal { display: flex; flex-direction: column; min-height: 0; }
+.analytics-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 20px; gap: 12px;
+  background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
+  color: var(--on-grad);
+  border-bottom: 3px solid var(--gold);
+  flex-shrink: 0;
+}
+.analytics-head h3 {
+  font-size: 17px; font-style: italic; font-weight: 600; color: var(--on-grad);
+}
+body.ar .analytics-head h3 { font-style: normal; }
+.analytics-tabs {
+  display: flex; flex-wrap: wrap; gap: 2px;
+  background: var(--paper-soft);
+  border-bottom: 1px solid var(--line);
+  padding: 6px 10px;
+  flex-shrink: 0;
+}
+.analytics-tab {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px;
+  transition: all 0.15s;
+}
+body.ar .analytics-tab {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px; text-transform: none; letter-spacing: 0;
+}
+.analytics-tab:hover { color: var(--ink); }
+.analytics-tab.active {
+  background: var(--accent); color: var(--on-accent); border-color: var(--accent);
+}
+.analytics-pane {
+  display: none;
+  padding: 18px 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+.analytics-pane.active { display: block; }
+.analytics-pane .trends-body,
+.analytics-pane .weight-history-body {
+  padding: 0;
+  display: flex; flex-direction: column; gap: 16px;
+}
+
 /* Goals bar */
 /* Goals card */
 .goals-card {
@@ -3821,7 +3878,7 @@ body.ar .footer li::before {
   <button class="day-btn" id="newDayBtn" data-en="+ New Day" data-ar="+ يوم جديد">+ New Day</button>
   <button class="day-btn" id="saveDayBtn" data-en="💾 Save Day" data-ar="💾 احفظ اليوم">💾 Save Day</button>
   <button class="day-btn" id="loadDayBtn" data-en="📂 Load Saved" data-ar="📂 الأيام المحفوظة">📂 Load Saved</button>
-  <button class="day-btn" id="trendsBtn" data-en="📈 Trends" data-ar="📈 الإحصائيات">📈 Trends</button>
+  <button class="day-btn" id="trendsBtn" data-en="📊 Analytics" data-ar="📊 الإحصائيات">📊 Analytics</button>
   <button class="day-btn danger" id="clearDayBtn" data-en="🗑 Clear" data-ar="🗑 مسح">🗑 Clear</button>
   <span class="day-info" id="dayInfo"></span>
 </div>
@@ -4060,11 +4117,6 @@ body.ar .footer li::before {
     <div class="weight-section" id="weightSection">
       <div class="weight-section-head">
         <h4 data-en="⚖ Weight" data-ar="⚖ الوزن">⚖ Weight</h4>
-        <button class="weight-history-btn" id="openWeightHistoryBtn"
-                data-title-en="Open weight history" data-title-ar="افتح سجل الوزن"
-                aria-label="Open weight history">📈
-          <span data-en="History" data-ar="السجل">History</span>
-        </button>
       </div>
       <div class="weight-summary" id="weightSummary">
         <span class="latest" id="weightLatest" data-en="—" data-ar="—">—</span>
@@ -4081,11 +4133,6 @@ body.ar .footer li::before {
     <div class="activity-section" id="activitySection">
       <div class="activity-section-head">
         <h4 data-en="Activity" data-ar="النشاط">Activity</h4>
-        <button class="weight-history-btn" id="openActivityStatsBtn"
-                data-title-en="Activity stats" data-title-ar="إحصاءات النشاط"
-                aria-label="Activity stats">📊
-          <span data-en="Stats" data-ar="إحصاءات">Stats</span>
-        </button>
       </div>
       <div id="workoutsList">
         <!-- Rendered list of workouts -->
@@ -4751,20 +4798,88 @@ body.ar .footer li::before {
   </div>
 </div>
 
-<!-- ============ TREND CHARTS MODAL ============ -->
+<!-- ============ ANALYTICS HUB MODAL ============ -->
 <div class="popup-overlay" id="trendsOverlay">
-  <div class="trends-modal">
-    <h3 data-en="📈 Macro Trends" data-ar="📈 إحصائيات الماكروز">📈 Macro Trends</h3>
-    <div class="trends-body">
-      <div class="trends-controls">
-        <button class="window-btn" data-window="7" data-en="Last 7 days" data-ar="آخر 7 أيام">Last 7 days</button>
-        <button class="window-btn active" data-window="30" data-en="Last 30 days" data-ar="آخر 30 يوم">Last 30 days</button>
-      </div>
-      <div class="trends-empty" id="trendsEmpty" style="display:none;">
-        <span data-en="Save some days first to view trends" data-ar="احفظ بضعة أيام أولاً لعرض الإحصائيات">Save some days first to view trends</span>
-      </div>
-      <div class="trends-charts" id="trendsCharts"></div>
+  <div class="trends-modal analytics-modal">
+    <div class="analytics-head">
+      <h3 data-en="📊 Analytics" data-ar="📊 الإحصائيات">📊 Analytics</h3>
+      <button class="guide-modal-close" id="analyticsHeadCloseBtn" aria-label="Close">×</button>
     </div>
+    <div class="analytics-tabs" role="tablist">
+      <button class="analytics-tab active" data-atab="trends" role="tab" data-en="📈 Macros" data-ar="📈 ماكروز">📈 Macros</button>
+      <button class="analytics-tab" data-atab="weight" role="tab" data-en="⚖ Weight" data-ar="⚖ الوزن">⚖ Weight</button>
+      <button class="analytics-tab" data-atab="activity" role="tab" data-en="🏋 Activity" data-ar="🏋 نشاط">🏋 Activity</button>
+    </div>
+
+    <!-- TRENDS PANE -->
+    <div class="analytics-pane active" data-pane="trends">
+      <div class="trends-body">
+        <div class="trends-controls">
+          <button class="window-btn" data-window="7" data-en="Last 7 days" data-ar="آخر 7 أيام">Last 7 days</button>
+          <button class="window-btn active" data-window="30" data-en="Last 30 days" data-ar="آخر 30 يوم">Last 30 days</button>
+        </div>
+        <div class="trends-empty" id="trendsEmpty" style="display:none;">
+          <span data-en="Save some days first to view trends" data-ar="احفظ بضعة أيام أولاً لعرض الإحصائيات">Save some days first to view trends</span>
+        </div>
+        <div class="trends-charts" id="trendsCharts"></div>
+      </div>
+    </div>
+
+    <!-- WEIGHT PANE -->
+    <div class="analytics-pane" data-pane="weight">
+      <div class="weight-history-body">
+        <div class="wh-range" id="whRange">
+          <button class="wh-range-btn" data-range="7"   data-en="7d"   data-ar="٧ أيام">7d</button>
+          <button class="wh-range-btn active" data-range="30" data-en="30d" data-ar="٣٠ يوم">30d</button>
+          <button class="wh-range-btn" data-range="90"  data-en="90d"  data-ar="٩٠ يوم">90d</button>
+          <button class="wh-range-btn" data-range="all" data-en="All"  data-ar="الكل">All</button>
+        </div>
+        <div class="wh-chart" id="weightHistoryChart"></div>
+        <div class="wh-stats">
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Latest" data-ar="آخر">Latest</span><span class="wh-stat-val" id="whStatLatest">—</span></div>
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Lowest" data-ar="أقل">Lowest</span><span class="wh-stat-val" id="whStatMin">—</span></div>
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Highest" data-ar="أعلى">Highest</span><span class="wh-stat-val" id="whStatMax">—</span></div>
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Average" data-ar="متوسط">Average</span><span class="wh-stat-val" id="whStatAvg">—</span></div>
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Net change" data-ar="صافي التغير">Net change</span><span class="wh-stat-val" id="whStatNet">—</span></div>
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Per week" data-ar="أسبوعياً">Per week</span><span class="wh-stat-val" id="whStatRate">—</span></div>
+        </div>
+        <div class="wh-target-row">
+          <label class="wh-target-label" data-en="Target weight (kg, optional):" data-ar="الوزن المستهدف (كجم، اختياري):">Target weight (kg, optional):</label>
+          <input type="number" id="whTargetInput" min="20" max="400" step="0.1" />
+          <button id="whTargetSaveBtn" data-en="Save" data-ar="حفظ">Save</button>
+        </div>
+        <div class="wh-target-distance" id="whTargetDistance"></div>
+        <div class="wh-list-head">
+          <h4 data-en="All entries" data-ar="كل الإدخالات">All entries</h4>
+          <span class="wh-count" id="whCount">0</span>
+        </div>
+        <div class="wh-list" id="whList"></div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY PANE -->
+    <div class="analytics-pane" data-pane="activity">
+      <div class="weight-history-body">
+        <div class="wh-stats" id="activityStatsHeader">
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Unique activities" data-ar="أنشطة فريدة">Unique activities</span><span class="wh-stat-val" id="actStatUnique">0</span></div>
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Total sessions" data-ar="إجمالي الجلسات">Total sessions</span><span class="wh-stat-val" id="actStatSessions">0</span></div>
+          <div class="wh-stat"><span class="wh-stat-label" data-en="Total kcal" data-ar="إجمالي السعرات">Total kcal</span><span class="wh-stat-val" id="actStatKcal">0</span></div>
+        </div>
+        <div class="wh-list-head">
+          <h4 data-en="Top activities" data-ar="الأنشطة الأكثر استخداماً">Top activities</h4>
+          <span class="wh-count" data-en="by count" data-ar="حسب التكرار">by count</span>
+        </div>
+        <div class="activity-bank-list" id="activityBankList"></div>
+        <div class="wh-list-head" style="margin-top: 16px;">
+          <h4 data-en="Manage" data-ar="إدارة">Manage</h4>
+        </div>
+        <div class="tdee-help" data-en="Tap an activity to quick-log it again. Tap 🗑 to forget it (clears stats; existing workouts kept)."
+             data-ar="اضغط على نشاط لتسجيله مرة أخرى. اضغط 🗑 لحذفه من السجل (لا يحذف التمارين الموجودة).">
+          Tap an activity to quick-log it again.
+        </div>
+      </div>
+    </div>
+
     <div class="popup-actions">
       <button class="btn-cancel" id="trendsCloseBtn" data-en="Close" data-ar="إغلاق">Close</button>
     </div>
@@ -4799,93 +4914,6 @@ body.ar .footer li::before {
   </div>
 </div>
 
-<!-- ============ ACTIVITY STATS MODAL ============ -->
-<div class="popup-overlay" id="activityStatsOverlay">
-  <div class="weight-history-modal">
-    <div class="weight-history-head">
-      <h3 data-en="📊 Activity Stats" data-ar="📊 إحصاءات النشاط">📊 Activity Stats</h3>
-      <button class="guide-modal-close" id="activityStatsCloseBtn" aria-label="Close">×</button>
-    </div>
-
-    <div class="weight-history-body">
-      <div class="wh-stats" id="activityStatsHeader">
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Unique activities" data-ar="أنشطة فريدة">Unique activities</span><span class="wh-stat-val" id="actStatUnique">0</span></div>
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Total sessions" data-ar="إجمالي الجلسات">Total sessions</span><span class="wh-stat-val" id="actStatSessions">0</span></div>
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Total kcal" data-ar="إجمالي السعرات">Total kcal</span><span class="wh-stat-val" id="actStatKcal">0</span></div>
-      </div>
-
-      <div class="wh-list-head">
-        <h4 data-en="Top activities" data-ar="الأنشطة الأكثر استخداماً">Top activities</h4>
-        <span class="wh-count" data-en="by count" data-ar="حسب التكرار">by count</span>
-      </div>
-      <div class="activity-bank-list" id="activityBankList"></div>
-
-      <div class="wh-list-head" style="margin-top: 16px;">
-        <h4 data-en="Manage" data-ar="إدارة">Manage</h4>
-      </div>
-      <div class="tdee-help" data-en="Tap an activity to quick-log it again. Tap 🗑 to forget it (clears stats; existing workouts kept)."
-           data-ar="اضغط على نشاط لتسجيله مرة أخرى. اضغط 🗑 لحذفه من السجل (لا يحذف التمارين الموجودة).">
-        Tap an activity to quick-log it again.
-      </div>
-    </div>
-
-    <div class="popup-actions">
-      <button class="btn-cancel" id="activityStatsCloseBtn2" data-en="Close" data-ar="إغلاق">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ WEIGHT HISTORY MODAL ============ -->
-<div class="popup-overlay" id="weightHistoryOverlay">
-  <div class="weight-history-modal">
-    <div class="weight-history-head">
-      <h3 data-en="⚖ Weight History" data-ar="⚖ سجل الوزن">⚖ Weight History</h3>
-      <button class="guide-modal-close" id="weightHistoryCloseBtn" aria-label="Close">×</button>
-    </div>
-
-    <div class="weight-history-body">
-      <!-- Range selector -->
-      <div class="wh-range" id="whRange">
-        <button class="wh-range-btn" data-range="7"   data-en="7d"   data-ar="٧ أيام">7d</button>
-        <button class="wh-range-btn active" data-range="30" data-en="30d" data-ar="٣٠ يوم">30d</button>
-        <button class="wh-range-btn" data-range="90"  data-en="90d"  data-ar="٩٠ يوم">90d</button>
-        <button class="wh-range-btn" data-range="all" data-en="All"  data-ar="الكل">All</button>
-      </div>
-
-      <!-- Big chart -->
-      <div class="wh-chart" id="weightHistoryChart"></div>
-
-      <!-- Analytics grid -->
-      <div class="wh-stats">
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Latest" data-ar="آخر">Latest</span><span class="wh-stat-val" id="whStatLatest">—</span></div>
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Lowest" data-ar="أقل">Lowest</span><span class="wh-stat-val" id="whStatMin">—</span></div>
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Highest" data-ar="أعلى">Highest</span><span class="wh-stat-val" id="whStatMax">—</span></div>
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Average" data-ar="متوسط">Average</span><span class="wh-stat-val" id="whStatAvg">—</span></div>
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Net change" data-ar="صافي التغير">Net change</span><span class="wh-stat-val" id="whStatNet">—</span></div>
-        <div class="wh-stat"><span class="wh-stat-label" data-en="Per week" data-ar="أسبوعياً">Per week</span><span class="wh-stat-val" id="whStatRate">—</span></div>
-      </div>
-
-      <!-- Target weight (optional) -->
-      <div class="wh-target-row">
-        <label class="wh-target-label" data-en="Target weight (kg, optional):" data-ar="الوزن المستهدف (كجم، اختياري):">Target weight (kg, optional):</label>
-        <input type="number" id="whTargetInput" min="20" max="400" step="0.1" />
-        <button id="whTargetSaveBtn" data-en="Save" data-ar="حفظ">Save</button>
-      </div>
-      <div class="wh-target-distance" id="whTargetDistance"></div>
-
-      <!-- Full entries list -->
-      <div class="wh-list-head">
-        <h4 data-en="All entries" data-ar="كل الإدخالات">All entries</h4>
-        <span class="wh-count" id="whCount">0</span>
-      </div>
-      <div class="wh-list" id="whList"></div>
-    </div>
-
-    <div class="popup-actions">
-      <button class="btn-cancel" id="weightHistoryCloseBtn2" data-en="Close" data-ar="إغلاق">Close</button>
-    </div>
-  </div>
-</div>
 
 <!-- ============ GUIDE MODAL ============ -->
 <div class="popup-overlay" id="guideOverlay">
@@ -7829,8 +7857,10 @@ function renderWeightSection() {
     deltaEl.textContent = '';
     deltaEl.className = 'delta';
   }
-  // If the modal is open, refresh it too.
-  if (document.getElementById('weightHistoryOverlay').classList.contains('active')) {
+  // Auto-refresh the weight pane inside the analytics hub if it's currently visible.
+  const trendsOvl = document.getElementById('trendsOverlay');
+  const weightPane = document.querySelector('.analytics-pane[data-pane="weight"]');
+  if (trendsOvl && trendsOvl.classList.contains('active') && weightPane && weightPane.classList.contains('active')) {
     renderWeightHistoryModal();
   }
 }
@@ -7958,21 +7988,9 @@ function removeWeightEntry(id) {
   btn.addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
 
-  // History modal wiring.
-  const openHist = document.getElementById('openWeightHistoryBtn');
-  const overlay = document.getElementById('weightHistoryOverlay');
-  const closeBtn = document.getElementById('weightHistoryCloseBtn');
-  const closeBtn2 = document.getElementById('weightHistoryCloseBtn2');
-  if (openHist && overlay) {
-    openHist.addEventListener('click', () => {
-      renderWeightHistoryModal();
-      overlay.classList.add('active');
-    });
-  }
-  const closeModal = () => overlay && overlay.classList.remove('active');
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (closeBtn2) closeBtn2.addEventListener('click', closeModal);
-  if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  // Weight history now lives inside the Analytics hub (#trendsOverlay,
+  // 'weight' tab) — the renderer below populates whRange / whStatXxx /
+  // whList directly, no standalone overlay wiring needed here.
 
   // Range buttons.
   const rangeBar = document.getElementById('whRange');
@@ -8451,46 +8469,32 @@ document.getElementById('workoutName').addEventListener('input', () => {
   if (!kcalInput.value) kcalInput.value = e.lastKcal || '';
 });
 
-// Activity stats modal: open, close, row click → prefill form, 🗑 → forget.
-(function initActivityStats() {
-  const openBtn = document.getElementById('openActivityStatsBtn');
-  const overlay = document.getElementById('activityStatsOverlay');
-  const closeBtn = document.getElementById('activityStatsCloseBtn');
-  const closeBtn2 = document.getElementById('activityStatsCloseBtn2');
+// Activity stats now live in the Analytics hub (#trendsOverlay, 'activity'
+// tab). The renderer writes into #activityBankList directly; this handler
+// still wires row-clicks → refill the workout form, and 🗑 → forget.
+(function initActivityStatsListHandlers() {
   const list = document.getElementById('activityBankList');
-  if (!openBtn || !overlay) return;
-  openBtn.addEventListener('click', () => {
-    renderActivityStatsModal();
-    overlay.classList.add('active');
+  if (!list) return;
+  list.addEventListener('click', e => {
+    const forget = e.target.closest('[data-act-forget]');
+    if (forget) {
+      const key = forget.dataset.actForget;
+      if (confirm(lang === 'ar' ? 'حذف هذا النشاط من السجل؟' : 'Forget this activity?')) {
+        activityBankForget(key);
+      }
+      return;
+    }
+    const name = e.target.closest('[data-act-fill]');
+    if (name) {
+      document.getElementById('workoutName').value = name.dataset.actFill;
+      document.getElementById('workoutKcal').value = name.dataset.actKcal || '';
+      // Close the hub so the user lands back on the entry form.
+      closeTrendsModal();
+    }
   });
-  const closeIt = () => overlay.classList.remove('active');
-  if (closeBtn) closeBtn.addEventListener('click', closeIt);
-  if (closeBtn2) closeBtn2.addEventListener('click', closeIt);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeIt(); });
-  if (list) {
-    list.addEventListener('click', e => {
-      const forget = e.target.closest('[data-act-forget]');
-      if (forget) {
-        const key = forget.dataset.actForget;
-        if (confirm(lang === 'ar' ? 'حذف هذا النشاط من السجل؟' : 'Forget this activity?')) {
-          activityBankForget(key);
-        }
-        return;
-      }
-      const name = e.target.closest('[data-act-fill]');
-      if (name) {
-        document.getElementById('workoutName').value = name.dataset.actFill;
-        document.getElementById('workoutKcal').value = name.dataset.actKcal || '';
-        closeIt();
-        // Focus kcal so user can tweak.
-        const kcalInput = document.getElementById('workoutKcal');
-        if (kcalInput) setTimeout(() => kcalInput.focus(), 80);
-      }
-    });
-  }
-  // Boot-time datalist sync.
-  syncActivityDatalist();
 })();
+// Boot-time datalist sync.
+syncActivityDatalist();
 
 // Event delegation for removing workouts
 document.addEventListener('click', (e) => {
@@ -10409,33 +10413,52 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   container.insertAdjacentHTML('beforeend', chartHtml);
 }
 
-// Open the trends modal and render charts for the current window of saved days.
-function openTrendsModal() {
+// Open the unified Analytics hub modal. Optional tabId param ('trends',
+// 'weight', or 'activity') controls which tab is initially active. The
+// renderers for each pane are called eagerly so switching tabs feels
+// instant — none of them are expensive.
+function openAnalyticsModal(tabId) {
+  // Render macro trends pane.
   const data = getTrendData(currentTrendWindow);
-
   const empty = document.getElementById('trendsEmpty');
   const charts = document.getElementById('trendsCharts');
-
   charts.innerHTML = '';
-
   if (!data || data.length === 0) {
     empty.style.display = 'block';
     charts.style.display = 'none';
   } else {
     empty.style.display = 'none';
     charts.style.display = 'grid';
-
-    // Render 4 charts: kcal, protein, fat, carbs
     renderTrendChart('trendsCharts', 'kcal', lang === 'ar' ? 'السعرات' : 'Calories', 'kcal', goals.kcal, data);
-    renderTrendChart('trendsCharts', 'p', lang === 'ar' ? 'بروتين' : 'Protein', 'g', goals.protein, data);
-    renderTrendChart('trendsCharts', 'f', lang === 'ar' ? 'دهون' : 'Fat', 'g', goals.fat, data);
-    renderTrendChart('trendsCharts', 'carb', lang === 'ar' ? 'كارب' : 'Carbs', 'g', goals.carbs, data);
+    renderTrendChart('trendsCharts', 'p',    lang === 'ar' ? 'بروتين'   : 'Protein',  'g',    goals.protein, data);
+    renderTrendChart('trendsCharts', 'f',    lang === 'ar' ? 'دهون'    : 'Fat',      'g',    goals.fat, data);
+    renderTrendChart('trendsCharts', 'carb', lang === 'ar' ? 'كارب'    : 'Carbs',    'g',    goals.carbs, data);
   }
+
+  // Render weight + activity panes too (cheap; keeps tab switching snappy).
+  if (typeof renderWeightHistoryModal === 'function') renderWeightHistoryModal();
+  if (typeof renderActivityStatsModal === 'function') renderActivityStatsModal();
+
+  // Switch active tab.
+  selectAnalyticsTab(tabId || 'trends');
 
   document.getElementById('trendsOverlay').classList.add('active');
 }
 
-// Close the trends modal overlay.
+// Activate one tab + pane. Defaults to 'trends'.
+function selectAnalyticsTab(tabId) {
+  const id = tabId || 'trends';
+  document.querySelectorAll('.analytics-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.atab === id);
+  });
+  document.querySelectorAll('.analytics-pane').forEach(p => {
+    p.classList.toggle('active', p.dataset.pane === id);
+  });
+}
+
+// Backwards-compatible alias — older code paths may still call openTrendsModal().
+function openTrendsModal() { openAnalyticsModal('trends'); }
+
 function closeTrendsModal() {
   document.getElementById('trendsOverlay').classList.remove('active');
 }
@@ -10453,6 +10476,13 @@ document.querySelectorAll('.window-btn').forEach(btn => {
     currentTrendWindow = parseInt(e.target.dataset.window);
     openTrendsModal();
   });
+});
+
+// Head close-X + tab clicks.
+const headCloseBtn = document.getElementById('analyticsHeadCloseBtn');
+if (headCloseBtn) headCloseBtn.addEventListener('click', closeTrendsModal);
+document.querySelectorAll('.analytics-tab').forEach(t => {
+  t.addEventListener('click', () => selectAnalyticsTab(t.dataset.atab));
 });
 
 // ============ OCR (PHOTO EXTRACTION) FEATURE ============

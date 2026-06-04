@@ -16,6 +16,7 @@ A single-file, offline-first daily macro and calorie tracker. Open one HTML file
 - **Smart sort presets** per category — sort by protein density, kcal-low, protein-vs-carbs ratio, and more.
 - **Daily totals + progress bars** for kcal, protein, fat, carbs, against editable goals.
 - **Save day** to history (up to 60 days), reload any past day with one click.
+- **Analytics hub** — one **📊 Analytics** button on the main page opens a single tabbed modal that contains macro trends (kcal/protein/fat/carbs over time), weight history (chart + stats + target + entries) and activity stats (top activities by count + per-name totals). Replaces the previous three scattered triggers.
 
 ### Food database
 - Comes with a [`food_database-7.json`](./food_database-7.json) of ~200 foods (~123 KB). Load it once via **⬆ Restore JSON** in the side panel.

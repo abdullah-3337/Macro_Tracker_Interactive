@@ -1421,6 +1421,55 @@ body.ar .popup-header h3 { font-style: normal; }
 }
 body.ar .popup-food-action { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 .popup-body { padding: 24px; box-sizing: border-box; overflow-x: hidden; }
+.meal-picker {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 12px 0;
+}
+.meal-picker-label {
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 2px;
+}
+body.ar .meal-picker-label {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 12px;
+}
+.meal-chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px; font-weight: 600;
+  font-family: inherit;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.meal-chip:hover { background: var(--veil-hi); }
+.meal-chip.active {
+  background: var(--accent); color: var(--on-accent);
+  border-color: var(--accent);
+}
+.meal-group-header {
+  background: var(--veil-hi);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+body.ar .meal-group-header {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px;
+}
+.meal-group-header td { padding: 8px 10px !important; }
+.meal-subtotal td {
+  font-size: 11px; color: var(--ink-soft);
+  border-top: 1px dashed var(--line) !important;
+  background: var(--veil-lo);
+}
 .popup-macros {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -3471,6 +3520,15 @@ body.ar .footer li::before {
         </div>
       </div>
 
+      <div class="meal-picker" id="mealPicker">
+        <div class="meal-picker-label" data-en="Meal" data-ar="الوجبة">Meal</div>
+        <button type="button" class="meal-chip" data-meal="breakfast" data-en="🍳 Breakfast" data-ar="🍳 إفطار">🍳 Breakfast</button>
+        <button type="button" class="meal-chip" data-meal="lunch" data-en="🥗 Lunch" data-ar="🥗 غداء">🥗 Lunch</button>
+        <button type="button" class="meal-chip" data-meal="dinner" data-en="🍽 Dinner" data-ar="🍽 عشاء">🍽 Dinner</button>
+        <button type="button" class="meal-chip" data-meal="snack" data-en="🍎 Snack" data-ar="🍎 سناك">🍎 Snack</button>
+        <button type="button" class="meal-chip active" data-meal="unsorted" data-en="∅ None" data-ar="∅ بدون">∅ None</button>
+      </div>
+
       <div class="preview">
         <div class="label" data-en="You'll add:" data-ar="هيتضاف:">You'll add:</div>
         <div class="preview-row"><span data-en="Weight" data-ar="الوزن">Weight</span><span id="pv-grams">100 g</span></div>
@@ -4693,6 +4751,10 @@ let currentFood = null;
 // instead of adding a new one.
 let editingIndex = -1;
 let activeTab = 'grams';
+// Selected meal-time tag for the next popup save. Persists across rapid
+// successive adds so the user can log multiple foods for the same meal
+// without re-tapping the chip. Reset on closePopup or app reload.
+let currentMeal = 'unsorted';
 
 // If user previously imported / added to a custom food database, use it
 try {
@@ -5674,6 +5736,17 @@ function openPopup(id, editIdx) {
     ? (lang === 'ar' ? 'هيتعدل إلى:' : "You'll change to:")
     : (lang === 'ar' ? 'هيتضاف:' : "You'll add:");
 
+  // Meal picker: restore existing item's meal tag when editing, default to
+  // 'unsorted' when adding. Heuristic for fresh adds: if a meal tag was set
+  // earlier this same popup session, keep it (so user can rapid-fire several
+  // foods for the same meal without re-tapping the chip every time).
+  if (isEdit && dayItems[editingIndex]) {
+    currentMeal = dayItems[editingIndex].meal || 'unsorted';
+  } else if (!currentMeal) {
+    currentMeal = 'unsorted';
+  }
+  syncMealPicker();
+
   updatePopupPreview();
   document.getElementById('popupOverlay').classList.add('active');
 }
@@ -5739,6 +5812,30 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   document.getElementById(id).addEventListener('input', updatePopupPreview);
   document.getElementById(id).addEventListener('change', updatePopupPreview);
 });
+
+// Highlight the currently-selected meal chip in the popup picker. Pure DOM
+// sync — no state writes. Called from openPopup and chip click handler.
+function syncMealPicker() {
+  const picker = document.getElementById('mealPicker');
+  if (!picker) return;
+  picker.querySelectorAll('.meal-chip').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.meal === currentMeal);
+  });
+}
+
+// Wire meal chip clicks: update `currentMeal` and re-highlight. Event
+// delegation so chips can be re-rendered (e.g. by language switch) without
+// rebinding.
+(function initMealPicker() {
+  const picker = document.getElementById('mealPicker');
+  if (!picker) return;
+  picker.addEventListener('click', e => {
+    const chip = e.target.closest('.meal-chip');
+    if (!chip) return;
+    currentMeal = chip.dataset.meal || 'unsorted';
+    syncMealPicker();
+  });
+})();
 
 document.getElementById('cancelBtn').addEventListener('click', closePopup);
 document.getElementById('popupOverlay').addEventListener('click', e => {
@@ -5811,6 +5908,7 @@ document.getElementById('addBtn').addEventListener('click', () => {
     f: fmt(eb.f * ratio),
     c: fmt(eb.c * ratio),
     kcal: fmt(eb.kcal * ratio),
+    meal: currentMeal || 'unsorted',
     ts: Date.now()
   };
   // Carry the per-base override on the entry so re-editing this row
@@ -5860,30 +5958,65 @@ function renderTotals() {
   updateProgress('fat', totals.f, goals.fat);
   updateProgress('carbs', totals.c, goals.carbs);
 
-  // Selected items table
+  // Selected items table — grouped by meal (breakfast/lunch/dinner/snack/unsorted).
+  // Empty groups are skipped. Each non-empty group prints a header row,
+  // its items, then a dashed subtotal row.
   const tbody = document.getElementById('selectedBody');
   const tfoot = document.getElementById('selectedFoot');
   if (dayItems.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" class="empty-state">${lang === 'ar' ? 'لم يتم اختيار أي عنصر بعد · اضغط على أي عنصر أعلاه' : "No items yet · tap any food above to add"}</td></tr>`;
     tfoot.innerHTML = '';
   } else {
-    tbody.innerHTML = dayItems.map((it, idx) => {
-      const f = getDB(it.id);
-      const removeText = lang === 'ar' ? 'حذف' : 'Remove';
-      const editText = lang === 'ar' ? 'تعديل' : 'Edit';
-      return `<tr>
-        <td>${escapeHtml(f ? f[lang] : it.id)}</td>
-        <td class="num">${it.grams} g</td>
-        <td class="num col-protein">${it.p}</td>
-        <td class="num col-fat">${it.f}</td>
-        <td class="num col-carb">${it.c}</td>
-        <td class="num">${it.kcal}</td>
-        <td class="row-actions">
-          <button class="edit-row-btn" data-edit-idx="${idx}">${editText}</button>
-          <button class="remove-btn" data-idx="${idx}">${removeText}</button>
-        </td>
+    const MEAL_ORDER = ['breakfast', 'lunch', 'dinner', 'snack', 'unsorted'];
+    const MEAL_LABELS = {
+      breakfast: lang === 'ar' ? '🍳 إفطار' : '🍳 Breakfast',
+      lunch:     lang === 'ar' ? '🥗 غداء'  : '🥗 Lunch',
+      dinner:    lang === 'ar' ? '🍽 عشاء'  : '🍽 Dinner',
+      snack:     lang === 'ar' ? '🍎 سناك'  : '🍎 Snack',
+      unsorted:  lang === 'ar' ? '∅ بدون تصنيف' : '∅ Unsorted'
+    };
+    // Bucket dayItems by meal while preserving original index for edit/remove.
+    const buckets = {};
+    dayItems.forEach((it, idx) => {
+      const m = MEAL_ORDER.indexOf(it.meal) >= 0 ? it.meal : 'unsorted';
+      (buckets[m] = buckets[m] || []).push({ it, idx });
+    });
+    const removeText = lang === 'ar' ? 'حذف' : 'Remove';
+    const editText   = lang === 'ar' ? 'تعديل' : 'Edit';
+    const subText    = lang === 'ar' ? 'مجموع' : 'Subtotal';
+    let html = '';
+    MEAL_ORDER.forEach(meal => {
+      const arr = buckets[meal];
+      if (!arr || !arr.length) return;
+      const sub = arr.reduce((a, x) => {
+        a.p += x.it.p; a.f += x.it.f; a.c += x.it.c; a.kcal += x.it.kcal; return a;
+      }, { p:0, f:0, c:0, kcal:0 });
+      html += `<tr class="meal-group-header"><td colspan="7">${MEAL_LABELS[meal]}</td></tr>`;
+      html += arr.map(({ it, idx }) => {
+        const f = getDB(it.id);
+        return `<tr>
+          <td>${escapeHtml(f ? f[lang] : it.id)}</td>
+          <td class="num">${it.grams} g</td>
+          <td class="num col-protein">${it.p}</td>
+          <td class="num col-fat">${it.f}</td>
+          <td class="num col-carb">${it.c}</td>
+          <td class="num">${it.kcal}</td>
+          <td class="row-actions">
+            <button class="edit-row-btn" data-edit-idx="${idx}">${editText}</button>
+            <button class="remove-btn" data-idx="${idx}">${removeText}</button>
+          </td>
+        </tr>`;
+      }).join('');
+      html += `<tr class="meal-subtotal">
+        <td><i>${subText}</i></td><td></td>
+        <td class="num col-protein">${fmt(sub.p)}</td>
+        <td class="num col-fat">${fmt(sub.f)}</td>
+        <td class="num col-carb">${fmt(sub.c)}</td>
+        <td class="num">${fmt(sub.kcal)}</td>
+        <td></td>
       </tr>`;
-    }).join('');
+    });
+    tbody.innerHTML = html;
     tfoot.innerHTML = `<tr>
       <td><b>${lang === 'ar' ? 'الإجمالي' : 'Total'}</b></td>
       <td></td>

@@ -4335,6 +4335,12 @@ const CATEGORIES = [
 
 
 // ============ STATE ============
+// Hydrate app state from localStorage with fallbacks. Stores language, daily
+// items, goals, water, workouts, meal templates, and feature flags. Each state
+// variable hydrated with lsGet() to survive corrupt JSON without crashing.
+// Key entry points: lsGet, lsSet, lsSetNow (persistence), applyFeatures
+// (feature flag toggling), and the pre-loaded DB/goals/dayItems/savedDays vars.
+
 // Safe localStorage JSON read: never lets a corrupt value crash startup.
 function lsGet(key, fallback) {
   try {
@@ -4350,9 +4356,13 @@ function lsGet(key, fallback) {
 
 // Safe localStorage write: alerts user if quota exceeded so data loss is visible, not silent.
 // Trailing-edge throttled per key: rapid successive writes (e.g. typing into goals
-// inputs) collapse into one localStorage write 250 ms after the last call.
+// inputs) collapse into one localStorage write 250 ms after the last call. Also
+// mirrors all mt-* writes to IndexedDB for iOS eviction resistance.
 const _lsPending = new Map();
 const _lsTimers = new Map();
+
+// Write to localStorage immediately and fire-and-forget to IndexedDB if available.
+// Quota exceeded is exposed to user via alert.
 function _lsWriteImmediate(key, value) {
   try {
     localStorage.setItem(key, value);
@@ -4372,6 +4382,9 @@ function _lsWriteImmediate(key, value) {
     console.error('localStorage write failed for "' + key + '":', e);
   }
 }
+
+// Flush pending write for a key immediately (cancel pending timer).
+// Called at unload to ensure all queued changes hit storage before page closes.
 function flushLsKey(key) {
   if (!_lsPending.has(key)) return;
   const value = _lsPending.get(key);
@@ -4380,18 +4393,26 @@ function flushLsKey(key) {
   if (t !== undefined) { clearTimeout(t); _lsTimers.delete(key); }
   _lsWriteImmediate(key, value);
 }
+
+// Flush all pending writes (beforeunload/pagehide).
 function flushLsAll() { Array.from(_lsPending.keys()).forEach(flushLsKey); }
 window.addEventListener('beforeunload', flushLsAll);
 window.addEventListener('pagehide', flushLsAll);
+
+// Queue a localStorage write with 250 ms trailing-edge throttle per key.
+// Collapses rapid successive writes (e.g. from input events) into one.
+// Multiple calls with the same key reset the timer. Side effect: also calls
+// idbPut if available (IndexedDB backup for iOS eviction resistance).
 function lsSet(key, value) {
   _lsPending.set(key, value);
   if (_lsTimers.has(key)) return;
   const t = setTimeout(() => { _lsTimers.delete(key); flushLsKey(key); }, 250);
   _lsTimers.set(key, t);
 }
-// Synchronous variant for critical paths (e.g. one-shot writes during a
-// confirmed destructive operation). Use sparingly — throttled lsSet is the
-// default.
+
+// Bypass throttle and write immediately to localStorage + IndexedDB.
+// Used for critical one-shot writes (e.g., confirmed destructive operations).
+// Cancels any pending timer for the key first. Use sparingly; lsSet is the default.
 function lsSetNow(key, value) {
   _lsPending.delete(key);
   const t = _lsTimers.get(key);
@@ -4403,12 +4424,17 @@ function lsSetNow(key, value) {
 // Mirror every mt-* localStorage write into IndexedDB. iOS Safari evicts
 // localStorage after 7 days of disuse but is more lenient with IDB, so this
 // is a silent safety net — all sync lsGet readers stay sync, lsSet stays
-// sync, and IDB writes fire-and-forget alongside.
+// sync, and IDB writes fire-and-forget alongside. On startup, idbForwardFill()
+// one-time migrates existing mt-* keys from LS to IDB. Entry points: idbOpen,
+// idbPut, idbDel, idbGetAll (all async), and idbForwardFill (one-time init).
 const IDB_NAME = 'mt-backup';
 const IDB_VERSION = 1;
 const IDB_STORE = 'kv';
 let _idbDbPromise = null;
 
+// Open or reuse the IndexedDB connection. Initializes the 'kv' store on first
+// open. Caches the promise; if it rejects (private mode, quota, etc), clears
+// the cache so retries aren't blocked by a permanent error.
 function idbOpen() {
   if (_idbDbPromise) return _idbDbPromise;
   if (!('indexedDB' in window)) {
@@ -4433,6 +4459,8 @@ function idbOpen() {
   return _idbDbPromise;
 }
 
+// Store a key-value pair in IndexedDB. Fire-and-forget async; errors are
+// swallowed silently (IDB is a safety net, not critical path).
 function idbPut(key, value) {
   return idbOpen().then(function (db) {
     return new Promise(function (resolve, reject) {
@@ -4445,6 +4473,7 @@ function idbPut(key, value) {
   });
 }
 
+// Delete a key from IndexedDB.
 function idbDel(key) {
   return idbOpen().then(function (db) {
     return new Promise(function (resolve, reject) {
@@ -4456,6 +4485,8 @@ function idbDel(key) {
   });
 }
 
+// Bulk-fetch all key-value pairs from IndexedDB. Returns a promise of {key: value, ...}.
+// Used by restore logic to check for eviction-recovery data.
 function idbGetAll() {
   return idbOpen().then(function (db) {
     return new Promise(function (resolve, reject) {
@@ -4477,8 +4508,10 @@ function idbGetAll() {
   });
 }
 
-// One-time forward-fill: users upgrading from a pre-IDB build have data only
-// in LS. Mirror every existing mt-* into IDB so the safety net is armed.
+// One-time forward-fill (IIFE): users upgrading from a pre-IDB build have
+// data only in LS. Mirror every existing mt-* into IDB so the safety net is
+// armed. Marks completion with mt-idb-filled so it doesn't re-run. Runs 200ms
+// after load to avoid blocking the initial render.
 (function idbForwardFill() {
   if (typeof idbPut !== 'function') return;
   if (localStorage.getItem('mt-idb-filled') === '1') return;
@@ -4517,11 +4550,16 @@ const DEFAULT_FEATURES = FEATURE_KEYS.reduce((acc, k) => (acc[k] = true, acc), {
 let featureFlags = lsGet('mt-features', DEFAULT_FEATURES);
 if (!featureFlags || typeof featureFlags !== 'object') featureFlags = { ...DEFAULT_FEATURES };
 FEATURE_KEYS.forEach(k => { if (typeof featureFlags[k] !== 'boolean') featureFlags[k] = true; });
+
+// Apply current feature flags to the DOM by toggling .feat-off-* classes
+// on body. CSS rules use [class*="feat-off-water"] to hide feature sections.
 function applyFeatures() {
   FEATURE_KEYS.forEach(k => {
     document.body.classList.toggle('feat-off-' + k, !featureFlags[k]);
   });
 }
+
+// Persist feature flags to localStorage and re-apply CSS visibility.
 function saveFeatures() {
   lsSet('mt-features', JSON.stringify(featureFlags));
   applyFeatures();
@@ -4541,9 +4579,14 @@ try {
   }
 } catch(e) { console.warn('Corrupt mt-db — using built-in DB.', e); }
 
+// Look up a food from the DB by id. Returns the food object or undefined.
 function getDB(id) { return DB.find(f => f.id === id); }
+
+// Format a number to 1 decimal place. Used throughout for macro display.
 function fmt(n) { return Math.round(n * 10) / 10; }
-// Escape user/imported strings before they go into innerHTML (XSS guard).
+
+// Escape user/imported strings before they go into innerHTML. XSS guard:
+// every DB/import/API value passed to innerHTML must go through this first.
 function escapeHtml(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;')
@@ -4554,6 +4597,10 @@ function escapeHtml(s) {
 }
 
 // ============ LAZY-LOAD CDN SCRIPTS ============
+// On-demand loading for Excel/PDF export libs (heavy, rarely used).
+// Deferred from startup via explicit user action (click Export).
+// Whitelisted in CSP meta tag at line 5.
+
 const CDN = {
   xlsx:        'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   jspdf:       'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
@@ -4561,6 +4608,9 @@ const CDN = {
 };
 
 const _loadedScripts = new Map();
+
+// Inject a script tag into the DOM and return a promise that resolves once
+// the script is loaded. Caches the promise so retries return the same promise.
 function loadScript(url) {
   if (_loadedScripts.has(url)) return _loadedScripts.get(url);
   const p = new Promise((resolve, reject) => {
@@ -4575,6 +4625,9 @@ function loadScript(url) {
   return p;
 }
 
+// Disable a button, show a loading message, await a function, then restore.
+// Used for import/export operations and async flow. Preserves original text
+// and disabled state, so it's safe to call on disabled buttons or null.
 async function withButtonBusy(btn, fn) {
   if (!btn) return await fn();
   const orig = btn.textContent;
@@ -4589,6 +4642,8 @@ async function withButtonBusy(btn, fn) {
   }
 }
 
+// Remove an element with a fade animation if prefers-reduced-motion is not set.
+// Otherwise, call the remove callback immediately (sync).
 function fadeAndRemove(el, doRemove) {
   if (!el || !window.matchMedia || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
     doRemove(); return;
@@ -4596,28 +4651,37 @@ function fadeAndRemove(el, doRemove) {
   el.classList.add('removing');
   el.addEventListener('animationend', doRemove, { once: true });
 }
+
+// Return localized date string for today (e.g., "Mon, 4 Jun 2026").
 function todayStr() {
   const d = new Date();
   return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
 }
 
 // ============ WORKOUT OFFSET ============
+// Tracks calorie burn from workouts, which offsets daily net calories.
+// Workouts are stored as {id, date, name_en, name_ar, kcalBurned, duration_min}.
+
+// Sum all kcalBurned across today's workouts.
 function getTotalBurned() {
   return workouts.reduce((sum, w) => sum + (w.kcalBurned || 0), 0);
 }
 
+// Persist the workouts array to localStorage.
 function saveWorkoutState() {
   lsSet('mt-workouts', JSON.stringify(workouts));
 }
 
 // ============ RENDER TABLES ============
-// Per-category display mode: 'g100' | 'base' | 'easy'
-//   'g100': per 100 g (default — uniform comparison baseline)
-//   'base': per the item's DB base (the "basis" field, e.g. per 1 egg, per slice)
-//   'easy': per the item's FIRST easy unit (units[0])
-// If 'easy' is selected and the item has no easy units, we fall back to 'g100'.
-// If 'base' is selected and the item's base is 100, the values equal 'g100'
-// — that's expected and acceptable.
+// Build and display the per-category food database tables. Triggers on: DB import,
+// food add/delete, language toggle. Rebuilds from scratch into #foodTablesContainer
+// (no DOM diffing). Also handles per-category display modes, sorting, filtering,
+// and in-table row buttons. Entry points: renderTables (main), attachRowClickHandlers
+// (delegation), renderSection (per category), buildRowHtml (per food).
+// Display modes persist per-category: 'g100' (per 100g), 'base' (per DB base),
+// 'easy' (per first easy unit). 'easy' falls back to 'g100' if no units exist.
+
+// Per-category display mode state: { [catFilter]: 'g100' | 'base' | 'easy' }
 let displayModes = {};
 try {
   const saved = JSON.parse(localStorage.getItem('mt-display-modes') || '{}');
@@ -4631,20 +4695,26 @@ Object.keys(displayModes).forEach(k => {
   else if (displayModes[k] === 'base') displayModes[k] = 'g100';
 });
 
+// Retrieve the display mode for a category (or default to 'g100').
 function modeForCat(catFilter) {
   const m = displayModes[catFilter];
   return (m === 'base' || m === 'easy') ? m : 'g100';
 }
+
+// Persist the per-category display modes to localStorage.
 function persistDisplayModes() {
   lsSet('mt-display-modes', JSON.stringify(displayModes));
 }
-// Cycle order: g100 → base → easy → g100 ...
+
+// Cycle to the next display mode: g100 → base → easy → g100 ...
 function nextDisplayMode(cur) {
   if (cur === 'g100') return 'base';
   if (cur === 'base') return 'easy';
   return 'g100';
 }
-// Resolve which category-filter a given food belongs to (for scaling).
+
+// Resolve which category-filter a food belongs to (from its cat field).
+// Used to determine which per-category mode to apply for scaling.
 function catFilterOf(f) {
   const def = (typeof CATEGORIES !== 'undefined')
     ? CATEGORIES.find(c => c.cat === f.cat) : null;
@@ -4663,12 +4733,14 @@ try {
   if (saved && typeof saved === 'object') smartSortState = saved;
 } catch (e) { smartSortState = {}; }
 
+// Persist the per-category smart sort state to localStorage.
 function persistSmartSort() {
   lsSet('mt-smart-sort', JSON.stringify(smartSortState));
 }
 
-// Returns the (grams, label) of the portion shown in the row for a given food
-// AT THE CURRENT MODE for that food's category.
+// Return the portion {g, label} that is shown in the macro columns for a food,
+// based on the food's category's current display mode ('g100'|'base'|'easy').
+// Respects fallback rules: 'easy' falls back to 'g100' if no easy units.
 function portionFor(f) {
   const mode = modeForCat(catFilterOf(f));
   const base = f.base || 100;
@@ -4689,11 +4761,12 @@ function portionFor(f) {
   return { g: base, label: basisText };
 }
 
-// Scale factor from the stored macros (per `base`) to the displayed amount,
-// using the current mode for the food's own category.
-//   g100  → 100 / base   (show "per 100 g")
-//   base  → 1            (show as stored)
-//   easy  → units[0].g / base  (show per first easy unit; falls back to g100)
+// Return the multiplier to convert stored macros (per base) to displayed macros.
+// Computed from the current display mode for the food's category:
+//   g100  → 100 / base (display per 100 g)
+//   base  → 1 (display per DB base, as stored)
+//   easy  → units[0].g / base (display per first easy unit, or g100 fallback)
+// Multiply any stored macro by this factor to get what the user sees.
 function scaleFor(f) {
   const mode = modeForCat(catFilterOf(f));
   const base = f.base || 100;
@@ -4708,21 +4781,23 @@ function scaleFor(f) {
 }
 
 // ============ SMART SORT HELPERS ============
-// Scoring matches the EXACT value shown in each macro column, which is
-// `macro * scaleFor(f)` (see buildRowHtml). scaleFor already converts the
-// stored per-base amount into the displayed amount for the current mode:
-//   - g100 mode  → macro * (100/base)  = amount per 100 g
-//   - base mode  → macro * 1           = amount per DB portion
-//   - easy mode  → macro * (unit_g/base)= amount per first easy unit
+// Compute and apply smart-sort presets (e.g., "highest protein", "protein vs carbs").
+// Scoring accounts for the current display mode (g100/base/easy), so the sort
+// column always matches what the user sees on the row. Entry points:
+// applyPresetScore (renderer), PRESET_SCORERS (score map), pShown/fShown/etc (helpers).
 //
-// IMPORTANT: we must NOT divide by base here — scaleFor already accounts for
-// base. Dividing again would wrongly shrink the score of items whose base
-// isn't 100 (e.g. a "half chicken" item stored per 320 g), pushing a 0-carb
-// item above a 4-carb item. The score must equal the on-screen number so
-// "Highest carbs" literally means "the row with the biggest carbs column".
+// CRITICAL: each scoreFunc must compute `macro * scaleFor(f)` so the numeric sort
+// equals the displayed values. Do NOT divide by base — scaleFor already handles it.
+// For example: a "half chicken" item stored per 320 g has base=320; scoring it as
+// `p / 100` would wrongly shrink it, allowing a low-p item with base=100 to rank above it.
+
+// Return the displayed protein value for a food (accounts for display mode).
 function pShown(f)       { return f.p * scaleFor(f); }
+// Return the displayed fat value for a food.
 function fShown(f)       { return f.f * scaleFor(f); }
+// Return the displayed carb value for a food.
 function cShown(f)       { return f.c * scaleFor(f); }
+// Return the displayed kcal value for a food.
 function kcalShown(f)    { return f.kcal * scaleFor(f); }
 
 const PRESET_SCORERS = {
@@ -5119,6 +5194,11 @@ function renderSection(catDef, foods) {
   return section;
 }
 
+// Rebuild all food category tables from scratch. Clears #foodTablesContainer,
+// iterates CATEGORIES, renders sections for foods matching each category,
+// and handles orphaned foods (unmatched category) in an "Other" section.
+// Side effects: clears sort menus, resets event delegation. Called by: DB import,
+// food add/delete, language toggle, feature flag changes.
 function renderTables() {
   if (typeof updateDbEmptyNotice === 'function') updateDbEmptyNotice();
   const container = document.getElementById('foodTablesContainer');
@@ -5157,10 +5237,11 @@ function renderTables() {
   attachRowClickHandlers();
 }
 
+// Attach a single delegated click listener to the food tables container.
+// Event delegation means a single listener on the container catches clicks on
+// any food row, including rows created later when a table is rebuilt. Uses a
+// dataset flag to bind only once. Side effect: opens popup on row click.
 function attachRowClickHandlers() {
-  // Event delegation: a single listener on the container catches clicks on
-  // any food row, including rows created later when a table is rebuilt by
-  // the per-table unit toggle or column sort. Bind exactly once.
   const container = document.getElementById('foodTablesContainer');
   if (!container || container.dataset.rowDelegation === '1') return;
   container.dataset.rowDelegation = '1';
@@ -5218,6 +5299,12 @@ function handleRowDelete(btn) {
 }
 
 // ============ POPUP ============
+// Modal for adding/editing a food item on the current day. Driven by currentFood
+// (which food) + editingIndex (editing existing day item, or -1 for new).
+// Manages portion selection (grams / easy units / custom multiplier), in-popup
+// macro editing (popupOverride), and day-item save flow. Entry points: openPopup,
+// closePopup, renderPopupMacroValues, getCurrentGrams, handlePopupSave.
+
 // ============ POPUP MACRO EDIT (in-popup per-base override) ============
 // Lets the user tweak a food's per-base P/F/C inside the popup. The change
 // applies only to this dayItem (carried in entry.__overrideBase); it does
@@ -5225,19 +5312,18 @@ function handleRowDelete(btn) {
 let popupOverride = null; // { p, f, c, kcal } or null
 
 // Return the effective per-base values for the current popup (override if set,
-// otherwise the DB defaults).
+// otherwise the DB defaults). Used to drive macro display and edit mode.
 function effectiveBase() {
   if (!currentFood) return { p:0, f:0, c:0, kcal:0 };
   if (popupOverride) return popupOverride;
   return { p: currentFood.p, f: currentFood.f, c: currentFood.c, kcal: currentFood.kcal };
 }
 
-// Refresh the four big numbers at the top of the popup. By default this
-// shows the per-base values (issue: the user wanted them to reflect what's
-// CURRENTLY selected, so e.g. picking "1 medium tomato (45 g)" should show
-// the macros for 45 g, not for 100 g). We scale by the active tab/unit
-// unless the user is in "Edit per-base values" mode — in that mode the
-// cells must show raw per-base numbers so editing them is unambiguous.
+// Update the four big macro values at the top of the popup (P / F / C / kcal).
+// In normal mode, scales them by the currently-selected portion (active tab + qty).
+// In "Edit per-base values" mode, shows raw per-base values so the user can edit
+// them unambiguously. Also updates the subtitle ("for 1 × [unit]") and adjusts
+// the label to show what base the macros refer to (per-base vs per-portion).
 function renderPopupMacroValues() {
   const e = effectiveBase();
   const setText = (id, v) => {
@@ -5611,6 +5697,12 @@ document.getElementById('addBtn').addEventListener('click', () => {
 });
 
 // ============ TOTALS ============
+// Render daily totals (sum of dayItems), progress bars, goal status, and the
+// selected-items table. Called whenever dayItems changes. Entry points:
+// renderTotals (main), updateProgress (per macro), removeItem (remove day-item).
+
+// Recompute and display totals from dayItems. Updates: FAB counter, progress cards,
+// progress bars, the selected-items table, goal status indicators.
 function renderTotals() {
   const totals = dayItems.reduce((acc, it) => {
     acc.p += it.p; acc.f += it.f; acc.c += it.c; acc.kcal += it.kcal;
@@ -5670,6 +5762,8 @@ function renderTotals() {
   }
 }
 
+// Update a single progress card with current value, remaining/over value, progress bar,
+// and status indicator (empty / close / on target / over). Called for each macro + kcal.
 function updateProgress(name, current, target) {
   document.getElementById('val-' + name).textContent = fmt(current);
   document.getElementById('tgt-' + name).textContent = target;
@@ -5704,6 +5798,8 @@ function updateProgress(name, current, target) {
   }
 }
 
+// Remove a day-item at the given index, persist to localStorage, and re-render totals.
+// Called by the Remove button in the selected-items table (delegated listener).
 function removeItem(idx) {
   dayItems.splice(idx, 1);
   saveDayState();
@@ -5734,12 +5830,17 @@ function removeItem(idx) {
   });
 })();
 
+// Persist dayItems to localStorage and update the day header text.
 function saveDayState() {
   lsSet('mt-day', JSON.stringify(dayItems));
   document.getElementById('dayInfo').textContent = `📅 ${todayStr()} · ${dayItems.length} ${lang === 'ar' ? 'صنف' : 'items'}`;
 }
 
 // ============ DAY CONTROLS ============
+// Buttons for managing the current day: New Day, Save Day, Clear Day, Load Day.
+// Supports saving/loading historical days. savedDays is capped at 60 entries.
+// Entry points: New Day (clear all), Save Day (archive current), Clear Day (reset),
+// Load Day (restore from archive), loadSaved/deleteSaved (window global handlers).
 document.getElementById('newDayBtn').addEventListener('click', () => {
   if (dayItems.length > 0) {
     const msg = lang === 'ar' ? 'مسح اليوم الحالي وبدء يوم جديد؟' : 'Clear current day and start fresh?';
@@ -5832,6 +5933,10 @@ document.getElementById('closeSavedBtn').addEventListener('click', () => {
 });
 
 // ============ GOALS ============
+// Daily macro target setters. Persists to localStorage and updates the goals
+// card + progress bars. Entry points: renderGoals (display), Edit Goals button.
+
+// Update the four goal tiles with current target values.
 function renderGoals() {
   document.getElementById('goalKcal').textContent = goals.kcal;
   document.getElementById('goalProtein').textContent = goals.protein;
@@ -5863,6 +5968,11 @@ document.getElementById('saveGoalsBtn').addEventListener('click', () => {
 });
 
 // ============ WATER TRACKER ============
+// Track daily water intake (cups / ml). Configurable per-glass volume and goal ml.
+// Rendered as clickable cups. Entry points: renderWater, updateWater, click handlers.
+
+// Render the water cups grid and ml display. Shows goal-count of cups, expanding
+// to display overages. Updates the progress percentage.
 function renderWater() {
   const mlPer = waterState.mlPerGlass || 250;
   const goalMl = waterState.goalMl || 2000;
@@ -5889,6 +5999,7 @@ function renderWater() {
   if (pctEl) pctEl.textContent = pct;
 }
 
+// Add or remove glasses of water. Clamps to non-negative. Persists and re-renders.
 function updateWater(delta) {
   waterState.glasses = Math.max(0, waterState.glasses + delta);
   lsSet('mt-water', JSON.stringify(waterState));
@@ -5973,12 +6084,17 @@ document.getElementById('addMethodOverlay').addEventListener('click', e => {
 });
 
 // ============ SEARCH & FILTER ============
+// Floating search input + category filter buttons. Debounced search runs against
+// a pre-built per-id haystack (entries + badges) for fast keystroke response.
+// Entry points: applyFilters (debounced), normalizeSearch, rebuildSearchIndex,
+// normalizeSearch. Filter toggles show/hide category sections.
+
 const searchInput = document.getElementById('searchInput');
 const filterBtns = document.querySelectorAll('.filter-btn');
 let currentFilter = 'all';
 
-// Normalize text for searching: lowercase Latin, strip Arabic diacritics,
-// unify alef/yaa/taa-marbuta variants, collapse whitespace.
+// Normalize text for searching: lowercase, strip Arabic diacritics, unify variants.
+// Makes user queries work without requiring exact diacritics/orthography.
 function normalizeSearch(s) {
   return String(s)
     .toLowerCase()
@@ -5991,7 +6107,8 @@ function normalizeSearch(s) {
     .trim();
 }
 
-// Debounce helper: only invoke fn after ms of inactivity.
+// Return a debounced version of a function: invokes only after ms of inactivity.
+// Used to throttle keystrokes (e.g., 250 ms debounce on search input).
 function debounce(fn, ms) {
   let timeout;
   return function(...args) {
@@ -6000,10 +6117,13 @@ function debounce(fn, ms) {
   };
 }
 
-// Pre-computed haystack per food.id. Built once per DB change, reused on every
-// keystroke — saves recomputing normalizeSearch() across 500+ foods on every
-// keypress.
+// Pre-computed per-id search haystacks. Built once per DB change, reused on every
+// keystroke. Saves recomputing normalizeSearch() across 500+ foods per keystroke.
+// Includes food names, basis text, easy unit text, and badges.
 const searchIndex = new Map();
+
+// Rebuild the search index from the current DB. Called on boot, on DB import,
+// on food add/delete, and on-demand if the index is empty on search.
 function rebuildSearchIndex() {
   searchIndex.clear();
   DB.forEach(f => {
@@ -6085,11 +6205,20 @@ filterBtns.forEach(btn => {
 // (Per-table display toggles live in each category header — see renderSection.)
 
 // ============ TOTALS BAR TOGGLE ============
+// Floating action button (FAB) toggles. Controls sidebar visibility.
+
 // ============ SIDE PANEL ============
+// Right-side drawer for: daily activity (workouts), meal templates, trends, settings.
+// Opened by FAB click, closed by close button / overlay click. Entry points:
+// openPanel, closePanel, renderWorkoutsList, renderTemplatesList, etc.
+
+// Open the side panel.
 function openPanel() {
   document.getElementById('sidePanel').classList.add('active');
   document.getElementById('panelOverlay').classList.add('active');
 }
+
+// Close the side panel and overlay.
 function closePanel() {
   document.getElementById('sidePanel').classList.remove('active');
   document.getElementById('panelOverlay').classList.remove('active');
@@ -6098,7 +6227,7 @@ document.getElementById('fab').addEventListener('click', openPanel);
 document.getElementById('panelClose').addEventListener('click', closePanel);
 document.getElementById('panelOverlay').addEventListener('click', closePanel);
 
-// Render the list of workouts in the activity section
+// Render the list of workouts in the activity section, showing total burned kcal.
 function renderWorkoutsList() {
   const list = document.getElementById('workoutsList');
   if (workouts.length === 0) {
@@ -6515,11 +6644,12 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
 });
 
 // ============ ADD FOOD (manual entry) ============
-// Adds a new item straight into DB and persists it to localStorage['mt-db'],
-// the same store the Excel import uses — so manual items survive reloads and
-// coexist with an imported custom database.
+// Modal for manually creating a new food (scratch) or recipe (composite).
+// New items are added to DB and persisted. Modes: manual entry, recipe builder.
+// Recipe builder sums macros from picked foods. Entry points: openAddFood,
+// openAddFoodFromOCR, setRecipeMode, recipeAddFood, saveNewFood, populateAddFoodCategories.
 
-// Smart sort preset menu items configuration
+// Smart sort preset menu configuration (used by category header sort button)
 // Note: shortcuts use arrow-BEFORE-letter ordering (↑P not P↑) which reads more
 // naturally as "up P". The button label adds a LRM marker; menu items don't
 // need it because each shortcut sits inside its own .smi-shortcut <span> with
@@ -6552,8 +6682,8 @@ const PRESET_GROUP_ICONS = {
 
 const NEW_CAT_SENTINEL = '__new__';
 
-// Build a readable label for a category key, preferring the CATEGORIES
-// definition; falls back to the raw key for custom/imported categories.
+// Return a human-readable label for a category. Checks CATEGORIES first;
+// if not found, returns the raw key (for custom imported categories).
 function catLabel(catKey) {
   const def = CATEGORIES.find(c => c.cat === catKey);
   if (def) return def[lang];
@@ -6592,7 +6722,8 @@ function populateAddFoodCategories() {
   sel.appendChild(oNew);
 }
 
-// Slugify the English name into an id; ensure it is unique in DB.
+// Generate a unique ID from an English name by slugifying and appending a
+// counter if needed. Used for new manual foods and recipes.
 function makeUniqueId(enName) {
   let base = String(enName).toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -6606,10 +6737,11 @@ function makeUniqueId(enName) {
 }
 
 // ============ ADD FOOD — RECIPE BUILDER ============
-// Lets the user build a new item by combining existing items + grams.
-// Each picked = { id, grams }. The total P/F/C/kcal of the new item is the
-// sum of contributions = (item.{p,f,c,kcal} * grams / item.base) per pick.
-// 'base' of the resulting item = sum of grams (so 1× base = the whole recipe).
+// Composite food builder: pick existing foods + quantities, compute totals, save as new recipe.
+// Recipes become first-class DB items with a synthetic per-100g base. Each pick contributes
+// (item.{p,f,c,kcal} * qty * unitG / item.base) to the recipe total. The resulting recipe's
+// 'base' = sum of grams, so 1× the base = the entire recipe. Entry points: setRecipeMode,
+// recipeAddFood, recipeRenderTotals, saveRecipeAsFood.
 let recipeMode = 'scratch'; // 'scratch' | 'recipe'
 // Each picked entry: { id, qty, unitG, unitLabel }
 //   unitG    = grams represented by ONE unit (could be base grams, or a units[] entry's .g)
@@ -6617,6 +6749,7 @@ let recipeMode = 'scratch'; // 'scratch' | 'recipe'
 //   qty * unitG = effective grams of this ingredient
 let recipePicked = [];
 
+// Clear all recipe state: empty picks, switch UI back to scratch, reset totals.
 function recipeReset() {
   recipeMode = 'scratch';
   recipePicked = [];
@@ -6640,6 +6773,8 @@ function recipeReset() {
   if (eg) eg.value = '';
 }
 
+// Toggle between 'recipe' (composite builder) and 'scratch' (manual entry) modes.
+// Swaps UI visibility and updates active button state.
 function setRecipeMode(mode) {
   recipeMode = (mode === 'recipe') ? 'recipe' : 'scratch';
   const box = document.getElementById('afRecipeBox');
@@ -6651,12 +6786,9 @@ function setRecipeMode(mode) {
   });
 }
 
-// Build the list of available "unit options" for a food in the recipe
-// builder. The dropdown lists ONLY easy measures (the food's `units[]`),
-// plus a "1 g" option so the user can enter raw grams directly. This way
-// `qty * unitG` always gives the user precise control over the weight:
-//   - Pick "1 medium tomato (45 g)" with qty=2  -> 90 g
-//   - Pick "g" (1 g per unit) with qty=120     -> 120 g
+// Return the unit dropdown options for a food in the recipe builder.
+// Lists the food's easy units plus a "raw grams" (1 g per unit) option.
+// This lets the user control precise weight: e.g., "2 × [medium tomato (45g)]" = 90 g.
 function unitOptionsFor(it) {
   const opts = [];
   // Named easy units come first (as defined on the food).
@@ -7613,6 +7745,12 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
 });
 
 // ============ LANGUAGE TOGGLE ============
+// Switch between English and Arabic. Affects DOM text, direction, and all UI labels.
+// Master re-render: calls renderTables, renderTotals, applyFilters, etc.
+// Entry points: applyLanguage (main), lang toggle button (IIFE).
+
+// Apply the current language globally: update text nodes, attributes, CSS direction,
+// and trigger a full UI re-render. Called on startup and on language toggle.
 function applyLanguage() {
 
   document.body.classList.remove('en', 'ar');
@@ -7685,12 +7823,14 @@ function applyLanguage() {
 })();
 
 // ============ INIT ============
+// App startup sequence (order matters). Hydration from localStorage is done in
+// the STATE section. Boot order: search index → theme → features → render all.
 rebuildSearchIndex();
 applyTheme();
 applyFeatures();
 renderGoals();
 renderWater();
-applyLanguage();
+applyLanguage();  // Master re-render: handles all table/filter/totals rendering
 renderMealTemplates();
 saveDayState();
 renderWorkoutsList();
@@ -7700,12 +7840,11 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 }));
 
 // ============ DOCK ABOVE KEYBOARD ============
-// On Android, `position: fixed; bottom: 0` anchors to the layout viewport so
-// the bottom dock disappears under the soft keyboard whenever the page scrolls
-// (e.g. the search auto-scroll). Track the VisualViewport and translate the
-// dock up by the keyboard-occluded amount so it stays just above the keyboard.
-// No-op when the keyboard is closed and on browsers without the VisualViewport
-// API.
+// On Android, `position: fixed; bottom: 0` anchors to the layout viewport, so
+// the soft keyboard hides the bottom dock when the page scrolls. This IIFE tracks
+// VisualViewport height and translates the dock up by the keyboard-occluded
+// amount, keeping it just above the keyboard. No-op on browsers without
+// VisualViewport API or when the keyboard is closed.
 (function initDockKeyboardTracking() {
   if (!window.visualViewport) return;
   const dock = document.getElementById('bottomDock');
@@ -7721,6 +7860,9 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 })();
 
 // ============ GLOBAL SORT MENU HANDLERS ============
+// Close popover sort menus when clicking outside, scrolling, resizing, or pressing Escape.
+
+// Close all open sort-menu popovers. Called by global click/scroll/resize/keydown listeners.
 function closeAllSortMenus() {
   document.querySelectorAll('.sort-menu-pop.open').forEach(pop => {
     pop.classList.remove('open');
@@ -7757,6 +7899,9 @@ document.addEventListener('keydown', e => {
 // Settings collapse retired — see #settingsOverlay (initSettingsModal below).
 
 // ============ UNIFIED SETTINGS MODAL ============
+// Tabbed settings panel: theme, language, goals, feature toggles, API keys, about.
+// Tab state persisted. Opened by gear icon in header, closed by X or overlay click.
+
 (function initSettingsModal() {
   const overlay = document.getElementById('settingsOverlay');
   const openBtn = document.getElementById('settingsBtn');
@@ -8025,13 +8170,20 @@ document.querySelectorAll('.window-btn').forEach(btn => {
 });
 
 // ============ OCR (PHOTO EXTRACTION) FEATURE ============
+// Extract macros from a photo of a nutrition label via Gemini API.
+// Pipeline: openOcrModal → file picker → preview → Gemini call → render result →
+// openAddFoodFromOCR (pre-fill Add Food modal). User supplies API key in Settings.
+// Queries gemini-2.5-flash with a structured prompt, validates result (calorie check),
+// and handles scaling (per-serving → per-100g). Entry points: openOcrModal, callGeminiOCR,
+// ocrSanityCheck, renderOcrResult, openAddFoodFromOCR.
+
 const GEMINI_MODEL_NAME = 'gemini-2.5-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL_NAME}:generateContent`;
 
 let ocrImageBase64 = null;
 let ocrImageMime = null;
 let ocrLastResult = null;
-let ocrReqId = 0;  // Incremented on each run to detect stale in-flight responses.
+let ocrReqId = 0;  // Incremented per OCR run to reject stale in-flight responses.
 
 const OCR_PROMPT = `You are a nutrition label extraction expert. Analyze the image and extract these 5 fields:
 1. kcal (calories)
@@ -8062,6 +8214,7 @@ Return ONLY valid JSON (no markdown):
   "warnings": ["any issues"]
 }`;
 
+// Show one OCR modal step, hide others ('pick'|'preview'|'progress'|'result').
 function ocrShowStep(step) {
   ['ocrStepPick', 'ocrStepPreview', 'ocrStepProgress', 'ocrStepResult'].forEach(id => {
     document.getElementById(id).style.display = 'none';
@@ -8072,11 +8225,14 @@ function ocrShowStep(step) {
   else if (step === 'result') document.getElementById('ocrStepResult').style.display = 'block';
 }
 
+// Display an error message in the OCR modal.
 function ocrShowError(msg) {
   const el = document.getElementById('ocrErr');
   el.textContent = msg;
   el.classList.add('show');
 }
+
+// Hide the error message.
 function ocrClearError() {
   document.getElementById('ocrErr').classList.remove('show');
 }
@@ -8104,6 +8260,7 @@ function openOcrModal() {
   document.getElementById('ocrOverlay').classList.add('active');
 }
 
+// Close the OCR modal.
 function closeOcrModal() {
   document.getElementById('ocrOverlay').classList.remove('active');
 }
@@ -8135,6 +8292,9 @@ document.getElementById('ocrFileInput').addEventListener('change', e => {
   reader.readAsDataURL(file);
 });
 
+// POST the image + OCR_PROMPT to Gemini and return parsed JSON result.
+// Handles API errors, response parsing (with markdown cleanup), and validates
+// that a response was returned. Throws on any error (caught by caller).
 async function callGeminiOCR(apiKey, imageBase64, mimeType) {
   const body = {
     contents: [{
@@ -8187,6 +8347,8 @@ async function callGeminiOCR(apiKey, imageBase64, mimeType) {
   return parsed;
 }
 
+// Validate OCR result by checking P×4 + F×9 + C×4 ≈ kcal (within tolerance).
+// Returns {level:'ok'|'warning'|'error', msg: localized text}. Warns on missing values.
 function ocrSanityCheck(v) {
   if (v.protein == null || v.fat == null || v.carbs == null || v.kcal == null) {
     return { level: 'warning', msg: lang === 'ar'
@@ -8209,6 +8371,8 @@ function ocrSanityCheck(v) {
     : `❌ Major mismatch (computed ${Math.round(computed)} vs ${v.kcal} kcal). Likely a read error.` };
 }
 
+// Render the OCR result in the modal: confidence badge, base unit note, macro values,
+// sanity-check result, warnings, and product name. Used by the "preview result" step.
 function renderOcrResult(r) {
   const badge = document.getElementById('ocrConfBadge');
   const conf = r.confidence || 'low';
@@ -8355,12 +8519,17 @@ function openAddFoodFromOCR(r) {
 }
 
 // ============ BARCODE SCANNER FEATURE ============
+// Real-time barcode scanning via camera + BarcodeDetector API (fetch macros from OpenFoodFacts).
+// Flows: initBarcodeDetector → openBarcodeModal → camera stream → detect → OpenFoodFacts lookup →
+// render result → openAddFoodFromBarcode (pre-fill Add Food modal). Entry points: openBarcodeModal,
+// lookupOpenFoodFacts, barcodeDetectLoop, handleBarcodeFound.
+
 let barcodeDetector = null;
 let barcodeCameraStream = null;
 let barcodeLastResult = null;
-let barcodeReqId = 0;  // Incremented on each lookup to detect stale in-flight responses.
+let barcodeReqId = 0;  // Incremented per lookup to reject stale responses.
 
-// Check if BarcodeDetector is supported and initialize it.
+// Check if BarcodeDetector is available and initialize with supported formats.
 async function initBarcodeDetector() {
   if (!('BarcodeDetector' in window)) {
     return false;
@@ -8376,6 +8545,7 @@ async function initBarcodeDetector() {
   }
 }
 
+// Show one barcode scanner step, hide others ('check'|'stream'|'progress'|'result').
 function barcodeShowStep(step) {
   ['barcodeStepCheck', 'barcodeStepStream', 'barcodeStepProgress', 'barcodeStepResult'].forEach(id => {
     document.getElementById(id).style.display = 'none';
@@ -8599,9 +8769,12 @@ document.getElementById('barcodeOverlay').addEventListener('click', e => {
 });
 
 // ============ LIVE CALORIE-MISMATCH CHECK (Add Food modal) ============
-// Compares the entered Calories against P×4 + F×9 + C×4 and shows a live
-// warning. Only meaningful when the user has typed an explicit kcal value
-// (leaving it blank means "auto-compute", which can never mismatch).
+// Monitor macro inputs and warn if kcal entry mismatches computed (P×4 + F×9 + C×4).
+// Only fires if the user explicitly entered a kcal value (blank = auto-computed).
+// Entry point: updateAfKcalCheck (wired to input events on macro fields).
+
+// Check Add Food modal macros for consistency. Warn if entered kcal doesn't match
+// computed macros. Called by input event listeners on P/F/C/kcal fields.
 function updateAfKcalCheck() {
   const warnEl = document.getElementById('afKcalWarn');
   if (!warnEl) return;
@@ -8645,9 +8818,10 @@ function updateAfKcalCheck() {
 });
 
 // ============ DB-EMPTY NOTICE VISIBILITY ============
-// The notice (a tip pointing to Restore JSON) only makes sense while the user
-// is still on the built-in sample DB. The moment they load/restore a real DB
-// or add/delete an item, localStorage['mt-db'] exists — so we hide it then.
+// Show/hide the "Restore JSON" tip based on whether mt-db exists in localStorage.
+// Tip only shows while using the built-in sample DB; hidden once a custom DB is loaded.
+
+// Hide the import tip if a custom DB has been loaded (mt-db is not empty).
 function updateDbEmptyNotice() {
   const bar = document.getElementById('dataToolsBar');
   if (!bar) return;
@@ -8661,18 +8835,23 @@ refreshApiKeyStatus();
 renderTotals();
 
 // ============ DAILY REMINDERS (LOCAL NOTIFICATIONS) ============
-// Stores `mt-notif-enabled` ('1'|'0') and `mt-notif-time` ('HH:MM'). When
-// enabled and permission is granted, a one-shot setTimeout fires the next
-// notification at the configured time, then reschedules itself for the day
-// after. Notifications fire via the active service worker so they can survive
-// brief tab backgrounding; if no SW is available we fall back to a plain
-// `new Notification(...)` from the page.
+// ============ DAILY REMINDERS (LOCAL NOTIFICATIONS) ============
+// One-time daily reminder at a configured time via Notification API.
+// Persists via localStorage: mt-notif-enabled ('1'|'0'), mt-notif-time ('HH:MM').
+// Reschedules itself daily. Fires via service worker (survives brief backgrounding),
+// falls back to page Notification. Entry points: scheduleReminder, fireReminder,
+// updateReminderStatusUI, plus Settings UI controls.
+
 var reminderTimerId = null;
 var REMINDER_DEFAULT_TIME = '20:00';
 
+// Return whether reminders are enabled.
 function reminderEnabled() { return localStorage.getItem('mt-notif-enabled') === '1'; }
+// Return the configured reminder time ('HH:MM').
 function reminderTime()    { return localStorage.getItem('mt-notif-time') || REMINDER_DEFAULT_TIME; }
 
+// Compute the delay (ms) until the next reminder at the given HH:MM time.
+// Accounts for timezone and reschedules to tomorrow if the time has passed.
 function nextReminderDelay(hhmm) {
   var parts = (hhmm || REMINDER_DEFAULT_TIME).split(':');
   var h = parseInt(parts[0], 10) || 20;
@@ -8683,6 +8862,7 @@ function nextReminderDelay(hhmm) {
   return next.getTime() - now.getTime();
 }
 
+// Fire the daily reminder notification. Posts via SW if available, else fallback to page Notification.
 function fireReminder() {
   var lang = localStorage.getItem('mt-lang') === 'ar' ? 'ar' : 'en';
   var title = lang === 'ar' ? 'تذكير الماكروز' : 'Macro reminder';
@@ -8710,6 +8890,9 @@ function fireReminder() {
   } catch (e) { console.warn('reminder fire failed:', e); }
 }
 
+// Schedule the next daily reminder. Clears any pending timer, checks if reminders
+// are enabled + permission granted, then sets a timeout for the next fire time.
+// Called on startup, on Settings change, and recursively after each fire.
 function scheduleReminder() {
   if (reminderTimerId) { clearTimeout(reminderTimerId); reminderTimerId = null; }
   if (!reminderEnabled()) return;
@@ -8806,10 +8989,11 @@ initReminderUI();
 scheduleReminder();
 
 // ============ PWA: service worker, install prompts, persistence, shortcuts ============
+// Progressive Web App setup: offline caching (sw.js), update toast, persistent storage claim,
+// install prompt handling. Also defines the manifest shortcut menu (add-to-home shortcuts).
 
-// Ask the browser to mark our storage as "persistent" so iOS Safari / Firefox
-// won't evict mt-* localStorage keys after 7 days of disuse. Best-effort —
-// silently fails on unsupported browsers.
+// Request persistent storage so iOS Safari / Firefox don't evict localStorage after 7 days.
+// Best-effort; silently fails if unsupported.
 if (navigator.storage && navigator.storage.persist) {
   navigator.storage.persist().catch(function () {});
 }

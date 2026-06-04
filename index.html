@@ -7400,8 +7400,14 @@ function buildBackupObject() {
       scheme: currentScheme,
       templates: mealTemplates,
       features: featureFlags,
+      displayModes: displayModes,
+      smartSort: smartSortState,
       notifEnabled: localStorage.getItem('mt-notif-enabled') || '0',
       notifTime: localStorage.getItem('mt-notif-time') || '20:00'
+      // NOTE: mt-gemini-key is intentionally excluded. Backups are often
+      // shared/synced; an embedded API key would let anyone with the file
+      // bill calls to the user's Google account. User re-enters key after
+      // restore via Settings → API Key.
     }
   };
 }
@@ -7488,6 +7494,10 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (payload.goals) willRestore.push(lang === 'ar' ? 'الأهداف' : 'goals');
       if (Array.isArray(payload.templates) && payload.templates.length)
         willRestore.push(lang === 'ar' ? `قوالب الوجبات (${payload.templates.length})` : `meal templates (${payload.templates.length})`);
+      if (payload.displayModes && typeof payload.displayModes === 'object' && Object.keys(payload.displayModes).length)
+        willRestore.push(lang === 'ar' ? 'تفضيلات العرض' : 'display preferences');
+      if (payload.smartSort && typeof payload.smartSort === 'object' && Object.keys(payload.smartSort).length)
+        willRestore.push(lang === 'ar' ? 'الترتيب الذكي' : 'smart sort');
 
       const msg = (lang === 'ar'
         ? 'سيتم استرجاع: '
@@ -7558,6 +7568,21 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         });
         saveFeatures();
         syncFeatureCheckboxes();
+      }
+      if (payload.displayModes && typeof payload.displayModes === 'object') {
+        displayModes = {};
+        Object.keys(payload.displayModes).forEach(k => {
+          const v = payload.displayModes[k];
+          if (v === 'g100' || v === 'base' || v === 'easy') displayModes[k] = v;
+        });
+        lsSet('mt-display-modes', JSON.stringify(displayModes));
+      }
+      if (payload.smartSort && typeof payload.smartSort === 'object') {
+        smartSortState = {};
+        Object.keys(payload.smartSort).forEach(k => {
+          if (typeof payload.smartSort[k] === 'string') smartSortState[k] = payload.smartSort[k];
+        });
+        lsSet('mt-smart-sort', JSON.stringify(smartSortState));
       }
       if (payload.notifEnabled === '0' || payload.notifEnabled === '1') {
         localStorage.setItem('mt-notif-enabled', payload.notifEnabled);

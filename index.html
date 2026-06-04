@@ -957,22 +957,34 @@ body.ar .filter-btn {
 .filter-btn.rest.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); border-style: solid; }
 
 /* ============ DIET FILTER BAR ============ */
+/* Label stays fixed; chips live in a horizontal-scroll track so the bar never
+ * wraps onto a second row and stays one tap-tall on phones. */
 .diet-filter-bar {
-  display: flex; flex-wrap: wrap; gap: 6px;
+  display: flex; gap: 8px;
   padding: 8px 16px 4px;
   align-items: center;
 }
+.diet-filter-scroll {
+  display: flex; gap: 6px;
+  overflow-x: auto;
+  flex: 1; min-width: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+.diet-filter-scroll::-webkit-scrollbar { display: none; }
+.diet-filter-scroll > * { flex-shrink: 0; }
 .diet-filter-label {
+  flex-shrink: 0;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.1em;
   color: var(--ink-soft);
-  margin-right: 4px;
 }
 body.ar .diet-filter-label {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 12px; text-transform: none; letter-spacing: 0;
-  margin-right: 0; margin-left: 4px;
 }
 .diet-chip {
   background: var(--paper);
@@ -1819,11 +1831,15 @@ body.ar .lr-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 
 [dir="rtl"] .settings-tabs { padding: 8px 8px 0; }
 
 /* ============ ADD METHOD CHOOSER ============ */
+/* OFF search results list cap — prevent results swamping the modal scroll */
+
 .add-method-modal {
   background: var(--paper);
   border-radius: 4px;
   max-width: 400px; width: 100%;
-  max-height: 90vh; overflow-y: auto; overflow-x: hidden;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto; overflow-x: hidden;
   border: 1px solid var(--line);
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   padding: 24px;
@@ -2985,6 +3001,9 @@ body.ar .empty-state { font-style: normal; }
 .goals-modal {
   background: var(--paper); border-radius: 4px;
   max-width: 480px; width: 100%;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto; overflow-x: hidden;
   border: 1px solid var(--line);
 }
 .goals-modal h3 {
@@ -3026,7 +3045,9 @@ body.ar .goals-form .input-row input { text-align: right; }
 .tdee-modal {
   background: var(--paper); border-radius: 4px;
   max-width: 560px; width: 100%;
-  max-height: 90vh; overflow-y: auto;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto; overflow-x: hidden;
   border: 1px solid var(--line);
 }
 .tdee-modal h3 {
@@ -3108,9 +3129,15 @@ body.ar .tdee-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size:
 .off-search-modal {
   background: var(--paper); border-radius: 4px;
   max-width: 600px; width: 100%;
-  max-height: 90vh; display: flex; flex-direction: column;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  display: flex; flex-direction: column;
   border: 1px solid var(--line);
+  min-height: 0;
 }
+.off-search-modal h3 { flex-shrink: 0; }
+.off-search-modal .popup-actions { flex-shrink: 0; border-top: 1px solid var(--line); padding: 12px 24px; }
+.off-search-body { min-height: 0; }
 .off-search-modal h3 {
   padding: 18px 24px;
   background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
@@ -3367,12 +3394,12 @@ body.ar .footer li::before {
 
 <div class="diet-filter-bar" id="dietFilterBar">
   <span class="diet-filter-label" data-en="Diet" data-ar="نظام">Diet</span>
-  <button type="button" class="diet-chip" data-diet="halal"        data-en="☪ Halal"        data-ar="☪ حلال">☪ Halal</button>
-  <button type="button" class="diet-chip" data-diet="vegan"        data-en="🌱 Vegan"       data-ar="🌱 نباتي صرف">🌱 Vegan</button>
-  <button type="button" class="diet-chip" data-diet="vegetarian"   data-en="🥕 Vegetarian"  data-ar="🥕 نباتي">🥕 Vegetarian</button>
-  <button type="button" class="diet-chip" data-diet="gluten-free"  data-en="🚫🌾 Gluten-free" data-ar="🚫🌾 خالٍ من القمح">🚫🌾 Gluten-free</button>
-  <button type="button" class="diet-chip" data-diet="keto"         data-en="🥑 Keto"        data-ar="🥑 كيتو">🥑 Keto</button>
-  <button type="button" class="diet-chip-clear" id="dietClearBtn"  data-en="✕ Clear"       data-ar="✕ مسح">✕ Clear</button>
+  <div class="diet-filter-scroll">
+    <button type="button" class="diet-chip" data-diet="gluten-free"  data-en="🚫🌾 Gluten-free"   data-ar="🚫🌾 خالٍ من الجلوتين">🚫🌾 Gluten-free</button>
+    <button type="button" class="diet-chip" data-diet="lactose-free" data-en="🚫🥛 Lactose-free"  data-ar="🚫🥛 خالٍ من اللاكتوز">🚫🥛 Lactose-free</button>
+    <button type="button" class="diet-chip" data-diet="keto"         data-en="🥑 Keto"           data-ar="🥑 كيتو">🥑 Keto</button>
+    <button type="button" class="diet-chip-clear" id="dietClearBtn"  data-en="✕ Clear"          data-ar="✕ مسح">✕ Clear</button>
+  </div>
 </div>
 
 <div class="controls">
@@ -7126,12 +7153,22 @@ function runSearchFromInput() {
   }
 }
 searchInput.addEventListener('input', debounce(runSearchFromInput, 250));
+// Scroll the first visible section into view after a filter change. Mirrors
+// runSearchFromInput's behavior so all filter mutations (search, category
+// chips, diet chips) share the same "show me the first hit" feedback.
+function scrollToFirstVisible() {
+  const firstVisible = applyFilters();
+  if (firstVisible && typeof firstVisible.scrollIntoView === 'function') {
+    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
 filterBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     filterBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentFilter = btn.dataset.filter;
-    applyFilters();
+    scrollToFirstVisible();
   });
 });
 
@@ -7143,34 +7180,47 @@ filterBtns.forEach(btn => {
 // Users add/override per-item tags through the Edit Food modal.
 
 // Conservative auto-tags by category. Power users override by setting badges
-// directly. The 'protein-meat' default is 'halal' to match the Saudi-targeted
-// seed DB; users with non-halal meats in their DB should explicitly omit it.
+// directly. Tags map to the chip set: gluten-free, lactose-free, keto.
+// Vegetables / fruit / legumes / fats / fish / meat all default to gluten-free
+// AND lactose-free (no wheat, no dairy). Dairy is GF but NOT LF. Grains are
+// LF but most contain gluten so not GF.
 const DIET_AUTO_BY_CAT = {
-  'veg':            ['halal', 'vegan', 'vegetarian', 'gluten-free'],
-  'fruit':          ['halal', 'vegan', 'vegetarian', 'gluten-free'],
-  'protein-veg':    ['halal', 'vegan', 'vegetarian', 'gluten-free'],
-  'fats':           ['halal', 'vegan', 'vegetarian', 'gluten-free'],
-  'protein-fish':   ['halal', 'vegetarian'],
-  'protein-dairy':  ['halal', 'vegetarian'],
-  'carbs':          ['halal', 'vegan', 'vegetarian'],
-  'protein-meat':   ['halal']
+  'veg':            ['gluten-free', 'lactose-free'],
+  'fruit':          ['gluten-free', 'lactose-free'],
+  'protein-veg':    ['gluten-free', 'lactose-free'],
+  'fats':           ['gluten-free', 'lactose-free'],
+  'protein-fish':   ['gluten-free', 'lactose-free'],
+  'protein-meat':   ['gluten-free', 'lactose-free'],
+  'protein-dairy':  ['gluten-free'],
+  'carbs':          ['lactose-free']
 };
 
 // Return the effective diet-tag set for a food: union of explicit badges +
-// category-derived auto-tags. A Set is returned for O(1) membership checks.
+// category-derived auto-tags + data-derived keto. Keto is a macro property,
+// not a category one — a food counts as keto if its net-carbs share at the
+// food's `base` is ≤ 5 g per 100 g (an aggressive but standard threshold).
 function dietTagsOf(f) {
   const out = new Set(Array.isArray(f.badges) ? f.badges : []);
   const auto = DIET_AUTO_BY_CAT[f.cat] || [];
   auto.forEach(t => out.add(t));
+  // Keto by macros: per-100g carbs ≤ 5 g. Use the food's own base to scale.
+  if (typeof f.c === 'number' && typeof f.base === 'number' && f.base > 0) {
+    const cPer100 = (f.c / f.base) * 100;
+    if (cPer100 <= 5) out.add('keto');
+  }
   return out;
 }
 
 // Persisted set of active diet filter tags. Loaded from mt-diet-filters on
 // boot; saved on any chip toggle. Empty Set = no diet filter applied.
+// Only the currently-supported chips are accepted on load — earlier versions
+// shipped with halal/vegan/vegetarian chips that have since been removed, so
+// stale saved tags are filtered out here to keep the persisted set clean.
+const VALID_DIET_TAGS = new Set(['gluten-free', 'lactose-free', 'keto']);
 let dietFilters = new Set();
 try {
   const saved = lsGet('mt-diet-filters', []);
-  if (Array.isArray(saved)) dietFilters = new Set(saved);
+  if (Array.isArray(saved)) dietFilters = new Set(saved.filter(t => VALID_DIET_TAGS.has(t)));
 } catch (e) { dietFilters = new Set(); }
 
 // Reflect current dietFilters into the chip-bar UI.
@@ -7200,7 +7250,7 @@ function syncDietChips() {
     }
     lsSet('mt-diet-filters', JSON.stringify(Array.from(dietFilters)));
     syncDietChips();
-    applyFilters();
+    scrollToFirstVisible();
   });
   syncDietChips();
 })();
@@ -8732,7 +8782,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         lsSet('mt-profile', JSON.stringify(payload.profile));
       }
       if (Array.isArray(payload.dietFilters)) {
-        dietFilters = new Set(payload.dietFilters.filter(t => typeof t === 'string'));
+        dietFilters = new Set(payload.dietFilters.filter(t => VALID_DIET_TAGS.has(t)));
         lsSet('mt-diet-filters', JSON.stringify(Array.from(dietFilters)));
         if (typeof syncDietChips === 'function') syncDietChips();
       }
@@ -9932,10 +9982,16 @@ async function runOffSearch() {
   resultsEl.innerHTML = `<div class="off-result-loading">${lang === 'ar' ? 'جارٍ البحث…' : 'Searching…'}</div>`;
   const myReq = ++offSearchReqId;
   try {
+    // `lc` (locale) tells OFF which language to prioritize in product_name and
+    // search matching. Without it the API treats the query as English-only and
+    // misses items indexed under product_name_ar.
+    const lc = lang === 'ar' ? 'ar' : 'en';
     const url = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' +
       encodeURIComponent(q) +
-      '&search_simple=1&action=process&json=1&page_size=20&fields=product_name,product_name_en,product_name_ar,brands,nutriments,code';
-    const resp = await fetch(url);
+      '&search_simple=1&action=process&json=1&page_size=20' +
+      '&lc=' + lc +
+      '&fields=product_name,product_name_en,product_name_ar,brands,nutriments,code';
+    const resp = await fetch(url, { headers: { 'Accept-Language': lc } });
     if (myReq !== offSearchReqId) return; // user fired a newer search
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
@@ -9966,7 +10022,12 @@ function renderOffResults() {
   }
   resultsEl.innerHTML = offLastResults.map((p, idx) => {
     const n = p.nutriments || {};
-    const name = escapeHtml(p.product_name_en || p.product_name || p.product_name_ar || '—');
+    // Prefer the current-language name field if OFF returned one; fall back
+    // to the generic product_name; finally to the other language.
+    const preferred = lang === 'ar'
+      ? (p.product_name_ar || p.product_name || p.product_name_en)
+      : (p.product_name_en || p.product_name || p.product_name_ar);
+    const name = escapeHtml(preferred || '—');
     const brand = p.brands ? escapeHtml(String(p.brands).split(',')[0].trim()) : '';
     const kcal = Math.round(Number(n['energy-kcal_100g']) || 0);
     const prot = (Number(n['proteins_100g']) || 0).toFixed(1);

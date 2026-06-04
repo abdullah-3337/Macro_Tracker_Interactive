@@ -606,8 +606,12 @@ body.ar .scheme-card { text-align: right; }
   background: var(--paper); border-radius: 4px;
   max-width: 820px; width: 100%;
   border: 1px solid var(--line);
-  max-height: 90vh; display: flex; flex-direction: column;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  display: flex; flex-direction: column;
+  min-height: 0;
 }
+.trends-modal h3 { flex-shrink: 0; }
 .trends-modal h3 {
   padding: 18px 24px;
   background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
@@ -620,6 +624,7 @@ body.ar .trends-modal h3 { font-style: normal; }
 .trends-body {
   padding: 18px 24px; overflow-y: auto; flex: 1;
   display: flex; flex-direction: column; gap: 16px;
+  min-height: 0;
 }
 .trends-controls {
   display: flex; gap: 8px; flex-wrap: wrap;
@@ -2420,6 +2425,162 @@ body.ar .weight-section h4 {
 .remove-weight-btn:hover { filter: brightness(1.05); }
 body.feat-off-weight .weight-section { display: none !important; }
 
+/* Slim side panel header for weight: title on the left, history button right. */
+.weight-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.weight-section-head h4 { margin: 0; }
+.weight-history-btn {
+  background: var(--paper); color: var(--ink-soft);
+  border: 1px solid var(--line); border-radius: 3px;
+  padding: 4px 10px; cursor: pointer;
+  font-family: inherit; font-size: 11px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.weight-history-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* ============ WEIGHT HISTORY MODAL ============ */
+.weight-history-modal {
+  background: var(--paper); border-radius: 4px;
+  max-width: 700px; width: 100%;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  display: flex; flex-direction: column;
+  border: 1px solid var(--line);
+  min-height: 0;
+}
+.weight-history-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px;
+  background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
+  color: var(--on-grad);
+  border-bottom: 3px solid var(--gold);
+  flex-shrink: 0;
+}
+.weight-history-head h3 {
+  margin: 0; font-size: 18px; font-style: italic; font-weight: 600;
+  color: var(--on-grad);
+}
+body.ar .weight-history-head h3 { font-style: normal; }
+.weight-history-head .guide-modal-close {
+  background: var(--on-grad-veil); border: 1px solid var(--on-grad-bd);
+  color: var(--on-grad);
+}
+.weight-history-body {
+  padding: 18px 22px;
+  overflow-y: auto;
+  flex: 1; min-height: 0;
+}
+.wh-range {
+  display: flex; gap: 6px; margin-bottom: 12px;
+}
+.wh-range-btn {
+  background: var(--paper); border: 1px solid var(--line);
+  color: var(--ink-soft); cursor: pointer;
+  border-radius: 999px; padding: 6px 14px;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+}
+.wh-range-btn:hover { background: var(--veil-hi); }
+.wh-range-btn.active {
+  background: var(--accent); color: var(--on-accent);
+  border-color: var(--accent);
+}
+.wh-chart {
+  width: 100%; height: 200px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.wh-chart svg { width: 100%; height: 100%; display: block; }
+.wh-chart .raw-dot { fill: var(--ink-soft); }
+.wh-chart .avg-line { fill: none; stroke: var(--accent); stroke-width: 2; }
+.wh-chart .target-line { fill: none; stroke: var(--protein); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.wh-chart .grid-line { stroke: var(--line); stroke-width: 1; }
+.wh-chart .grid-text {
+  fill: var(--ink-soft); font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.wh-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 14px;
+}
+.wh-stat {
+  background: var(--veil-hi);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.wh-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+body.ar .wh-stat-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.wh-stat-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; color: var(--ink); font-weight: 700;
+}
+.wh-stat-val.up    { color: var(--carb); }
+.wh-stat-val.down  { color: var(--protein); }
+.wh-target-row {
+  display: flex; gap: 6px; align-items: center;
+  margin-bottom: 6px; flex-wrap: wrap;
+}
+.wh-target-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+body.ar .wh-target-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0; }
+.wh-target-row input {
+  flex: 1; max-width: 120px;
+  padding: 6px 10px;
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+}
+.wh-target-row button {
+  background: var(--accent); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 6px 14px; cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+}
+.wh-target-distance {
+  font-size: 12px; color: var(--ink-soft);
+  margin-bottom: 16px;
+}
+body.ar .wh-target-distance { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+.wh-list-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+  border-top: 1px dashed var(--line);
+  padding-top: 14px;
+}
+.wh-list-head h4 {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+body.ar .wh-list-head h4 { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; text-transform: none; letter-spacing: 0; }
+.wh-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--ink-soft);
+}
+.wh-list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 280px; overflow-y: auto;
+}
+.wh-list .weight-row { font-size: 13px; }
+.weight-history-modal .popup-actions {
+  flex-shrink: 0; border-top: 1px solid var(--line);
+  padding: 12px 18px;
+}
+
 /* ============ MEAL TEMPLATES ============ */
 .templates-pane {
   padding: 16px;
@@ -3231,6 +3392,10 @@ body.ar .guide-pane p { font-family: 'IBM Plex Sans Arabic', sans-serif; }
   gap: 10px;
   font-size: 13px; color: var(--ink);
 }
+/* `display: flex` above overrides the [hidden] attribute's default
+ * `display: none`, so the dismiss/open click handlers couldn't actually hide
+ * the banner. Force the attribute to win. */
+.guide-hint[hidden] { display: none !important; }
 .guide-hint-text { flex: 1; min-width: 0; }
 body.ar .guide-hint-text { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 .guide-hint-actions { display: flex; gap: 6px; flex-shrink: 0; }
@@ -3634,7 +3799,7 @@ body.ar .footer li::before {
 <div id="foodTablesContainer"></div>
 
 <footer class="app-footer">
-  <span class="app-footer-author" data-en="Made by Abdullah Ayoub" data-ar="من تطوير عبدالله أيوب">Made by Abdullah Ayoub</span>
+  <span class="app-footer-author" data-en="Made by Abdullah Khedr" data-ar="من تطوير عبدالله خضر">Made by Abdullah Khedr</span>
   <span class="app-footer-links">
     <a class="app-footer-link" href="https://github.com/abdullah-3337/Macro_Tracker_Interactive" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
       <span aria-hidden="true">⌨</span><span>GitHub</span>
@@ -3782,20 +3947,26 @@ body.ar .footer li::before {
       </table>
     </div>
 
-    <!-- ============ WEIGHT LOG ============ -->
+    <!-- ============ WEIGHT (TODAY ONLY) ============ -->
+    <!-- Side panel keeps the daily quick-log surface: today's reading + a
+         trend indicator + the input. Full history (chart + list + stats)
+         lives in the Weight History modal opened from the 📈 button. -->
     <div class="weight-section" id="weightSection">
-      <h4 data-en="⚖ Weight" data-ar="⚖ الوزن">⚖ Weight</h4>
+      <div class="weight-section-head">
+        <h4 data-en="⚖ Weight" data-ar="⚖ الوزن">⚖ Weight</h4>
+        <button class="weight-history-btn" id="openWeightHistoryBtn"
+                data-title-en="Open weight history" data-title-ar="افتح سجل الوزن"
+                aria-label="Open weight history">📈
+          <span data-en="History" data-ar="السجل">History</span>
+        </button>
+      </div>
       <div class="weight-summary" id="weightSummary">
         <span class="latest" id="weightLatest" data-en="—" data-ar="—">—</span>
         <span class="delta" id="weightDelta"></span>
       </div>
-      <div class="weight-chart" id="weightChart"></div>
-      <div id="weightListWrap">
-        <div class="weight-list" id="weightList"></div>
-      </div>
       <div class="weight-add">
         <input type="number" id="weightKg" step="0.1" min="20" max="400"
-               placeholder="kg" data-placeholder-en="kg" data-placeholder-ar="كجم" />
+               placeholder="kg" data-placeholder-en="Today's weight in kg" data-placeholder-ar="وزن اليوم بالكجم" />
         <button id="addWeightBtn" data-en="Log" data-ar="سجّل">Log</button>
       </div>
     </div>
@@ -4456,6 +4627,58 @@ body.ar .footer li::before {
     </div>
     <div class="popup-actions">
       <button class="btn-cancel" id="addMethodCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WEIGHT HISTORY MODAL ============ -->
+<div class="popup-overlay" id="weightHistoryOverlay">
+  <div class="weight-history-modal">
+    <div class="weight-history-head">
+      <h3 data-en="⚖ Weight History" data-ar="⚖ سجل الوزن">⚖ Weight History</h3>
+      <button class="guide-modal-close" id="weightHistoryCloseBtn" aria-label="Close">×</button>
+    </div>
+
+    <div class="weight-history-body">
+      <!-- Range selector -->
+      <div class="wh-range" id="whRange">
+        <button class="wh-range-btn" data-range="7"   data-en="7d"   data-ar="٧ أيام">7d</button>
+        <button class="wh-range-btn active" data-range="30" data-en="30d" data-ar="٣٠ يوم">30d</button>
+        <button class="wh-range-btn" data-range="90"  data-en="90d"  data-ar="٩٠ يوم">90d</button>
+        <button class="wh-range-btn" data-range="all" data-en="All"  data-ar="الكل">All</button>
+      </div>
+
+      <!-- Big chart -->
+      <div class="wh-chart" id="weightHistoryChart"></div>
+
+      <!-- Analytics grid -->
+      <div class="wh-stats">
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Latest" data-ar="آخر">Latest</span><span class="wh-stat-val" id="whStatLatest">—</span></div>
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Lowest" data-ar="أقل">Lowest</span><span class="wh-stat-val" id="whStatMin">—</span></div>
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Highest" data-ar="أعلى">Highest</span><span class="wh-stat-val" id="whStatMax">—</span></div>
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Average" data-ar="متوسط">Average</span><span class="wh-stat-val" id="whStatAvg">—</span></div>
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Net change" data-ar="صافي التغير">Net change</span><span class="wh-stat-val" id="whStatNet">—</span></div>
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Per week" data-ar="أسبوعياً">Per week</span><span class="wh-stat-val" id="whStatRate">—</span></div>
+      </div>
+
+      <!-- Target weight (optional) -->
+      <div class="wh-target-row">
+        <label class="wh-target-label" data-en="Target weight (kg, optional):" data-ar="الوزن المستهدف (كجم، اختياري):">Target weight (kg, optional):</label>
+        <input type="number" id="whTargetInput" min="20" max="400" step="0.1" />
+        <button id="whTargetSaveBtn" data-en="Save" data-ar="حفظ">Save</button>
+      </div>
+      <div class="wh-target-distance" id="whTargetDistance"></div>
+
+      <!-- Full entries list -->
+      <div class="wh-list-head">
+        <h4 data-en="All entries" data-ar="كل الإدخالات">All entries</h4>
+        <span class="wh-count" id="whCount">0</span>
+      </div>
+      <div class="wh-list" id="whList"></div>
+    </div>
+
+    <div class="popup-actions">
+      <button class="btn-cancel" id="weightHistoryCloseBtn2" data-en="Close" data-ar="إغلاق">Close</button>
     </div>
   </div>
 </div>
@@ -7146,56 +7369,93 @@ function weightMovingAvg(arr, windowDays) {
   return result;
 }
 
-// Render the weight chart as inline SVG: raw entries as small dots + a smooth
-// 7-day moving-average polyline overlay. Y-axis auto-scales to data range
-// (with ±1 kg padding). Falls back to empty state when no data.
-function renderWeightChart() {
-  const host = document.getElementById('weightChart');
-  if (!host) return;
+// Active range filter for the weight history modal chart + stats.
+// One of '7' | '30' | '90' | 'all'. Persists to mt-weight-range.
+let weightHistoryRange = (function () {
+  const r = localStorage.getItem('mt-weight-range');
+  return (r === '7' || r === '30' || r === '90' || r === 'all') ? r : '30';
+})();
+
+// Optional target weight, persisted as mt-weight-target. null = unset.
+let weightTarget = (function () {
+  const v = parseFloat(localStorage.getItem('mt-weight-target'));
+  return isFinite(v) && v > 0 ? v : null;
+})();
+
+// Return weight entries filtered to the active range (sorted asc).
+function weightsInRange(rangeKey) {
   const sorted = weights.slice().sort((a, b) => a.date.localeCompare(b.date));
-  if (!sorted.length) {
-    host.innerHTML = '<div class="weight-chart-empty" data-en="No data yet — log a weight to start." data-ar="لا توجد بيانات — سجّل وزناً للبدء.">' +
-      (lang === 'ar' ? 'لا توجد بيانات — سجّل وزناً للبدء.' : 'No data yet — log a weight to start.') + '</div>';
+  if (rangeKey === 'all' || !sorted.length) return sorted;
+  const days = parseInt(rangeKey, 10) || 30;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - (days - 1));
+  const cutStr = cutoff.toISOString().slice(0, 10);
+  return sorted.filter(e => e.date >= cutStr);
+}
+
+// Render an SVG line chart sized to the host element. Raw entries as dots,
+// 7-day moving-average overlay, optional target-weight dashed line, and
+// y-axis grid labels. Generic for both the modal (200px) and any future
+// embed. Empty state shows a centered message.
+function renderWeightLineChart(hostEl, entries, opts) {
+  if (!hostEl) return;
+  opts = opts || {};
+  if (!entries.length) {
+    hostEl.innerHTML = '<div class="weight-chart-empty">' +
+      (lang === 'ar' ? 'لا توجد بيانات في هذه الفترة.' : 'No data in this range.') + '</div>';
     return;
   }
-  const avgs = weightMovingAvg(sorted, 7);
-  const w = 300, h = 80, padX = 8, padY = 8;
-  const innerW = w - padX * 2, innerH = h - padY * 2;
-  const all = sorted.map(e => e.kg).concat(avgs.map(a => a.avg));
+  const avgs = weightMovingAvg(entries, 7);
+  const w = 600, h = 200, padL = 36, padR = 12, padT = 12, padB = 22;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const all = entries.map(e => e.kg).concat(avgs.map(a => a.avg));
+  if (opts.target) all.push(opts.target);
   const minV = Math.min.apply(null, all) - 1;
   const maxV = Math.max.apply(null, all) + 1;
   const span = Math.max(0.1, maxV - minV);
-  const n = sorted.length;
-  const x = i => padX + (n === 1 ? innerW / 2 : (innerW * i) / (n - 1));
-  const y = v => padY + innerH - ((v - minV) / span) * innerH;
-  const dots = sorted.map((e, i) => `<circle class="raw-dot" cx="${x(i).toFixed(1)}" cy="${y(e.kg).toFixed(1)}" r="2"/>`).join('');
+  const n = entries.length;
+  const x = i => padL + (n === 1 ? innerW / 2 : (innerW * i) / (n - 1));
+  const y = v => padT + innerH - ((v - minV) / span) * innerH;
+  // Y grid: 4 lines from min to max
+  const grids = [];
+  for (let g = 0; g <= 3; g++) {
+    const v = minV + (span * g / 3);
+    const yy = y(v).toFixed(1);
+    grids.push(`<line class="grid-line" x1="${padL}" y1="${yy}" x2="${w - padR}" y2="${yy}"/>`);
+    grids.push(`<text class="grid-text" x="4" y="${(parseFloat(yy) + 3).toFixed(1)}">${v.toFixed(1)}</text>`);
+  }
+  const dots = entries.map((e, i) => `<circle class="raw-dot" cx="${x(i).toFixed(1)}" cy="${y(e.kg).toFixed(1)}" r="2.5"/>`).join('');
   const path = avgs.map((a, i) => (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(a.avg).toFixed(1)).join(' ');
-  host.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">` +
+  let targetLine = '';
+  if (opts.target && isFinite(opts.target)) {
+    const ty = y(opts.target).toFixed(1);
+    targetLine = `<line class="target-line" x1="${padL}" y1="${ty}" x2="${w - padR}" y2="${ty}"/>`;
+  }
+  hostEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">` +
+    grids.join('') + targetLine +
     `<path class="avg-line" d="${path}"/>` + dots + `</svg>`;
 }
 
-// Render the weight summary (latest reading + trend delta vs 7 days ago) and
-// the recent-entries list. Delta compares latest kg to the moving-average value
-// from ~7 entries earlier (or the earliest entry if shorter history).
+// Render the slim side-panel weight section: today's reading + trend delta +
+// (no chart, no list — those moved to the history modal). Called on boot,
+// language switch, and after any weight log mutation.
 function renderWeightSection() {
-  renderWeightChart();
   const sorted = weights.slice().sort((a, b) => a.date.localeCompare(b.date));
   const latestEl = document.getElementById('weightLatest');
   const deltaEl = document.getElementById('weightDelta');
-  const listEl = document.getElementById('weightList');
-  if (!latestEl || !deltaEl || !listEl) return;
+  if (!latestEl || !deltaEl) return;
   if (!sorted.length) {
-    latestEl.textContent = '—';
+    latestEl.textContent = lang === 'ar' ? 'لا يوجد إدخال بعد' : 'No entry yet';
     deltaEl.textContent = '';
     deltaEl.className = 'delta';
-    listEl.innerHTML = '<div class="weight-empty">' +
-      (lang === 'ar' ? 'لا توجد إدخالات.' : 'No entries.') + '</div>';
     return;
   }
   const latest = sorted[sorted.length - 1];
-  latestEl.textContent = fmt(latest.kg) + ' kg · ' + latest.date;
+  const today = todayStr();
+  const isToday = latest.date === today;
+  latestEl.textContent = fmt(latest.kg) + ' kg · ' +
+    (isToday ? (lang === 'ar' ? 'اليوم' : 'today') : latest.date);
   const avgs = weightMovingAvg(sorted, 7);
-  // Compare current 7-day avg to the avg from ~7 days earlier in the series.
   if (avgs.length >= 2) {
     const cur = avgs[avgs.length - 1].avg;
     const baselineIdx = Math.max(0, avgs.length - 8);
@@ -7210,16 +7470,96 @@ function renderWeightSection() {
     deltaEl.textContent = '';
     deltaEl.className = 'delta';
   }
-  // Show last 10 entries newest-first.
-  const recent = sorted.slice(-10).reverse();
-  listEl.innerHTML = recent.map(e =>
-    `<div class="weight-row">` +
-      `<span class="wdate">${escapeHtml(e.date)}</span>` +
-      `<span class="wkg">${fmt(e.kg)} kg</span>` +
-      `<button class="remove-weight-btn" data-weight-id="${escapeHtml(e.id)}" ` +
-        `data-en="Remove" data-ar="حذف">${lang === 'ar' ? 'حذف' : 'Remove'}</button>` +
-    `</div>`
-  ).join('');
+  // If the modal is open, refresh it too.
+  if (document.getElementById('weightHistoryOverlay').classList.contains('active')) {
+    renderWeightHistoryModal();
+  }
+}
+
+// Render the full weight history modal: chart, summary stats, target distance,
+// and the entries list. Called on modal open, range change, target save, and
+// after any weight mutation while the modal is open.
+function renderWeightHistoryModal() {
+  const entries = weightsInRange(weightHistoryRange);
+  // Chart
+  renderWeightLineChart(
+    document.getElementById('weightHistoryChart'),
+    entries,
+    { target: weightTarget }
+  );
+  // Stats — computed on the filtered range.
+  const setStat = (id, val, cls) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val;
+    el.className = 'wh-stat-val' + (cls ? ' ' + cls : '');
+  };
+  if (!entries.length) {
+    ['whStatLatest','whStatMin','whStatMax','whStatAvg','whStatNet','whStatRate']
+      .forEach(id => setStat(id, '—'));
+  } else {
+    const kgs = entries.map(e => e.kg);
+    const latest = kgs[kgs.length - 1];
+    const min = Math.min.apply(null, kgs);
+    const max = Math.max.apply(null, kgs);
+    const avg = kgs.reduce((a, b) => a + b, 0) / kgs.length;
+    const net = latest - kgs[0];
+    // Days between first and last entry (≥1).
+    const d0 = new Date(entries[0].date + 'T00:00:00');
+    const d1 = new Date(entries[entries.length - 1].date + 'T00:00:00');
+    const days = Math.max(1, Math.round((d1 - d0) / 86400000));
+    const perWeek = (net / days) * 7;
+    const cls = (v) => v > 0.05 ? 'up' : (v < -0.05 ? 'down' : '');
+    setStat('whStatLatest', fmt(latest) + ' kg');
+    setStat('whStatMin', fmt(min) + ' kg');
+    setStat('whStatMax', fmt(max) + ' kg');
+    setStat('whStatAvg', fmt(avg) + ' kg');
+    setStat('whStatNet', (net >= 0 ? '+' : '') + fmt(net) + ' kg', cls(net));
+    setStat('whStatRate', (perWeek >= 0 ? '+' : '') + fmt(perWeek) + ' kg/wk', cls(perWeek));
+  }
+  // Target
+  const tgtInput = document.getElementById('whTargetInput');
+  if (tgtInput) tgtInput.value = weightTarget == null ? '' : weightTarget;
+  const dist = document.getElementById('whTargetDistance');
+  if (dist) {
+    if (weightTarget == null || !entries.length) {
+      dist.textContent = '';
+    } else {
+      const latest = entries[entries.length - 1].kg;
+      const d = latest - weightTarget;
+      if (Math.abs(d) < 0.1) {
+        dist.textContent = lang === 'ar' ? '🎯 وصلت للهدف!' : '🎯 At your target!';
+      } else if (d > 0) {
+        dist.textContent = lang === 'ar'
+          ? `${fmt(d)} كجم فوق الهدف`
+          : `${fmt(d)} kg above target`;
+      } else {
+        dist.textContent = lang === 'ar'
+          ? `${fmt(-d)} كجم تحت الهدف`
+          : `${fmt(-d)} kg below target`;
+      }
+    }
+  }
+  // Full list (all entries, newest first).
+  const sortedAll = weights.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const countEl = document.getElementById('whCount');
+  if (countEl) countEl.textContent = sortedAll.length;
+  const listEl = document.getElementById('whList');
+  if (listEl) {
+    if (!sortedAll.length) {
+      listEl.innerHTML = '<div class="weight-empty">' +
+        (lang === 'ar' ? 'لا توجد إدخالات.' : 'No entries.') + '</div>';
+    } else {
+      listEl.innerHTML = sortedAll.slice().reverse().map(e =>
+        `<div class="weight-row">` +
+          `<span class="wdate">${escapeHtml(e.date)}</span>` +
+          `<span class="wkg">${fmt(e.kg)} kg</span>` +
+          `<button class="remove-weight-btn" data-weight-id="${escapeHtml(e.id)}" ` +
+            `data-en="Remove" data-ar="حذف">${lang === 'ar' ? 'حذف' : 'Remove'}</button>` +
+        `</div>`
+      ).join('');
+    }
+  }
 }
 
 // Add or overwrite today's weight entry. Same-date overwrite keeps the series
@@ -7246,12 +7586,11 @@ function removeWeightEntry(id) {
   renderWeightSection();
 }
 
-// Wire the entry form and the per-row remove buttons.
+// Wire side-panel form (today's quick entry) + history modal.
 (function initWeightLog() {
   const btn = document.getElementById('addWeightBtn');
   const input = document.getElementById('weightKg');
-  const list = document.getElementById('weightList');
-  if (!btn || !input || !list) return;
+  if (!btn || !input) return;
   function submit() {
     const v = input.value.trim();
     if (!v) return;
@@ -7259,11 +7598,68 @@ function removeWeightEntry(id) {
   }
   btn.addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
-  list.addEventListener('click', e => {
-    const b = e.target.closest('.remove-weight-btn');
-    if (!b) return;
-    removeWeightEntry(b.dataset.weightId);
-  });
+
+  // History modal wiring.
+  const openHist = document.getElementById('openWeightHistoryBtn');
+  const overlay = document.getElementById('weightHistoryOverlay');
+  const closeBtn = document.getElementById('weightHistoryCloseBtn');
+  const closeBtn2 = document.getElementById('weightHistoryCloseBtn2');
+  if (openHist && overlay) {
+    openHist.addEventListener('click', () => {
+      renderWeightHistoryModal();
+      overlay.classList.add('active');
+    });
+  }
+  const closeModal = () => overlay && overlay.classList.remove('active');
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (closeBtn2) closeBtn2.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+  // Range buttons.
+  const rangeBar = document.getElementById('whRange');
+  if (rangeBar) {
+    rangeBar.addEventListener('click', e => {
+      const b = e.target.closest('.wh-range-btn');
+      if (!b) return;
+      weightHistoryRange = b.dataset.range;
+      localStorage.setItem('mt-weight-range', weightHistoryRange);
+      rangeBar.querySelectorAll('.wh-range-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      renderWeightHistoryModal();
+    });
+    // Sync initial active button.
+    rangeBar.querySelectorAll('.wh-range-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.range === weightHistoryRange);
+    });
+  }
+
+  // Target save.
+  const tgtBtn = document.getElementById('whTargetSaveBtn');
+  const tgtInput = document.getElementById('whTargetInput');
+  if (tgtBtn && tgtInput) {
+    tgtBtn.addEventListener('click', () => {
+      const v = parseFloat(tgtInput.value);
+      if (isFinite(v) && v > 0) {
+        weightTarget = Math.round(v * 10) / 10;
+        localStorage.setItem('mt-weight-target', String(weightTarget));
+      } else {
+        weightTarget = null;
+        localStorage.removeItem('mt-weight-target');
+      }
+      renderWeightHistoryModal();
+    });
+  }
+
+  // Remove entry from full list inside modal.
+  const whList = document.getElementById('whList');
+  if (whList) {
+    whList.addEventListener('click', e => {
+      const b = e.target.closest('.remove-weight-btn');
+      if (!b) return;
+      removeWeightEntry(b.dataset.weightId);
+      renderWeightHistoryModal();
+    });
+  }
 })();
 
 // ============ ADD METHOD CHOOSER ============
@@ -8878,6 +9274,7 @@ function buildBackupObject() {
       templates: mealTemplates,
       features: featureFlags,
       weights: weights,
+      weightTarget: weightTarget,
       profile: lsGet('mt-profile', null),
       dietFilters: Array.from(dietFilters),
       displayModes: displayModes,
@@ -9053,6 +9450,10 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         );
         weights.sort((a, b) => a.date.localeCompare(b.date));
         lsSet('mt-weights', JSON.stringify(weights));
+      }
+      if (typeof payload.weightTarget === 'number' && isFinite(payload.weightTarget) && payload.weightTarget > 0) {
+        weightTarget = Math.round(payload.weightTarget * 10) / 10;
+        localStorage.setItem('mt-weight-target', String(weightTarget));
       }
       if (payload.profile && typeof payload.profile === 'object') {
         lsSet('mt-profile', JSON.stringify(payload.profile));

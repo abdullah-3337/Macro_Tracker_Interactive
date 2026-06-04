@@ -3368,6 +3368,38 @@ body.ar .saved-day button { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 
 .hidden { display: none !important; }
 
+/* ============ APP FOOTER (social links) ============ */
+.app-footer {
+  margin-top: 28px;
+  padding: 14px 16px 110px; /* extra bottom for bottom-dock clearance */
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--ink-soft);
+}
+.app-footer-author { font-family: 'JetBrains Mono', monospace; }
+body.ar .app-footer-author { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+.app-footer-links { display: flex; gap: 10px; }
+.app-footer-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px; font-weight: 600;
+  font-family: inherit;
+  color: var(--ink); text-decoration: none;
+}
+.app-footer-link:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.app-footer-link span:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 11px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  border-radius: 2px;
+  padding: 1px 5px;
+}
+
 /* ============ FOOTER / LEGEND ============ */
 .footer {
   margin-top: 36px;
@@ -3601,6 +3633,17 @@ body.ar .footer li::before {
 </div>
 <div id="foodTablesContainer"></div>
 
+<footer class="app-footer">
+  <span class="app-footer-author" data-en="Made by Abdullah Ayoub" data-ar="من تطوير عبدالله أيوب">Made by Abdullah Ayoub</span>
+  <span class="app-footer-links">
+    <a class="app-footer-link" href="https://github.com/abdullah-3337/Macro_Tracker_Interactive" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
+      <span aria-hidden="true">⌨</span><span>GitHub</span>
+    </a>
+    <a class="app-footer-link" href="https://www.linkedin.com/in/abdullah-ayoub333" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">
+      <span aria-hidden="true">in</span><span data-en="LinkedIn" data-ar="لينكدإن">LinkedIn</span>
+    </a>
+  </span>
+</footer>
 
 </div>
 
@@ -4554,17 +4597,6 @@ body.ar .footer li::before {
            data-ar="في iOS قد يمسح Safari التخزين المحلي تحت الضغط. التطبيق يعمل نسخة احتياطية لكل تغيير في IndexedDB — لو ضاع التخزين المحلي، يُسترجع في التحميل التالي.">iOS IDB mirror.</p>
       </div>
 
-    </div>
-    <div class="guide-modal-foot">
-      <div class="guide-author" data-en="By Abdullah Ayoub" data-ar="بقلم عبدالله أيوب">By Abdullah Ayoub</div>
-      <div class="guide-links">
-        <a class="guide-link" href="https://github.com/abdullah-3337/Macro_Tracker_Interactive" target="_blank" rel="noopener noreferrer">
-          <span>⌨</span><span data-en="GitHub" data-ar="GitHub">GitHub</span>
-        </a>
-        <a class="guide-link" href="https://www.linkedin.com/in/abdullah-ayoub333" target="_blank" rel="noopener noreferrer">
-          <span>in</span><span data-en="LinkedIn" data-ar="لينكدإن">LinkedIn</span>
-        </a>
-      </div>
     </div>
   </div>
 </div>
@@ -10239,16 +10271,27 @@ function closeGuide() {
     t.addEventListener('click', () => guideSelectTab(t.dataset.gtab));
   });
 
-  // First-run hint logic.
+  // First-run hint logic — show only on a TRULY untouched state. Any signal
+  // that the user has engaged with the app (imported DB, edited goals, logged
+  // weight, saved a day, set a profile, dismissed the hint before) hides it.
+  // Earlier OR-based logic was too eager and surfaced the banner for active
+  // users whose `goals` happened to start at defaults.
   const DEFAULT_GOALS = { kcal: 1900, protein: 145, fat: 65, carbs: 215 };
-  const dbCustomized = !!localStorage.getItem('mt-db');
-  const goalsCustomized = !goals ||
-    goals.kcal    !== DEFAULT_GOALS.kcal ||
-    goals.protein !== DEFAULT_GOALS.protein ||
-    goals.fat     !== DEFAULT_GOALS.fat ||
-    goals.carbs   !== DEFAULT_GOALS.carbs;
+  const goalsAtDefault = goals &&
+    goals.kcal    === DEFAULT_GOALS.kcal &&
+    goals.protein === DEFAULT_GOALS.protein &&
+    goals.fat     === DEFAULT_GOALS.fat &&
+    goals.carbs   === DEFAULT_GOALS.carbs;
   const dismissed = localStorage.getItem('mt-guide-hint-dismissed') === '1';
-  if (hint && !dismissed && (!dbCustomized || !goalsCustomized)) {
+  const hasDb       = !!localStorage.getItem('mt-db');
+  const hasProfile  = !!localStorage.getItem('mt-profile');
+  const hasSaved    = Array.isArray(savedDays) && savedDays.length > 0;
+  const hasWeights  = Array.isArray(weights)   && weights.length > 0;
+  const hasItems    = Array.isArray(dayItems)  && dayItems.length > 0;
+  const hasTemplates = Array.isArray(mealTemplates) && mealTemplates.length > 0;
+  const trulyFirstRun = !dismissed && !hasDb && !hasProfile && !hasSaved &&
+                        !hasWeights && !hasItems && !hasTemplates && goalsAtDefault;
+  if (hint && trulyFirstRun) {
     hint.hidden = false;
   }
   if (hintOpen) hintOpen.addEventListener('click', () => { if (hint) hint.hidden = true; openGuide('welcome'); });
@@ -10282,6 +10325,32 @@ function closeOffSearchModal() {
   document.getElementById('offSearchOverlay').classList.remove('active');
 }
 
+// Fetch with timeout + bounded retry. Uses AbortController so a hung request
+// can't pin the modal in "Searching…" forever. Retries only network-level
+// failures (TypeError from fetch) and 5xx — not 4xx or aborts.
+async function offFetchWithRetry(url, timeoutMs, retries) {
+  let lastErr;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const resp = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(timer);
+      if (resp.ok) return resp;
+      if (resp.status >= 500 && attempt < retries) { lastErr = new Error('HTTP ' + resp.status); continue; }
+      throw new Error('HTTP ' + resp.status);
+    } catch (e) {
+      clearTimeout(timer);
+      lastErr = e;
+      // Don't retry user-initiated aborts (stale req-id check in caller).
+      if (e.name === 'AbortError' && attempt === retries) break;
+      if (attempt < retries) continue;
+      break;
+    }
+  }
+  throw lastErr || new Error('fetch failed');
+}
+
 // Hit the OFF search endpoint with the user-entered query. The response is
 // untrusted (anyone can publish to OFF), so all string fields are escaped
 // before render. The req-id pattern discards stale responses if the user
@@ -10300,13 +10369,18 @@ async function runOffSearch() {
     // `lc` (locale) tells OFF which language to prioritize in product_name and
     // search matching. Without it the API treats the query as English-only and
     // misses items indexed under product_name_ar.
+    // No custom headers — Accept-Language triggers a CORS preflight that OFF
+    // sometimes rejects, surfacing as a generic "Failed to fetch".
     const lc = lang === 'ar' ? 'ar' : 'en';
     const url = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' +
       encodeURIComponent(q) +
       '&search_simple=1&action=process&json=1&page_size=20' +
       '&lc=' + lc +
       '&fields=product_name,product_name_en,product_name_ar,brands,nutriments,code';
-    const resp = await fetch(url, { headers: { 'Accept-Language': lc } });
+    // 15s timeout + one retry on network failure. OFF can be slow or
+    // transiently 5xx; a single retry handles most flakes without making the
+    // user re-type.
+    const resp = await offFetchWithRetry(url, 15000, 1);
     if (myReq !== offSearchReqId) return; // user fired a newer search
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const data = await resp.json();
@@ -10322,7 +10396,20 @@ async function runOffSearch() {
   } catch (err) {
     if (myReq !== offSearchReqId) return;
     resultsEl.innerHTML = '';
-    errEl.textContent = (lang === 'ar' ? 'خطأ: ' : 'Error: ') + err.message;
+    // Map TypeError ("Failed to fetch") + AbortError to a friendlier message.
+    let msg;
+    if (err.name === 'AbortError') {
+      msg = lang === 'ar'
+        ? 'انتهت مهلة الاتصال. تحقق من الإنترنت ثم أعد المحاولة.'
+        : 'Request timed out. Check your connection and try again.';
+    } else if (err.name === 'TypeError' || /failed to fetch/i.test(err.message)) {
+      msg = lang === 'ar'
+        ? 'تعذر الوصول لـ OpenFoodFacts. قد تكون الخدمة بطيئة الآن — حاول مرة أخرى بعد لحظات.'
+        : 'Could not reach OpenFoodFacts. The service may be slow — try again in a moment.';
+    } else {
+      msg = (lang === 'ar' ? 'خطأ: ' : 'Error: ') + err.message;
+    }
+    errEl.textContent = msg;
     errEl.classList.add('active');
   }
 }

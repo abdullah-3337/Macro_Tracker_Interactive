@@ -2948,6 +2948,7 @@ body.ar .footer li::before {
       <div class="sub" data-en="Tap any food · Set portion · Track your day" data-ar="اضغط على أي صنف · حدد الكمية · تابع يومك">Tap any food · Set portion · Track your day</div>
     </div>
     <div class="header-tools">
+      <button class="hdr-btn" id="langToggle" data-title-en="Switch to Arabic" data-title-ar="Switch to English" title="Switch language" aria-label="Switch language">ع</button>
       <button class="hdr-btn" id="themeToggle" data-title-en="Toggle light / dark" data-title-ar="تبديل الفاتح / الداكن" title="Toggle light / dark" aria-label="Toggle light or dark mode">🌙</button>
       <button class="hdr-btn" id="settingsBtn" data-title-en="Settings" data-title-ar="الإعدادات" title="Settings" aria-label="Open settings">⚙</button>
     </div>
@@ -3652,10 +3653,7 @@ body.ar .footer li::before {
     </div>
 
     <nav class="settings-tabs" role="tablist">
-      <button class="settings-tab active" data-tab="lang"     role="tab" aria-selected="true">
-        <span class="settings-tab-icon">🌐</span><span class="settings-tab-label" data-en="Language" data-ar="اللغة">Language</span>
-      </button>
-      <button class="settings-tab" data-tab="appearance" role="tab" aria-selected="false">
+      <button class="settings-tab active" data-tab="appearance" role="tab" aria-selected="true">
         <span class="settings-tab-icon">🎨</span><span class="settings-tab-label" data-en="Appearance" data-ar="المظهر">Appearance</span>
       </button>
       <button class="settings-tab" data-tab="features"   role="tab" aria-selected="false">
@@ -3677,20 +3675,8 @@ body.ar .footer li::before {
 
     <div class="settings-modal-body">
 
-      <!-- LANGUAGE TAB -->
-      <div class="settings-pane active" data-pane="lang" role="tabpanel">
-        <div class="settings-pane-label" data-en="App language" data-ar="لغة التطبيق">App language</div>
-        <div class="lang-radio-row">
-          <label class="lang-radio"><input type="radio" name="settingsLang" value="en"><span class="lr-flag">🇬🇧</span><span class="lr-label">English</span></label>
-          <label class="lang-radio"><input type="radio" name="settingsLang" value="ar"><span class="lr-flag">🇸🇦</span><span class="lr-label">العربية</span></label>
-        </div>
-        <div class="settings-help"
-             data-en="Switching language flips the layout direction (LTR/RTL) and updates all labels."
-             data-ar="تغيير اللغة يقلب اتجاه التخطيط (LTR/RTL) ويحدّث كل النصوص.">Switching language flips the layout direction (LTR/RTL) and updates all labels.</div>
-      </div>
-
       <!-- APPEARANCE TAB -->
-      <div class="settings-pane" data-pane="appearance" role="tabpanel">
+      <div class="settings-pane active" data-pane="appearance" role="tabpanel">
         <div class="settings-pane-label" data-en="Mode" data-ar="الوضع">Mode</div>
         <div class="theme-seg" id="themeSeg">
           <button data-theme-choice="light"  data-en="☀ Light"  data-ar="☀ نهاري">☀ Light</button>
@@ -5182,6 +5168,14 @@ function attachRowClickHandlers() {
     const row = e.target.closest('tr[data-food-id]');
     if (!row || !container.contains(row)) return;
     openPopup(row.dataset.foodId);
+    // Clear search after picking so next search starts fresh. Programmatic
+    // value change does NOT fire 'input', so runSearchFromInput's auto-scroll
+    // is skipped — applyFilters() just unhides rows under the open popup.
+    if (searchInput && searchInput.value) {
+      searchInput.value = '';
+      _lastSearchQuery = '';
+      applyFilters();
+    }
   });
 }
 
@@ -7601,8 +7595,12 @@ function applyLanguage() {
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
-  // Sync language radios in the settings modal if present
-  document.querySelectorAll('input[name="settingsLang"]').forEach(r => { r.checked = (r.value === lang); });
+  // Reflect current language on the header quick-toggle (shows what you'd switch TO)
+  const lt = document.getElementById('langToggle');
+  if (lt) {
+    lt.textContent = lang === 'ar' ? 'EN' : 'ع';
+    lt.title = lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية';
+  }
 
   document.querySelectorAll('[data-en][data-ar]').forEach(el => {
     if (el.tagName === 'INPUT') return;
@@ -7640,7 +7638,26 @@ function applyLanguage() {
   if (typeof refreshApiKeyStatus === 'function') refreshApiKeyStatus();
 }
 
-// Language toggle moved into Settings → Language tab (see settingsLang radios).
+// Header quick language toggle: flip en <-> ar.
+(function initLangToggle() {
+  const btn = document.getElementById('langToggle');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const next = lang === 'ar' ? 'en' : 'ar';
+    const panel = document.getElementById('sidePanel');
+    const fab = document.getElementById('fab');
+    if (panel) panel.style.transition = 'none';
+    if (fab) fab.style.transition = 'none';
+    if (typeof closePanel === 'function') closePanel();
+    lang = next;
+    lsSet('mt-lang', lang);
+    applyLanguage();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (panel) panel.style.transition = '';
+      if (fab) fab.style.transition = '';
+    }));
+  });
+})();
 
 // ============ INIT ============
 rebuildSearchIndex();
@@ -7734,9 +7751,9 @@ document.addEventListener('keydown', e => {
     try { localStorage.setItem('mt-settings-tab', id); idbPut('mt-settings-tab', id).catch(function(){}); } catch(e) {}
   }
 
-  let lastTab = 'lang';
-  try { lastTab = localStorage.getItem('mt-settings-tab') || 'lang'; } catch(e) {}
-  if (!tabs.some(t => t.dataset.tab === lastTab)) lastTab = 'lang';
+  let lastTab = 'appearance';
+  try { lastTab = localStorage.getItem('mt-settings-tab') || 'appearance'; } catch(e) {}
+  if (!tabs.some(t => t.dataset.tab === lastTab)) lastTab = 'appearance';
   selectTab(lastTab);
 
   tabs.forEach(t => t.addEventListener('click', () => selectTab(t.dataset.tab)));
@@ -7749,7 +7766,6 @@ document.addEventListener('keydown', e => {
     if (typeof buildSchemeCards === 'function') buildSchemeCards();
     if (typeof syncSchemeModalUI === 'function') syncSchemeModalUI();
     if (typeof syncFeatureCheckboxes === 'function') syncFeatureCheckboxes();
-    document.querySelectorAll('input[name="settingsLang"]').forEach(r => { r.checked = (r.value === lang); });
     overlay.classList.add('active');
   }
   function closeSettings() { overlay.classList.remove('active'); }
@@ -7757,25 +7773,6 @@ document.addEventListener('keydown', e => {
   openBtn.addEventListener('click', () => openSettings());
   closeBtn.addEventListener('click', closeSettings);
   overlay.addEventListener('click', e => { if (e.target === overlay) closeSettings(); });
-
-  // Language radios — same effect as the old #langToggle
-  overlay.querySelectorAll('input[name="settingsLang"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      if (!radio.checked || radio.value === lang) return;
-      const panel = document.getElementById('sidePanel');
-      const fab = document.getElementById('fab');
-      if (panel) panel.style.transition = 'none';
-      if (fab) fab.style.transition = 'none';
-      if (typeof closePanel === 'function') closePanel();
-      lang = radio.value;
-      lsSet('mt-lang', lang);
-      applyLanguage();
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        if (panel) panel.style.transition = '';
-        if (fab) fab.style.transition = '';
-      }));
-    });
-  });
 
   // Expose for OCR fallback to deep-link to API tab
   window.openSettingsAt = openSettings;

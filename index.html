@@ -3104,6 +3104,81 @@ body.ar .tdee-label {
 }
 body.ar .tdee-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
 
+/* ============ OFF SEARCH MODAL ============ */
+.off-search-modal {
+  background: var(--paper); border-radius: 4px;
+  max-width: 600px; width: 100%;
+  max-height: 90vh; display: flex; flex-direction: column;
+  border: 1px solid var(--line);
+}
+.off-search-modal h3 {
+  padding: 18px 24px;
+  background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
+  color: var(--on-grad); font-size: 18px;
+  font-style: italic; font-weight: 600;
+  border-bottom: 3px solid var(--gold);
+}
+body.ar .off-search-modal h3 { font-style: normal; }
+.off-search-body { padding: 18px 24px; flex: 1; overflow-y: auto; }
+.off-search-row {
+  display: flex; gap: 8px; margin-bottom: 8px;
+}
+.off-search-row input {
+  flex: 1; padding: 10px 12px;
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 3px;
+  font-family: inherit; font-size: 14px;
+  min-width: 0;
+}
+.off-search-row input:focus { outline: none; border-color: var(--accent); }
+.off-search-row button {
+  background: var(--accent); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 10px 16px; cursor: pointer;
+  font-size: 13px; font-weight: 600;
+  font-family: inherit;
+}
+.off-search-help { font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; }
+body.ar .off-search-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
+.off-search-err {
+  background: var(--accent-soft); color: var(--ink);
+  border-left: 3px solid var(--carb);
+  padding: 8px 12px; margin: 8px 0;
+  font-size: 12px;
+  display: none;
+}
+.off-search-err.active { display: block; }
+.off-search-results {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: 8px;
+}
+.off-result {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.12s, border-color 0.12s;
+}
+.off-result:hover { background: var(--veil-hi); border-color: var(--accent); }
+.off-result .name { font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.off-result .brand { font-size: 11px; color: var(--ink-soft); margin-bottom: 6px; }
+.off-result .macros {
+  display: flex; gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-soft);
+}
+.off-result .macros .kcal { color: var(--kcal); font-weight: 700; }
+.off-result-loading {
+  text-align: center; padding: 24px;
+  color: var(--ink-soft); font-size: 13px;
+}
+.off-result-empty {
+  text-align: center; padding: 24px;
+  color: var(--ink-soft); font-size: 13px;
+}
+
 /* Saved days list */
 .saved-list {
   background: var(--paper); border-radius: 4px;
@@ -4212,9 +4287,38 @@ body.ar .footer li::before {
         <span class="add-method-icon">📷</span>
         <span class="add-method-label" data-en="Scan barcode" data-ar="مسح الباركود">Scan barcode</span>
       </button>
+      <button class="add-method-btn" id="addMethodOffSearchBtn">
+        <span class="add-method-icon">🔎</span>
+        <span class="add-method-label" data-en="Search OpenFoodFacts" data-ar="بحث OpenFoodFacts">Search OpenFoodFacts</span>
+      </button>
     </div>
     <div class="popup-actions">
       <button class="btn-cancel" id="addMethodCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ OFF SEARCH MODAL ============ -->
+<div class="popup-overlay" id="offSearchOverlay">
+  <div class="off-search-modal">
+    <h3 data-en="🔎 Search OpenFoodFacts" data-ar="🔎 بحث OpenFoodFacts">🔎 Search OpenFoodFacts</h3>
+    <div class="off-search-body">
+      <div class="off-search-row">
+        <input type="text" id="offSearchInput"
+               placeholder="Type a food name…"
+               data-placeholder-en="Type a food name…"
+               data-placeholder-ar="اكتب اسم صنف…" />
+        <button id="offSearchBtn" data-en="Search" data-ar="بحث">Search</button>
+      </div>
+      <div class="off-search-help" data-en="Tap a result to pre-fill the Add Food modal. Values are per 100 g."
+           data-ar="اضغط على نتيجة لملء نموذج إضافة الصنف. القيم لكل 100 جم.">
+        Tap a result to pre-fill the Add Food modal. Values are per 100 g.
+      </div>
+      <div class="off-search-err" id="offSearchErr"></div>
+      <div class="off-search-results" id="offSearchResults"></div>
+    </div>
+    <div class="popup-actions">
+      <button class="btn-cancel" id="offSearchCancelBtn" data-en="Close" data-ar="إغلاق">Close</button>
     </div>
   </div>
 </div>
@@ -6883,6 +6987,11 @@ document.getElementById('addMethodOcrBtn').addEventListener('click', () => {
 document.getElementById('addMethodBarcodeBtn').addEventListener('click', () => {
   closeAddMethodSheet();
   openBarcodeModal();
+});
+
+document.getElementById('addMethodOffSearchBtn').addEventListener('click', () => {
+  closeAddMethodSheet();
+  openOffSearchModal();
 });
 
 document.getElementById('addMethodCancelBtn').addEventListener('click', closeAddMethodSheet);
@@ -9784,6 +9893,147 @@ function updateDbEmptyNotice() {
 refreshApiKeyStatus();
 
 renderTotals();
+
+// ============ OFF NAME SEARCH (OPENFOODFACTS) ============
+// Search OpenFoodFacts by free-text food name. Pre-fills the Add Food modal
+// with the user's selected result (already per 100 g). Same origin already
+// whitelisted in the CSP for barcode lookups; treated as untrusted input —
+// every field is escaped before any innerHTML write. Entry points:
+// openOffSearchModal, runOffSearch, openAddFoodFromOff.
+
+let offSearchReqId = 0;       // Bump on each search to ignore stale responses.
+let offLastResults = [];      // Last result set, used by row click handler.
+
+// Open the OFF search modal and focus the input.
+function openOffSearchModal() {
+  document.getElementById('offSearchOverlay').classList.add('active');
+  const err = document.getElementById('offSearchErr');
+  if (err) { err.classList.remove('active'); err.textContent = ''; }
+  const input = document.getElementById('offSearchInput');
+  if (input) setTimeout(() => input.focus(), 50);
+}
+
+function closeOffSearchModal() {
+  document.getElementById('offSearchOverlay').classList.remove('active');
+}
+
+// Hit the OFF search endpoint with the user-entered query. The response is
+// untrusted (anyone can publish to OFF), so all string fields are escaped
+// before render. The req-id pattern discards stale responses if the user
+// types and submits again before an earlier fetch returns.
+async function runOffSearch() {
+  const input = document.getElementById('offSearchInput');
+  const errEl = document.getElementById('offSearchErr');
+  const resultsEl = document.getElementById('offSearchResults');
+  if (!input || !resultsEl) return;
+  const q = input.value.trim();
+  if (!q) return;
+  errEl.classList.remove('active'); errEl.textContent = '';
+  resultsEl.innerHTML = `<div class="off-result-loading">${lang === 'ar' ? 'جارٍ البحث…' : 'Searching…'}</div>`;
+  const myReq = ++offSearchReqId;
+  try {
+    const url = 'https://world.openfoodfacts.org/cgi/search.pl?search_terms=' +
+      encodeURIComponent(q) +
+      '&search_simple=1&action=process&json=1&page_size=20&fields=product_name,product_name_en,product_name_ar,brands,nutriments,code';
+    const resp = await fetch(url);
+    if (myReq !== offSearchReqId) return; // user fired a newer search
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (myReq !== offSearchReqId) return;
+    const products = Array.isArray(data.products) ? data.products : [];
+    // Keep only products with at least kcal + one macro — others are useless.
+    offLastResults = products.filter(p => {
+      const n = p && p.nutriments;
+      return n && n['energy-kcal_100g'] != null &&
+        (n['proteins_100g'] != null || n['fat_100g'] != null || n['carbohydrates_100g'] != null);
+    });
+    renderOffResults();
+  } catch (err) {
+    if (myReq !== offSearchReqId) return;
+    resultsEl.innerHTML = '';
+    errEl.textContent = (lang === 'ar' ? 'خطأ: ' : 'Error: ') + err.message;
+    errEl.classList.add('active');
+  }
+}
+
+// Render the current offLastResults list. Empty state when zero usable hits.
+function renderOffResults() {
+  const resultsEl = document.getElementById('offSearchResults');
+  if (!resultsEl) return;
+  if (!offLastResults.length) {
+    resultsEl.innerHTML = `<div class="off-result-empty">${lang === 'ar' ? 'لا توجد نتائج بقيم غذائية صحيحة.' : 'No results with valid nutrition values.'}</div>`;
+    return;
+  }
+  resultsEl.innerHTML = offLastResults.map((p, idx) => {
+    const n = p.nutriments || {};
+    const name = escapeHtml(p.product_name_en || p.product_name || p.product_name_ar || '—');
+    const brand = p.brands ? escapeHtml(String(p.brands).split(',')[0].trim()) : '';
+    const kcal = Math.round(Number(n['energy-kcal_100g']) || 0);
+    const prot = (Number(n['proteins_100g']) || 0).toFixed(1);
+    const fat  = (Number(n['fat_100g']) || 0).toFixed(1);
+    const carb = (Number(n['carbohydrates_100g']) || 0).toFixed(1);
+    return `<div class="off-result" data-off-idx="${idx}">` +
+      `<div class="name">${name}</div>` +
+      (brand ? `<div class="brand">${brand}</div>` : '') +
+      `<div class="macros">` +
+        `<span class="kcal">${kcal} kcal</span>` +
+        `<span>P ${prot} g</span>` +
+        `<span>F ${fat} g</span>` +
+        `<span>C ${carb} g</span>` +
+      `</div>` +
+    `</div>`;
+  }).join('');
+}
+
+// Pre-fill the Add Food modal from a chosen OFF product. Mirrors the
+// barcode-result handler; values are already per 100 g.
+function openAddFoodFromOff(p) {
+  const n = p.nutriments || {};
+  const nameEn = p.product_name_en || p.product_name || '';
+  const nameAr = p.product_name_ar || '';
+  closeOffSearchModal();
+  openAddFood();
+  if (nameEn) document.getElementById('afEn').value = nameEn;
+  if (nameAr) document.getElementById('afAr').value = nameAr;
+  const setNum = (id, v) => {
+    const num = Number(v);
+    if (isFinite(num) && num >= 0) document.getElementById(id).value = Math.round(num * 10) / 10;
+  };
+  setNum('afKcal', n['energy-kcal_100g']);
+  setNum('afP',    n['proteins_100g']);
+  setNum('afF',    n['fat_100g']);
+  setNum('afC',    n['carbohydrates_100g']);
+  document.getElementById('afBase').value = 100;
+  document.getElementById('afBasisEn').value = 'per 100 g';
+  document.getElementById('afBasisAr').value = 'لكل 100 جم';
+  const titleEl = document.querySelector('.popup-modal h3');
+  if (titleEl) titleEl.textContent = lang === 'ar' ? '🔎 مراجعة الصنف من OFF' : '🔎 Review product from OFF';
+  if (typeof updateAfKcalCheck === 'function') updateAfKcalCheck();
+}
+
+// Wire the modal: submit on button click or Enter, click on result row,
+// cancel/overlay-click to close.
+(function initOffSearch() {
+  const overlay = document.getElementById('offSearchOverlay');
+  const input = document.getElementById('offSearchInput');
+  const btn = document.getElementById('offSearchBtn');
+  const resultsEl = document.getElementById('offSearchResults');
+  const cancelBtn = document.getElementById('offSearchCancelBtn');
+  if (!overlay || !input || !btn || !resultsEl) return;
+  btn.addEventListener('click', runOffSearch);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); runOffSearch(); }
+  });
+  resultsEl.addEventListener('click', e => {
+    const row = e.target.closest('.off-result');
+    if (!row) return;
+    const idx = parseInt(row.dataset.offIdx, 10);
+    const p = offLastResults[idx];
+    if (p) openAddFoodFromOff(p);
+  });
+  cancelBtn.addEventListener('click', closeOffSearchModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeOffSearchModal(); });
+})();
 
 // ============ DAILY REMINDERS (LOCAL NOTIFICATIONS) ============
 // ============ DAILY REMINDERS (LOCAL NOTIFICATIONS) ============

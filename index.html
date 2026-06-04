@@ -520,24 +520,19 @@ header.cover::before {
                     radial-gradient(circle at 80% 70%, rgba(139, 58, 47, 0.12) 0%, transparent 50%);
   pointer-events: none;
 }
-/* Header layout: title flows naturally, tool buttons absolutely pinned to
-   the top-right corner so they stay in the same physical spot regardless
-   of language direction or title length. The right-side padding on the
-   title block reserves space so long EN headings cannot collide with the
-   pinned tools. */
+/* Header layout: title text on top, tool buttons stacked on their own
+   row below. Avoids any overlap with the title in either language and
+   removes the wrap-to-second-line inconsistency that flex space-between
+   produced when EN titles were longer than AR. */
 header.cover .row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   position: relative;
-  direction: ltr;
-}
-header.cover .row > div:first-child {
-  padding-right: 200px;
-  min-height: 64px;
 }
 body.ar header.cover .row > div:first-child {
   direction: rtl;
   text-align: right;
-  padding-right: 0;
-  padding-left: 200px;
 }
 header.cover h1 {
   font-size: clamp(26px, 4vw, 42px);
@@ -565,16 +560,16 @@ body.ar header.cover .sub { font-family: 'JetBrains Mono', monospace; }
 }
 .lang-toggle:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-/* Pinned to the top-right corner of header.cover in both LTR and RTL so
-   the buttons sit in the same physical spot regardless of language. The
-   forced direction:ltr keeps the button order (lang / theme / guide /
-   settings) identical across languages. */
+/* Sits on its own row underneath the header title in both LTR and RTL.
+   direction:ltr keeps the button order (lang / theme / guide / settings)
+   identical across languages; align-self:flex-start anchors the row to
+   the start side (left in EN, right in AR) so the buttons hug the same
+   edge as the title above them. */
 .header-tools {
   display: flex; gap: 8px; align-items: center; direction: ltr;
-  position: absolute;
-  top: 0;
-  right: 0;
+  align-self: flex-start;
 }
+body.ar .header-tools { align-self: flex-end; }
 .hdr-btn {
   background: var(--on-grad-veil);
   border: 1px solid var(--on-grad-bd);

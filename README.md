@@ -279,7 +279,7 @@ Read [`CLAUDE.md`](./CLAUDE.md) before editing. It documents:
 - Where each feature lives by `// ============ BANNER ============` name.
 - XSS guardrails (`escapeHtml()` is mandatory on any DB-derived `innerHTML` write).
 - The bilingual rule (every static label needs `data-en` + `data-ar`; every dynamic string needs a `lang === 'ar'` ternary).
-- The header-tools rule: `.header-tools` is absolutely pinned to the top-right of `header.cover` in **both** LTR and RTL, with forced `direction: ltr` so the button order (lang / theme / guide / settings) is identical across languages. Don't replace it with a plain flex layout — long EN titles will push the buttons to a second row.
+- The header-tools rule: `.header-tools` sits on its own row beneath the title in `header.cover` for **both** LTR and RTL. The row uses `flex-direction: column` so title length cannot push the buttons off; `direction: ltr` is forced on the tool row so the button order (lang / theme / guide / settings) is identical across languages. `align-self` flips between `flex-start` (EN) and `flex-end` (AR) so the buttons hug the same edge as the title text above them. Do not bring back a single-row `space-between` layout — long EN titles wrap the buttons to a second flex line and they end up at the wrong edge.
 - The CSP meta tag — adding any new network origin requires updating it.
 
 After any change to the main `<script>` block, run the smoke test from `CLAUDE.md`:

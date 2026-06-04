@@ -3125,6 +3125,126 @@ body.ar .tdee-label {
 }
 body.ar .tdee-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
 
+/* ============ GUIDE MODAL ============ */
+.guide-modal {
+  background: var(--paper); border-radius: 8px;
+  width: min(720px, 96vw);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  display: flex; flex-direction: column;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.guide-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.guide-modal-head h3 {
+  margin: 0; font-family: 'Fraunces', serif; font-size: 20px;
+  color: var(--ink);
+}
+.guide-modal-close {
+  background: transparent; border: 1px solid var(--line);
+  color: var(--ink); font-size: 22px; line-height: 1;
+  width: 34px; height: 34px; border-radius: 4px;
+  cursor: pointer;
+}
+.guide-modal-close:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.guide-tabs {
+  display: flex; flex-wrap: wrap; gap: 2px;
+  padding: 8px 12px 0;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.guide-tab {
+  background: transparent; border: none;
+  color: var(--ink-soft); cursor: pointer;
+  padding: 10px 12px;
+  font-size: 13px; font-weight: 600;
+  font-family: inherit;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.guide-tab:hover { color: var(--ink); }
+.guide-tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+.guide-modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1; min-height: 0;
+}
+.guide-pane { display: none; }
+.guide-pane.active { display: block; }
+.guide-pane h4 {
+  font-family: 'Fraunces', serif;
+  font-size: 17px; color: var(--ink);
+  margin: 0 0 10px;
+}
+.guide-pane p {
+  font-size: 14px; line-height: 1.6;
+  color: var(--ink); margin: 0 0 12px;
+}
+body.ar .guide-pane p { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.guide-pane ul { padding-inline-start: 18px; margin: 0 0 12px; }
+.guide-pane li {
+  font-size: 14px; line-height: 1.55;
+  color: var(--ink); margin-bottom: 6px;
+}
+.guide-pane strong { color: var(--accent); }
+.guide-modal-foot {
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+  display: flex; gap: 10px; flex-wrap: wrap;
+  align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.guide-links { display: flex; gap: 10px; flex-wrap: wrap; }
+.guide-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-size: 13px; font-weight: 600;
+  font-family: inherit;
+  color: var(--ink); text-decoration: none;
+}
+.guide-link:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.guide-author {
+  font-size: 12px; color: var(--ink-soft);
+}
+
+/* First-run hint banner above goals card */
+.guide-hint {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+  font-size: 13px; color: var(--ink);
+}
+.guide-hint-text { flex: 1; min-width: 0; }
+body.ar .guide-hint-text { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.guide-hint-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.guide-hint-actions button {
+  background: var(--accent); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 6px 12px; cursor: pointer;
+  font-size: 12px; font-weight: 600; font-family: inherit;
+}
+.guide-hint-actions .dismiss {
+  background: transparent; color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+
 /* ============ OFF SEARCH MODAL ============ */
 .off-search-modal {
   background: var(--paper); border-radius: 4px;
@@ -3327,10 +3447,23 @@ body.ar .footer li::before {
     <div class="header-tools">
       <button class="hdr-btn" id="langToggle" data-title-en="Switch to Arabic" data-title-ar="Switch to English" title="Switch language" aria-label="Switch language">ع</button>
       <button class="hdr-btn" id="themeToggle" data-title-en="Toggle light / dark" data-title-ar="تبديل الفاتح / الداكن" title="Toggle light / dark" aria-label="Toggle light or dark mode">🌙</button>
+      <button class="hdr-btn" id="guideBtn" data-title-en="Guide" data-title-ar="الدليل" title="Guide" aria-label="Open guide">📖</button>
       <button class="hdr-btn" id="settingsBtn" data-title-en="Settings" data-title-ar="الإعدادات" title="Settings" aria-label="Open settings">⚙</button>
     </div>
   </div>
 </header>
+
+<div class="guide-hint" id="guideHint" hidden>
+  <div class="guide-hint-text"
+       data-en="👋 You're using the sample database and default goals. Tap the 📖 Guide for a 1-minute tour to load the full food DB, set your real goals, and unlock every feature."
+       data-ar="👋 ما زلت تستخدم البيانات الافتراضية. اضغط على 📖 الدليل لجولة دقيقة واحدة تشرح تحميل قاعدة الأكل الكاملة، وضبط أهدافك الحقيقية، وكل المميزات.">
+    👋 You're using the sample database and default goals. Tap the 📖 Guide for a 1-minute tour.
+  </div>
+  <div class="guide-hint-actions">
+    <button id="guideHintOpenBtn" data-en="Open guide" data-ar="افتح الدليل">Open guide</button>
+    <button class="dismiss" id="guideHintDismissBtn" data-en="Dismiss" data-ar="تجاهل">Dismiss</button>
+  </div>
+</div>
 
 <div class="goals-card" id="goalsCard">
   <div class="goals-card-head">
@@ -3468,47 +3601,6 @@ body.ar .footer li::before {
 </div>
 <div id="foodTablesContainer"></div>
 
-<div class="footer">
-  <h3 data-en="How to use this table" data-ar="إزاي تستخدم الجدول ده">How to use this table</h3>
-  <ul>
-    <li>
-      <span data-en="All weights are raw / pre-cooking unless a row says &quot;cooked&quot; or &quot;canned&quot;. Chicken loses about 25% of its weight when cooked — if a recipe needs 115 g cooked, weigh about 145 g raw."
-            data-ar="كل الأوزان خام / قبل الطبخ إلا إذا كان السطر مكتوباً فيه &quot;مطبوخ&quot; أو &quot;معلب&quot;. الدجاج يفقد حوالي 25% من وزنه بعد الطبخ — إذا احتاجت وصفة إلى 115 جم مطبوخ، فالوزن الخام يبقى حوالي 145 جم.">All weights are raw / pre-cooking unless a row says "cooked" or "canned". Chicken loses about 25% of its weight when cooked — if a recipe needs 115 g cooked, weigh about 145 g raw.</span>
-    </li>
-    <li>
-      <span data-en="The Easy measure column is for when you have no scale handy — use it for rough planning, but a kitchen scale is far more accurate."
-            data-ar="عمود المعيار السهل يُفيد عند عدم توفر ميزان — استخدمه للتقدير السريع، لكن الميزان أدق بكثير.">The Easy measure column is for when you have no scale handy — use it for rough planning, but a kitchen scale is far more accurate.</span>
-    </li>
-    <li>
-      <span data-en="The IRON marker flags iron-rich foods. Pair these with vitamin C (lemon, orange, bell pepper) and avoid tea or coffee within 2 hours — important given the anemia picture in the lab reports."
-            data-ar="علامة (حديد) تُشير إلى الأطعمة الغنية بالحديد. من الأفضل تناولها مع فيتامين C (ليمون، برتقال، فلفل حلو) وتجنب الشاي والقهوة لمدة ساعتين — مهم جداً نظراً لصورة الأنيميا في التحاليل.">The IRON marker flags iron-rich foods. Pair these with vitamin C (lemon, orange, bell pepper) and avoid tea or coffee within 2 hours — important given the anemia picture in the lab reports.</span>
-    </li>
-    <li>
-      <span data-en="The OMEGA-3 marker flags foods high in omega-3. Aim for fatty fish 2–3 times per week."
-            data-ar="علامة (أوميجا-٣) تُشير إلى الأطعمة الغنية بأوميجا-3. يفضل تناول الأسماك الدهنية 2–3 مرات في الأسبوع.">The OMEGA-3 marker flags foods high in omega-3. Aim for fatty fish 2–3 times per week.</span>
-    </li>
-    <li>
-      <span data-en="Small-portion items (oils, seeds, spreads) are listed per 10 g or per 30 g instead of 100 g, because nobody eats 100 g of olive oil. Check the basis line under each food name."
-            data-ar="العناصر الصغيرة (زيوت، بذور، زبدات) مكتوبة لكل 10 جم أو 30 جم بدلاً من 100 جم، لأنه لا أحد يتناول 100 جم من زيت الزيتون. تحقق من سطر الأساس تحت اسم كل عنصر.">Small-portion items (oils, seeds, spreads) are listed per 10 g or per 30 g instead of 100 g, because nobody eats 100 g of olive oil. Check the basis line under each food name.</span>
-    </li>
-    <li>
-      <span data-en="Tap any food to open the calculator: enter grams directly, a × 100 g multiplier, or pick an easy measure. The running total sits behind the floating button at the bottom corner."
-            data-ar="اضغط على أي عنصر لفتح الحاسبة: أدخل الجرامات مباشرة، أو مضاعف × 100 جم، أو اختر معياراً سهلاً. المجموع الجاري يقع خلف الزر العائم في الزاوية السفلية.">Tap any food to open the calculator: enter grams directly, a × 100 g multiplier, or pick an easy measure. The running total sits behind the floating button at the bottom corner.</span>
-    </li>
-    <li>
-      <span data-en="The display button at the top of each table cycles through three views: (1) per 100 g — the default, uniform baseline for comparison; (2) DB portion — whatever the database defines (per 100 g, per 1 egg, per slice, etc.); (3) Easy measure — per the first easy unit (1 filet, 1 piece, 1 fruit). If a food has no easy unit defined, the Easy view shows per 100 g."
-            data-ar="زر العرض في رأس كل جدول يدور بين ثلاثة معايير: (١) لكل 100 جم — الافتراضي، معيار موحد للمقارنة العادلة؛ (٢) معيار الحصة — الحصة كما هي معرّفة في قاعدة البيانات (لكل 100 جم، لكل بيضة، لكل شريحة، إلخ)؛ (٣) المعيار السهل — لكل وحدة سهلة (1 فيليه، 1 قطعة، 1 ثمرة). إذا لم يكن للعنصر معيار سهل معرّف، يعرض المعيار السهل القيمة لكل 100 جم.">The display button at the top of each table cycles through three views: (1) per 100 g — the default, uniform baseline for comparison; (2) DB portion — whatever the database defines (per 100 g, per 1 egg, per slice, etc.); (3) Easy measure — per the first easy unit (1 filet, 1 piece, 1 fruit). If a food has no easy unit defined, the Easy view shows per 100 g.</span>
-    </li>
-    <li>
-      <span data-en="The smart sort button (↕) at the top of each table re-ranks items by what you actually care about: highest protein, highest protein with lowest carbs, lowest calories per gram, etc. The ranking uses the current display mode — so if you switch to Easy measure, the order reflects the actual grams shown."
-            data-ar="زر الترتيب الذكي (↕) في رأس كل جدول يُعيد ترتيب الأصناف حسب ما يهمك فعلاً: أعلى بروتين، أعلى بروتين مع أقل كربوهيدرات، أقل سعرات لكل جرام، إلخ. يستخدم الترتيب معيار العرض الحالي — أي أنه إذا غيّرت إلى معيار سهل، يعكس الترتيب الجرامات الفعلية في الجدول.">The smart sort button (↕) at the top of each table re-ranks items by what you actually care about: highest protein, highest protein with lowest carbs, lowest calories per gram, etc. The ranking uses the current display mode — so if you switch to Easy measure, the order reflects the actual grams shown.</span>
-    </li>
-    <li>
-      <span data-en="Data sources: USDA FoodData Central (Foundation Foods and SR Legacy). Regional staples like baladi bread were cross-checked against published Middle Eastern composition tables. Values are typical averages and real products can vary by about 10%."
-            data-ar="مصادر البيانات: USDA FoodData Central (Foundation Foods و SR Legacy). تم التحقق من الأصناف المحلية مثل العيش البلدي مقابل جداول التركيب الغذائي المنشورة للمنطقة. القيم متوسطات تقريبية والمنتجات الحقيقية قد تختلف بحوالي 10%.">Data sources: USDA FoodData Central (Foundation Foods and SR Legacy). Regional staples like baladi bread were cross-checked against published Middle Eastern composition tables. Values are typical averages and real products can vary by about 10%.</span>
-    </li>
-  </ul>
-</div>
 
 </div>
 
@@ -4321,6 +4413,158 @@ body.ar .footer li::before {
     </div>
     <div class="popup-actions">
       <button class="btn-cancel" id="addMethodCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GUIDE MODAL ============ -->
+<div class="popup-overlay" id="guideOverlay">
+  <div class="guide-modal">
+    <div class="guide-modal-head">
+      <h3 data-en="📖 Guide" data-ar="📖 الدليل">📖 Guide</h3>
+      <button class="guide-modal-close" id="guideCloseBtn" aria-label="Close guide">×</button>
+    </div>
+    <nav class="guide-tabs" role="tablist">
+      <button class="guide-tab active" data-gtab="welcome" role="tab" data-en="👋 Welcome"      data-ar="👋 مرحبا">👋 Welcome</button>
+      <button class="guide-tab"        data-gtab="food"    role="tab" data-en="🥗 Food tables"  data-ar="🥗 جداول الأكل">🥗 Food tables</button>
+      <button class="guide-tab"        data-gtab="adding"  role="tab" data-en="➕ Adding food"  data-ar="➕ إضافة صنف">➕ Adding food</button>
+      <button class="guide-tab"        data-gtab="meals"   role="tab" data-en="🍽 Meals"        data-ar="🍽 الوجبات">🍽 Meals</button>
+      <button class="guide-tab"        data-gtab="goals"   role="tab" data-en="🎯 Goals & TDEE" data-ar="🎯 الأهداف والـTDEE">🎯 Goals & TDEE</button>
+      <button class="guide-tab"        data-gtab="weight"  role="tab" data-en="⚖ Weight"        data-ar="⚖ الوزن">⚖ Weight</button>
+      <button class="guide-tab"        data-gtab="filters" role="tab" data-en="🚫 Filters"      data-ar="🚫 المرشحات">🚫 Filters</button>
+      <button class="guide-tab"        data-gtab="data"    role="tab" data-en="💾 Backup"       data-ar="💾 النسخ الاحتياطي">💾 Backup</button>
+    </nav>
+    <div class="guide-modal-body">
+
+      <div class="guide-pane active" data-gpane="welcome" role="tabpanel">
+        <h4 data-en="Welcome 👋" data-ar="مرحبا 👋">Welcome 👋</h4>
+        <p data-en="This is a single-file, offline-first daily macro tracker. Everything you log lives in your browser — there is no backend, no account, and no telemetry."
+           data-ar="هذا متتبع ماكروز يومي يعمل بملف واحد دون الحاجة للإنترنت. كل ما تسجله يبقى في متصفحك — لا يوجد خادم، ولا حساب، ولا تتبع.">Welcome.</p>
+        <p data-en="First steps:" data-ar="أول الخطوات:">First steps:</p>
+        <ul>
+          <li data-en="Open the side panel (the floating button at the bottom corner) and tap “⬆ Restore JSON” to load the full food database — the sample has only 11 items."
+              data-ar="افتح اللوحة الجانبية (الزر العائم في الأسفل) واضغط “⬆ استرجاع JSON” لتحميل قاعدة بيانات الأكل الكاملة — العينة فيها 11 صنف فقط.">Load the full food DB.</li>
+          <li data-en="Set your daily targets — either manually via “✎ Edit” on the goals card, or hit “🧮 Calculate” to use the built-in TDEE / BMR calculator."
+              data-ar="حدد أهدافك اليومية — إما يدوياً عبر “✎ تعديل” على كرت الأهداف، أو اضغط “🧮 احسب” لاستخدام حاسبة TDEE / BMR المدمجة.">Set your goals.</li>
+          <li data-en="Tap any food to log it. The popup includes a meal tag (breakfast / lunch / dinner / snack)."
+              data-ar="اضغط على أي صنف لتسجيله. النموذج يحتوي على تصنيف للوجبة (إفطار / غداء / عشاء / سناك).">Tap to log.</li>
+        </ul>
+      </div>
+
+      <div class="guide-pane" data-gpane="food" role="tabpanel">
+        <h4 data-en="Food tables" data-ar="جداول الأكل">Food tables</h4>
+        <ul>
+          <li data-en="All weights are raw / pre-cooking unless a row says “cooked” or “canned”. Chicken loses ~25 % of its weight after cooking."
+              data-ar="كل الأوزان خام إلا إذا كان السطر مكتوب فيه “مطبوخ” أو “معلب”. الفراخ تخس حوالي 25% من وزنها بعد الطبخ.">Weights are raw.</li>
+          <li data-en="The display button at the top of each table cycles three views: per 100 g (the default fair comparison), DB portion (per 1 egg, per slice…), and Easy measure (1 fillet, 1 handful)."
+              data-ar="زر العرض في رأس الجدول يبدل بين ثلاثة معايير: لكل 100 جم، وحصة قاعدة البيانات، والمعيار السهل.">Three display modes.</li>
+          <li data-en="The smart-sort button (↕) re-ranks items by what you care about: highest protein, lowest kcal, protein-vs-carbs, etc."
+              data-ar="زر الترتيب الذكي (↕) يعيد ترتيب الأصناف حسب اهتمامك: أعلى بروتين، أقل سعرات، إلخ.">Smart sort presets.</li>
+          <li data-en="Small-portion items (oils, seeds, spreads) are listed per 10 g or 30 g instead of 100 g — check the basis line under each food."
+              data-ar="الأصناف الصغيرة (زيوت، بذور، زبدات) مكتوبة لكل 10 أو 30 جم بدلاً من 100 جم — تحقق من سطر الأساس تحت كل صنف.">Small portions use 10 g / 30 g base.</li>
+          <li data-en="The IRON marker flags iron-rich foods. Pair with vitamin C (lemon, orange, pepper) and avoid tea/coffee within 2 hours. The OMEGA-3 marker flags fatty fish — aim for 2–3 servings per week."
+              data-ar="علامة (حديد) تُشير للأصناف الغنية بالحديد — تناولها مع فيتامين C (ليمون، برتقال) وتجنب الشاي والقهوة لساعتين. علامة (أوميجا-3) تشير للأسماك الدهنية — يفضل 2–3 مرات أسبوعياً.">Iron + Omega-3 badges.</li>
+        </ul>
+      </div>
+
+      <div class="guide-pane" data-gpane="adding" role="tabpanel">
+        <h4 data-en="Adding foods" data-ar="إضافة الأصناف">Adding foods</h4>
+        <p data-en="There are four ways to add a new food to your database:" data-ar="هناك أربع طرق لإضافة صنف جديد لقاعدة بياناتك:">Four entry methods:</p>
+        <ul>
+          <li><strong data-en="Manual:" data-ar="يدوي:">Manual:</strong>
+            <span data-en=" Enter name, category, macros per gram base, and optional easy units."
+                  data-ar=" أدخل الاسم والتصنيف وقيم الماكروز لكل وزن أساسي، ومعيار سهل اختياري.">Enter the fields directly.</span></li>
+          <li><strong data-en="Photo OCR (Gemini):" data-ar="من صورة (Gemini):">Photo OCR:</strong>
+            <span data-en=" Snap a nutrition label and Gemini 2.5 Flash extracts the numbers. You supply your own API key in Settings → API Key (free tier works)."
+                  data-ar=" التقط صورة لجدول التغذية واستخدم Gemini 2.5 Flash لاستخراج الأرقام. تحتاج لمفتاح API خاص بك في الإعدادات → API Key (الطبقة المجانية كافية).">Extracts from label photos.</span></li>
+          <li><strong data-en="Barcode:" data-ar="باركود:">Barcode:</strong>
+            <span data-en=" Scan a product barcode (OpenFoodFacts lookup). Works offline-light — fetches just the one product."
+                  data-ar=" امسح باركود المنتج (بحث OpenFoodFacts). يجلب منتجاً واحداً فقط.">Barcode → OFF lookup.</span></li>
+          <li><strong data-en="OpenFoodFacts name search:" data-ar="بحث OpenFoodFacts بالاسم:">OFF name search:</strong>
+            <span data-en=" Type a name and pick from the OFF database (millions of products). Works in English and Arabic."
+                  data-ar=" اكتب اسماً واختر من قاعدة OFF (ملايين المنتجات). تعمل بالإنجليزية والعربية.">Text search.</span></li>
+        </ul>
+        <p data-en="You can also build a recipe from existing items: in Add Food modal, switch to 🧩 Build from items, pick foods + quantities, and save as a new composite. Recipes become first-class foods in your DB."
+           data-ar="يمكنك أيضاً تكوين وصفة من أصناف موجودة: في نموذج إضافة الصنف، انتقل إلى 🧩 من عناصر موجودة، اختر الأصناف والكميات، واحفظ كصنف مركّب جديد. الوصفات تصبح أصنافاً عادية في قاعدة البيانات.">Recipe builder.</p>
+      </div>
+
+      <div class="guide-pane" data-gpane="meals" role="tabpanel">
+        <h4 data-en="Meal-time tagging" data-ar="تصنيف الوجبات">Meal-time tagging</h4>
+        <p data-en="When logging a food, pick a meal tag: 🍳 Breakfast, 🥗 Lunch, 🍽 Dinner, 🍎 Snack, or ∅ None. Today’s intake (side panel) groups items by meal with a per-meal subtotal — so you can see protein distribution across the day."
+           data-ar="عند تسجيل صنف، اختر تصنيف الوجبة: 🍳 إفطار، 🥗 غداء، 🍽 عشاء، 🍎 سناك، أو ∅ بدون. تجمع اللوحة الجانبية الأصناف حسب الوجبة مع مجموع لكل وجبة — لترى توزيع البروتين على مدار اليوم.">Group by meal time.</p>
+        <p data-en="The picker remembers your last pick across rapid successive adds — log all of breakfast in one go without re-tapping the chip every food."
+           data-ar="المنتقي يتذكر آخر اختيار عند الإضافات المتتالية السريعة — سجل الإفطار بأكمله دون إعادة اختيار التصنيف لكل صنف.">Sticky across adds.</p>
+        <p data-en="You can also save the entire current day as a Meal Template (side panel → 💾 Save as template) and restore it on a future day in one tap."
+           data-ar="يمكنك أيضاً حفظ اليوم بأكمله كقالب وجبة (اللوحة الجانبية → 💾 احفظ كقالب) واسترجاعه في يوم آخر بنقرة واحدة.">Templates.</p>
+      </div>
+
+      <div class="guide-pane" data-gpane="goals" role="tabpanel">
+        <h4 data-en="Daily targets" data-ar="الأهداف اليومية">Daily targets</h4>
+        <p data-en="The goals card at the top shows your kcal / protein / fat / carbs targets. Edit them manually with “✎ Edit”, or compute them from your body stats with “🧮 Calculate”."
+           data-ar="كرت الأهداف في الأعلى يعرض أهدافك من السعرات والبروتين والدهون والكارب. عدّل يدوياً عبر “✎ تعديل”، أو احسبها من بياناتك الجسدية عبر “🧮 احسب”.">Two ways to set goals.</p>
+        <p data-en="The Calculate modal uses Mifflin-St Jeor (the most accurate formula for the general population). If you know your body-fat %, it switches to Katch-McArdle (more accurate when lean mass is known)."
+           data-ar="نموذج الحساب يستخدم صيغة Mifflin-St Jeor (الأدق للسكان عموماً). لو تعرف نسبة الدهون عندك، يتحول لـ Katch-McArdle (أدق عند معرفة الكتلة العضلية).">BMR formulas.</p>
+        <p data-en="Pick activity level (sedentary → very active), goal (aggressive cut → bulk), and macro split (high-protein cut, balanced, moderate carb, bulk). The preview shows kcal/macros live; Apply writes to your goals."
+           data-ar="اختر مستوى النشاط (خامل → نشط جداً)، والهدف (تنشيف قوي → ضخامة)، وتوزيع الماكروز (تنشيف غني بالبروتين، متوازن، كارب متوسط، ضخامة). المعاينة تعرض النتيجة مباشرة؛ التطبيق يكتبها في أهدافك.">Live preview.</p>
+      </div>
+
+      <div class="guide-pane" data-gpane="weight" role="tabpanel">
+        <h4 data-en="Weight log" data-ar="سجل الوزن">Weight log</h4>
+        <p data-en="The Weight section (side panel) logs one entry per day. The sparkline shows raw readings as dots and a 7-day moving-average overlay as a smooth line — that average is what actually tracks your progress; the raw daily numbers bounce too much to read directly (water, glycogen, salt)."
+           data-ar="قسم الوزن في اللوحة الجانبية يسجل قراءة واحدة لكل يوم. المخطط الصغير يعرض القراءات الخام كنقاط وخط متوسط متحرك لـ 7 أيام — هذا المتوسط هو ما يعكس تقدمك فعلاً؛ القراءات اليومية تتذبذب كثيراً (ماء، جليكوجين، ملح).">Daily entry + 7-day moving average.</p>
+        <p data-en="The trend indicator above the chart compares your latest 7-day average to the value from ~7 entries earlier and colors it up / down / flat."
+           data-ar="مؤشر الاتجاه فوق المخطط يقارن متوسط آخر 7 أيام بقيمة من 7 إدخالات قبل ويلونها صعود / هبوط / ثبات.">Trend indicator.</p>
+        <p data-en="The TDEE calculator’s weight field auto-fills from the latest entry, so your goals stay current as you update your weight."
+           data-ar="حقل الوزن في حاسبة TDEE يُملأ تلقائياً من أحدث إدخال، فتبقى أهدافك محدثة مع تحديثك للوزن.">Auto-fill into TDEE.</p>
+      </div>
+
+      <div class="guide-pane" data-gpane="filters" role="tabpanel">
+        <h4 data-en="Filters" data-ar="المرشحات">Filters</h4>
+        <p data-en="Three filter dimensions compose:" data-ar="ثلاثة محاور للمرشحات تعمل سوياً:">Three composing filters:</p>
+        <ul>
+          <li><strong data-en="Search:" data-ar="بحث:">Search:</strong>
+            <span data-en=" floating bar at the bottom. Arabic-aware: tashkeel-stripped, hamza variants normalized."
+                  data-ar=" الشريط العائم بالأسفل. يتعرف على العربية: التشكيل والهمزات وغيرها.">free-text.</span></li>
+          <li><strong data-en="Category chips:" data-ar="مرشحات التصنيف:">Category chips:</strong>
+            <span data-en=" Meat & Poultry, Fish, Dairy, Carbs, Vegetables, etc. Single-select."
+                  data-ar=" لحوم، أسماك، ألبان، نشويات، خضار، إلخ. اختيار واحد.">single category.</span></li>
+          <li><strong data-en="Diet chips:" data-ar="مرشحات النظام الغذائي:">Diet chips:</strong>
+            <span data-en=" Gluten-free, Lactose-free, Keto. Multi-select (food must match ALL active tags). Tags are auto-derived from category for the seed DB; keto is data-derived (≤ 5 g carbs per 100 g)."
+                  data-ar=" خالٍ من الجلوتين، خالٍ من اللاكتوز، كيتو. اختيار متعدد (الصنف يطابق كل التصنيفات النشطة). التصنيفات مشتقة تلقائياً من فئة الصنف؛ كيتو محسوب من البيانات (≤ 5 جم كارب لكل 100 جم).">multi-select diet.</span></li>
+        </ul>
+        <p data-en="Changing any filter scrolls the first matching section into view — no manual scrolling needed."
+           data-ar="تغيير أي مرشح يلف العرض تلقائياً لأول قسم مطابق — لا حاجة للف اليدوي.">Auto-scroll on change.</p>
+      </div>
+
+      <div class="guide-pane" data-gpane="data" role="tabpanel">
+        <h4 data-en="Backup & restore" data-ar="النسخ الاحتياطي والاسترجاع">Backup & restore</h4>
+        <p data-en="Everything is stored locally in your browser. To move between devices, use Settings → Data:"
+           data-ar="كل البيانات محفوظة محلياً في متصفحك. للنقل بين الأجهزة، استخدم الإعدادات → البيانات:">Local-only storage.</p>
+        <ul>
+          <li data-en="⬇ Export JSON — full backup: food DB, today’s log, history, goals, weight, profile, templates, water, workouts, settings."
+              data-ar="⬇ تصدير JSON — نسخة احتياطية كاملة: قاعدة بيانات الأكل، سجل اليوم، التاريخ، الأهداف، الوزن، الملف الشخصي، القوالب، الماء، التمارين، الإعدادات.">Full JSON backup.</li>
+          <li data-en="⬆ Restore JSON — accepts either a full backup or a bare food-DB array."
+              data-ar="⬆ استرجاع JSON — يقبل نسخة كاملة أو مصفوفة قاعدة البيانات فقط.">Restore.</li>
+          <li data-en="Excel + PDF export — share or print your data."
+              data-ar="تصدير Excel و PDF — للمشاركة أو الطباعة.">Excel / PDF.</li>
+          <li data-en="The Gemini API key is excluded from backups for safety — re-enter it after restore via Settings → API Key."
+              data-ar="مفتاح Gemini API مستبعد من النسخ الاحتياطي للأمان — أعد إدخاله بعد الاسترجاع عبر الإعدادات → API Key.">API key excluded.</li>
+        </ul>
+        <p data-en="On iOS, Safari can evict localStorage under pressure. The app mirrors every change to IndexedDB as a safety net — if localStorage gets cleared, the next load restores from IDB."
+           data-ar="في iOS قد يمسح Safari التخزين المحلي تحت الضغط. التطبيق يعمل نسخة احتياطية لكل تغيير في IndexedDB — لو ضاع التخزين المحلي، يُسترجع في التحميل التالي.">iOS IDB mirror.</p>
+      </div>
+
+    </div>
+    <div class="guide-modal-foot">
+      <div class="guide-author" data-en="By Abdullah Ayoub" data-ar="بقلم عبدالله أيوب">By Abdullah Ayoub</div>
+      <div class="guide-links">
+        <a class="guide-link" href="https://github.com/abdullah-3337/Macro_Tracker_Interactive" target="_blank" rel="noopener noreferrer">
+          <span>⌨</span><span data-en="GitHub" data-ar="GitHub">GitHub</span>
+        </a>
+        <a class="guide-link" href="https://www.linkedin.com/in/abdullah-ayoub333" target="_blank" rel="noopener noreferrer">
+          <span>in</span><span data-en="LinkedIn" data-ar="لينكدإن">LinkedIn</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -9943,6 +10187,77 @@ function updateDbEmptyNotice() {
 refreshApiKeyStatus();
 
 renderTotals();
+
+// ============ GUIDE MODAL ============
+// Tabbed help popup describing each major feature. Replaces the bottom-of-page
+// "how to use" footer with a dedicated modal accessible from the header.
+// Tab switching mirrors the settings modal pattern; selection isn't persisted
+// (each open starts on Welcome). External GitHub + LinkedIn links live in the
+// modal footer.
+
+// Show a tab by id. Marks the matching button + pane active; others inactive.
+function guideSelectTab(id) {
+  document.querySelectorAll('#guideOverlay .guide-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.gtab === id);
+  });
+  document.querySelectorAll('#guideOverlay .guide-pane').forEach(p => {
+    p.classList.toggle('active', p.dataset.gpane === id);
+  });
+  // Scroll body back to top whenever the tab changes — long panes look broken
+  // if a new tab opens already-scrolled.
+  const body = document.querySelector('#guideOverlay .guide-modal-body');
+  if (body) body.scrollTop = 0;
+}
+
+function openGuide(tabId) {
+  guideSelectTab(tabId || 'welcome');
+  document.getElementById('guideOverlay').classList.add('active');
+}
+function closeGuide() {
+  document.getElementById('guideOverlay').classList.remove('active');
+}
+
+// Wire the open button, tab clicks, close button, overlay click-out, and the
+// first-run hint banner. The banner shows when the food DB has never been
+// imported AND goals still equal the hard-coded defaults — i.e. the user
+// hasn't customized anything yet. Dismiss persists to mt-guide-hint-dismissed
+// so the banner doesn't return next session.
+(function initGuide() {
+  const openBtn = document.getElementById('guideBtn');
+  const closeBtn = document.getElementById('guideCloseBtn');
+  const overlay = document.getElementById('guideOverlay');
+  const hint = document.getElementById('guideHint');
+  const hintOpen = document.getElementById('guideHintOpenBtn');
+  const hintDismiss = document.getElementById('guideHintDismissBtn');
+  if (!openBtn || !overlay) return;
+
+  openBtn.addEventListener('click', () => openGuide('welcome'));
+  closeBtn.addEventListener('click', closeGuide);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeGuide(); });
+
+  overlay.querySelectorAll('.guide-tab').forEach(t => {
+    t.addEventListener('click', () => guideSelectTab(t.dataset.gtab));
+  });
+
+  // First-run hint logic.
+  const DEFAULT_GOALS = { kcal: 1900, protein: 145, fat: 65, carbs: 215 };
+  const dbCustomized = !!localStorage.getItem('mt-db');
+  const goalsCustomized = !goals ||
+    goals.kcal    !== DEFAULT_GOALS.kcal ||
+    goals.protein !== DEFAULT_GOALS.protein ||
+    goals.fat     !== DEFAULT_GOALS.fat ||
+    goals.carbs   !== DEFAULT_GOALS.carbs;
+  const dismissed = localStorage.getItem('mt-guide-hint-dismissed') === '1';
+  if (hint && !dismissed && (!dbCustomized || !goalsCustomized)) {
+    hint.hidden = false;
+  }
+  if (hintOpen) hintOpen.addEventListener('click', () => { if (hint) hint.hidden = true; openGuide('welcome'); });
+  if (hintDismiss) hintDismiss.addEventListener('click', () => {
+    if (hint) hint.hidden = true;
+    localStorage.setItem('mt-guide-hint-dismissed', '1');
+    if (typeof idbPut === 'function') idbPut('mt-guide-hint-dismissed', '1').catch(function(){});
+  });
+})();
 
 // ============ OFF NAME SEARCH (OPENFOODFACTS) ============
 // Search OpenFoodFacts by free-text food name. Pre-fills the Add Food modal

@@ -2979,6 +2979,88 @@ body.ar .goals-form .input-row label {
 }
 body.ar .goals-form .input-row input { text-align: right; }
 
+/* ============ TDEE CALCULATOR MODAL ============ */
+.tdee-modal {
+  background: var(--paper); border-radius: 4px;
+  max-width: 560px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+  border: 1px solid var(--line);
+}
+.tdee-modal h3 {
+  padding: 18px 24px;
+  background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
+  color: var(--on-grad); font-size: 18px;
+  font-style: italic; font-weight: 600;
+  border-bottom: 3px solid var(--gold);
+  position: sticky; top: 0; z-index: 2;
+}
+body.ar .tdee-modal h3 { font-style: normal; }
+.tdee-form { padding: 20px 24px; }
+.tdee-field { margin-bottom: 14px; }
+.tdee-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+body.ar .tdee-label {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px; text-transform: none; letter-spacing: 0;
+}
+.tdee-field input[type="number"] {
+  width: 100%; padding: 9px 12px;
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+.tdee-field input[type="number"]:focus { outline: none; border-color: var(--accent); }
+.tdee-chip-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.tdee-chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 8px 12px;
+  font-size: 12px; font-weight: 600;
+  font-family: inherit;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.tdee-chip:hover { background: var(--veil-hi); }
+.tdee-chip.active {
+  background: var(--accent); color: var(--on-accent);
+  border-color: var(--accent);
+}
+.tdee-preview {
+  background: var(--veil-hi);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 14px 16px;
+  margin: 16px 0 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+.tdee-preview-row {
+  display: flex; justify-content: space-between;
+  padding: 4px 0;
+}
+.tdee-preview-row.head {
+  font-size: 11px; color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 6px; margin-bottom: 6px;
+}
+.tdee-preview-row .val { font-weight: 700; color: var(--ink); }
+.tdee-help {
+  font-size: 11px; color: var(--ink-soft);
+  margin-top: 4px;
+}
+body.ar .tdee-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
+
 /* Saved days list */
 .saved-list {
   background: var(--paper); border-radius: 4px;
@@ -3108,7 +3190,10 @@ body.ar .footer li::before {
 <div class="goals-card" id="goalsCard">
   <div class="goals-card-head">
     <h3 class="goals-card-title" data-en="Daily targets" data-ar="الأهداف اليومية">Daily targets</h3>
-    <button class="goals-edit-btn" id="editGoalsBtn" data-en="✎ Edit" data-ar="✎ تعديل">✎ Edit</button>
+    <div style="display:flex; gap:6px;">
+      <button class="goals-edit-btn" id="tdeeCalcBtn" data-en="🧮 Calculate" data-ar="🧮 احسب">🧮 Calculate</button>
+      <button class="goals-edit-btn" id="editGoalsBtn" data-en="✎ Edit" data-ar="✎ تعديل">✎ Edit</button>
+    </div>
   </div>
   <div class="goals-card-grid">
     <div class="goal-tile goal-tile--kcal">
@@ -3558,6 +3643,91 @@ body.ar .footer li::before {
       <div class="popup-actions">
         <button class="btn-cancel" id="cancelGoalsBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
         <button class="btn-add" id="saveGoalsBtn" data-en="Save" data-ar="حفظ">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TDEE CALCULATOR MODAL ============ -->
+<div class="popup-overlay" id="tdeeOverlay">
+  <div class="tdee-modal">
+    <h3 data-en="🧮 Calculate Your Targets" data-ar="🧮 احسب أهدافك">🧮 Calculate Your Targets</h3>
+    <div class="tdee-form">
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Sex" data-ar="الجنس">Sex</span>
+        <div class="tdee-chip-row" id="tdeeSexRow">
+          <button type="button" class="tdee-chip" data-sex="m" data-en="♂ Male"   data-ar="♂ ذكر">♂ Male</button>
+          <button type="button" class="tdee-chip" data-sex="f" data-en="♀ Female" data-ar="♀ أنثى">♀ Female</button>
+        </div>
+      </div>
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Age (years)" data-ar="العمر (سنوات)">Age (years)</span>
+        <input type="number" id="tdeeAge" min="10" max="100" placeholder="30" />
+      </div>
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Height (cm)" data-ar="الطول (سم)">Height (cm)</span>
+        <input type="number" id="tdeeHeight" min="100" max="250" placeholder="175" />
+      </div>
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Weight (kg)" data-ar="الوزن (كجم)">Weight (kg)</span>
+        <input type="number" id="tdeeWeight" min="20" max="400" step="0.1" placeholder="70" />
+        <div class="tdee-help" data-en="Auto-filled from latest weight log entry if available." data-ar="يُملأ تلقائياً من آخر إدخال في سجل الوزن إن وُجد.">Auto-filled from latest weight log entry if available.</div>
+      </div>
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Body fat % (optional — enables Katch-McArdle)" data-ar="نسبة الدهون % (اختياري — تفعّل صيغة كاتش-مكاردل)">Body fat % (optional)</span>
+        <input type="number" id="tdeeBodyFat" min="3" max="60" step="0.1" placeholder="—" />
+      </div>
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Activity level" data-ar="مستوى النشاط">Activity level</span>
+        <div class="tdee-chip-row" id="tdeeActivityRow">
+          <button type="button" class="tdee-chip" data-act="1.2"   data-en="Sedentary"   data-ar="خامل">Sedentary</button>
+          <button type="button" class="tdee-chip" data-act="1.375" data-en="Light"       data-ar="خفيف">Light</button>
+          <button type="button" class="tdee-chip active" data-act="1.55" data-en="Moderate" data-ar="متوسط">Moderate</button>
+          <button type="button" class="tdee-chip" data-act="1.725" data-en="Active"      data-ar="نشط">Active</button>
+          <button type="button" class="tdee-chip" data-act="1.9"   data-en="Very active" data-ar="نشط جداً">Very active</button>
+        </div>
+      </div>
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Goal" data-ar="الهدف">Goal</span>
+        <div class="tdee-chip-row" id="tdeeGoalRow">
+          <button type="button" class="tdee-chip" data-goal="-0.25" data-en="⬇⬇ Aggressive cut" data-ar="⬇⬇ تنشيف قوي">⬇⬇ Aggressive cut</button>
+          <button type="button" class="tdee-chip" data-goal="-0.15" data-en="⬇ Cut"            data-ar="⬇ تنشيف">⬇ Cut</button>
+          <button type="button" class="tdee-chip active" data-goal="0" data-en="= Maintain"    data-ar="= ثبات">= Maintain</button>
+          <button type="button" class="tdee-chip" data-goal="0.10"  data-en="⬆ Lean bulk"      data-ar="⬆ ضخامة نظيفة">⬆ Lean bulk</button>
+          <button type="button" class="tdee-chip" data-goal="0.20"  data-en="⬆⬆ Bulk"          data-ar="⬆⬆ ضخامة">⬆⬆ Bulk</button>
+        </div>
+      </div>
+
+      <div class="tdee-field">
+        <span class="tdee-label" data-en="Macro split" data-ar="توزيع الماكروز">Macro split</span>
+        <div class="tdee-chip-row" id="tdeeSplitRow">
+          <button type="button" class="tdee-chip" data-split="40-30-30" data-en="40 P / 30 F / 30 C — high-protein cut" data-ar="40 ب / 30 د / 30 ك — تنشيف غني بالبروتين">40 P / 30 F / 30 C</button>
+          <button type="button" class="tdee-chip active" data-split="30-30-40" data-en="30 P / 30 F / 40 C — balanced" data-ar="30 ب / 30 د / 40 ك — متوازن">30 P / 30 F / 40 C</button>
+          <button type="button" class="tdee-chip" data-split="30-25-45" data-en="30 P / 25 F / 45 C — moderate carb" data-ar="30 ب / 25 د / 45 ك — كارب متوسط">30 P / 25 F / 45 C</button>
+          <button type="button" class="tdee-chip" data-split="25-25-50" data-en="25 P / 25 F / 50 C — bulk" data-ar="25 ب / 25 د / 50 ك — ضخامة">25 P / 25 F / 50 C</button>
+        </div>
+      </div>
+
+      <div class="tdee-preview" id="tdeePreview">
+        <div class="tdee-preview-row head"><span data-en="Estimate" data-ar="التقدير">Estimate</span><span></span></div>
+        <div class="tdee-preview-row"><span data-en="BMR" data-ar="معدل الأيض الأساسي">BMR</span><span class="val" id="tdeeBmr">—</span></div>
+        <div class="tdee-preview-row"><span data-en="TDEE" data-ar="إجمالي الحرق اليومي">TDEE</span><span class="val" id="tdeeTdee">—</span></div>
+        <div class="tdee-preview-row"><span data-en="Target calories" data-ar="السعرات المستهدفة">Target calories</span><span class="val" id="tdeeTarget">—</span></div>
+        <div class="tdee-preview-row"><span data-en="Protein" data-ar="بروتين">Protein</span><span class="val" id="tdeeP">—</span></div>
+        <div class="tdee-preview-row"><span data-en="Fat" data-ar="دهون">Fat</span><span class="val" id="tdeeF">—</span></div>
+        <div class="tdee-preview-row"><span data-en="Carbs" data-ar="كارب">Carbs</span><span class="val" id="tdeeC">—</span></div>
+      </div>
+
+      <div class="popup-actions">
+        <button class="btn-cancel" id="cancelTdeeBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+        <button class="btn-add" id="applyTdeeBtn" data-en="Apply to goals" data-ar="طبّق على الأهداف">Apply to goals</button>
       </div>
     </div>
   </div>
@@ -6234,6 +6404,172 @@ document.getElementById('saveGoalsBtn').addEventListener('click', () => {
   document.getElementById('goalsOverlay').classList.remove('active');
 });
 
+// ============ TDEE CALCULATOR ============
+// Compute BMR (Mifflin-St Jeor by default, Katch-McArdle when body-fat % is
+// provided) → TDEE (BMR × activity multiplier) → target kcal (TDEE × goal
+// adjustment) → macro grams (split % × target kcal ÷ 4|9|4 kcal/g). Writes
+// the resulting kcal/P/F/C to `mt-goals` on Apply. Profile inputs persist to
+// `mt-profile` so re-opening the modal restores the last values.
+
+// Compute BMR for given inputs. If bodyFatPct is a valid number, use
+// Katch-McArdle (more accurate when lean mass is known); otherwise Mifflin.
+function tdeeBMR(sex, age, heightCm, weightKg, bodyFatPct) {
+  if (typeof bodyFatPct === 'number' && isFinite(bodyFatPct) && bodyFatPct > 0 && bodyFatPct < 60) {
+    const lbm = weightKg * (1 - bodyFatPct / 100);
+    return 370 + 21.6 * lbm;
+  }
+  // Mifflin-St Jeor
+  return 10 * weightKg + 6.25 * heightCm - 5 * age + (sex === 'm' ? 5 : -161);
+}
+
+// Parse split id "P-F-C" into fractional protein/fat/carb percentages.
+function tdeeParseSplit(id) {
+  const parts = String(id || '30-30-40').split('-').map(n => parseInt(n, 10) || 0);
+  const sum = parts.reduce((a, b) => a + b, 0) || 100;
+  return { p: parts[0] / sum, f: parts[1] / sum, c: parts[2] / sum };
+}
+
+// Read all form fields into a profile object. Returns null if any required
+// field is missing or out of range — preview will show "—" in that case.
+function tdeeReadForm() {
+  const sexChip = document.querySelector('#tdeeSexRow .tdee-chip.active');
+  const actChip = document.querySelector('#tdeeActivityRow .tdee-chip.active');
+  const goalChip = document.querySelector('#tdeeGoalRow .tdee-chip.active');
+  const splitChip = document.querySelector('#tdeeSplitRow .tdee-chip.active');
+  const sex = sexChip ? sexChip.dataset.sex : null;
+  const age = parseFloat(document.getElementById('tdeeAge').value);
+  const heightCm = parseFloat(document.getElementById('tdeeHeight').value);
+  const weightKg = parseFloat(document.getElementById('tdeeWeight').value);
+  const bf = parseFloat(document.getElementById('tdeeBodyFat').value);
+  const activity = actChip ? parseFloat(actChip.dataset.act) : 1.55;
+  const goalAdj = goalChip ? parseFloat(goalChip.dataset.goal) : 0;
+  const split = splitChip ? splitChip.dataset.split : '30-30-40';
+  if (!sex || !isFinite(age) || age < 10 || age > 100) return null;
+  if (!isFinite(heightCm) || heightCm < 100 || heightCm > 250) return null;
+  if (!isFinite(weightKg) || weightKg < 20 || weightKg > 400) return null;
+  return { sex, age, heightCm, weightKg, bodyFatPct: isFinite(bf) ? bf : null,
+           activity, goalAdj, split };
+}
+
+// Compute the full estimate from a valid profile. Returns {bmr, tdee, kcal, p, f, c}
+// with macro grams rounded to whole numbers.
+function tdeeCompute(p) {
+  const bmr = tdeeBMR(p.sex, p.age, p.heightCm, p.weightKg, p.bodyFatPct);
+  const tdee = bmr * p.activity;
+  const kcal = tdee * (1 + p.goalAdj);
+  const split = tdeeParseSplit(p.split);
+  return {
+    bmr: Math.round(bmr),
+    tdee: Math.round(tdee),
+    kcal: Math.round(kcal),
+    protein: Math.round((kcal * split.p) / 4),
+    fat: Math.round((kcal * split.f) / 9),
+    carbs: Math.round((kcal * split.c) / 4)
+  };
+}
+
+// Refresh the preview pane to reflect current form state. Called on any
+// chip click or numeric input event. Shows "—" until form is fully valid.
+function tdeeUpdatePreview() {
+  const p = tdeeReadForm();
+  const setText = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  if (!p) {
+    ['tdeeBmr','tdeeTdee','tdeeTarget','tdeeP','tdeeF','tdeeC'].forEach(id => setText(id, '—'));
+    return;
+  }
+  const r = tdeeCompute(p);
+  setText('tdeeBmr', r.bmr + ' kcal');
+  setText('tdeeTdee', r.tdee + ' kcal');
+  setText('tdeeTarget', r.kcal + ' kcal');
+  setText('tdeeP', r.protein + ' g');
+  setText('tdeeF', r.fat + ' g');
+  setText('tdeeC', r.carbs + ' g');
+}
+
+// Set a chip group's active selection by attribute value. Used when restoring
+// a saved profile on modal open.
+function tdeeSetChip(rowId, attr, val) {
+  const row = document.getElementById(rowId);
+  if (!row) return;
+  row.querySelectorAll('.tdee-chip').forEach(c => {
+    c.classList.toggle('active', String(c.dataset[attr]) === String(val));
+  });
+}
+
+// Open the TDEE modal. Hydrates the form from `mt-profile` if present;
+// otherwise leaves defaults. Auto-fills weight from the latest weight log
+// entry, since the user just told us their current weight there.
+function openTdeeModal() {
+  const saved = lsGet('mt-profile', null);
+  const p = saved && typeof saved === 'object' ? saved : {};
+  // Auto-fill weight from latest weight log if present.
+  let weightKg = p.weightKg;
+  if (Array.isArray(weights) && weights.length) {
+    const sorted = weights.slice().sort((a, b) => a.date.localeCompare(b.date));
+    weightKg = sorted[sorted.length - 1].kg;
+  }
+  document.getElementById('tdeeAge').value = p.age || '';
+  document.getElementById('tdeeHeight').value = p.heightCm || '';
+  document.getElementById('tdeeWeight').value = weightKg || '';
+  document.getElementById('tdeeBodyFat').value = p.bodyFatPct || '';
+  tdeeSetChip('tdeeSexRow', 'sex', p.sex || 'm');
+  tdeeSetChip('tdeeActivityRow', 'act', p.activity || 1.55);
+  tdeeSetChip('tdeeGoalRow', 'goal', typeof p.goalAdj === 'number' ? p.goalAdj : 0);
+  tdeeSetChip('tdeeSplitRow', 'split', p.split || '30-30-40');
+  tdeeUpdatePreview();
+  document.getElementById('tdeeOverlay').classList.add('active');
+}
+
+// Wire the entire TDEE modal: open button, chip toggles, input updates,
+// cancel, and apply. Apply writes target kcal/P/F/C to `goals` + persists
+// the profile inputs so the user can re-open with the same numbers.
+(function initTdeeModal() {
+  const openBtn = document.getElementById('tdeeCalcBtn');
+  const overlay = document.getElementById('tdeeOverlay');
+  const cancelBtn = document.getElementById('cancelTdeeBtn');
+  const applyBtn = document.getElementById('applyTdeeBtn');
+  if (!openBtn || !overlay) return;
+  openBtn.addEventListener('click', openTdeeModal);
+  cancelBtn.addEventListener('click', () => overlay.classList.remove('active'));
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
+  // Chip rows: single-select within each row.
+  ['tdeeSexRow', 'tdeeActivityRow', 'tdeeGoalRow', 'tdeeSplitRow'].forEach(rowId => {
+    const row = document.getElementById(rowId);
+    if (!row) return;
+    row.addEventListener('click', e => {
+      const chip = e.target.closest('.tdee-chip');
+      if (!chip) return;
+      row.querySelectorAll('.tdee-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      tdeeUpdatePreview();
+    });
+  });
+  // Numeric inputs: live preview on every keystroke.
+  ['tdeeAge','tdeeHeight','tdeeWeight','tdeeBodyFat'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', tdeeUpdatePreview);
+  });
+  applyBtn.addEventListener('click', () => {
+    const p = tdeeReadForm();
+    if (!p) {
+      alert(lang === 'ar'
+        ? 'املأ السن والطول والوزن قبل التطبيق.'
+        : 'Fill age, height, and weight before applying.');
+      return;
+    }
+    const r = tdeeCompute(p);
+    goals.kcal = r.kcal;
+    goals.protein = r.protein;
+    goals.fat = r.fat;
+    goals.carbs = r.carbs;
+    lsSet('mt-goals', JSON.stringify(goals));
+    lsSet('mt-profile', JSON.stringify(p));
+    renderGoals();
+    renderTotals();
+    overlay.classList.remove('active');
+  });
+})();
+
 // ============ WATER TRACKER ============
 // Track daily water intake (cups / ml). Configurable per-glass volume and goal ml.
 // Rendered as clickable cups. Entry points: renderWater, updateWater, click handlers.
@@ -7970,6 +8306,7 @@ function buildBackupObject() {
       templates: mealTemplates,
       features: featureFlags,
       weights: weights,
+      profile: lsGet('mt-profile', null),
       displayModes: displayModes,
       smartSort: smartSortState,
       notifEnabled: localStorage.getItem('mt-notif-enabled') || '0',
@@ -8143,6 +8480,9 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         );
         weights.sort((a, b) => a.date.localeCompare(b.date));
         lsSet('mt-weights', JSON.stringify(weights));
+      }
+      if (payload.profile && typeof payload.profile === 'object') {
+        lsSet('mt-profile', JSON.stringify(payload.profile));
       }
       if (payload.features && typeof payload.features === 'object') {
         FEATURE_KEYS.forEach(k => {

@@ -3285,6 +3285,42 @@ body.ar .tdee-label {
   margin-top: 4px;
 }
 body.ar .tdee-help { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
+.tdee-advanced {
+  margin-bottom: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  padding: 0 12px;
+}
+.tdee-advanced summary {
+  padding: 12px 0;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  list-style: none;
+}
+.tdee-advanced summary::-webkit-details-marker { display: none; }
+.tdee-advanced summary::before {
+  content: '▸ '; display: inline-block;
+  transition: transform 0.15s;
+}
+.tdee-advanced[open] summary::before { content: '▾ '; }
+body.ar .tdee-advanced summary {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px; text-transform: none; letter-spacing: 0;
+}
+.tdee-advanced .tdee-field { margin-bottom: 12px; }
+.tdee-progress {
+  background: var(--veil-hi);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 14px 16px;
+  margin: 8px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+.tdee-progress[hidden] { display: none !important; }
 
 /* ============ GUIDE MODAL ============ */
 .guide-modal {
@@ -4144,6 +4180,46 @@ body.ar .footer li::before {
         <input type="number" id="tdeeBodyFat" min="3" max="60" step="0.1" placeholder="—" />
       </div>
 
+      <!-- Advanced / InBody-style optional inputs. Collapsed by default; tap
+           to reveal. Any value here overrides the standard formula path. -->
+      <details class="tdee-advanced" id="tdeeAdvanced">
+        <summary data-en="🧬 Advanced (InBody / DEXA — optional)" data-ar="🧬 إعدادات متقدمة (InBody / DEXA — اختياري)">🧬 Advanced (InBody / DEXA — optional)</summary>
+
+        <div class="tdee-field">
+          <span class="tdee-label" data-en="Lean body mass (kg)" data-ar="الكتلة الخالية من الدهون (كجم)">Lean body mass (kg)</span>
+          <input type="number" id="tdeeLbm" min="20" max="200" step="0.1" placeholder="—" />
+          <div class="tdee-help" data-en="If supplied, used directly in Katch-McArdle (more accurate than BF%-derived LBM)."
+               data-ar="إذا أُدخلت، تُستخدم مباشرةً في كاتش-مكاردل (أدق من اشتقاقها من BF%).">If supplied, used directly in Katch-McArdle.</div>
+        </div>
+
+        <div class="tdee-field">
+          <span class="tdee-label" data-en="Measured BMR (kcal — overrides formula)" data-ar="معدل الأيض المقاس (سعر — يتجاوز الصيغة)">Measured BMR (kcal)</span>
+          <input type="number" id="tdeeMeasuredBmr" min="600" max="3500" step="1" placeholder="—" />
+          <div class="tdee-help" data-en="From an InBody / DEXA / metabolic cart reading. Overrides Mifflin and Katch."
+               data-ar="من جهاز InBody أو DEXA أو قياس استقلابي. يتجاوز Mifflin و Katch.">From InBody / DEXA / metabolic cart.</div>
+        </div>
+
+        <div class="tdee-field">
+          <span class="tdee-label" data-en="Skeletal muscle mass (kg — record only)" data-ar="الكتلة العضلية الهيكلية (كجم — للتسجيل فقط)">Skeletal muscle mass (kg)</span>
+          <input type="number" id="tdeeSmm" min="10" max="100" step="0.1" placeholder="—" />
+        </div>
+
+        <div class="tdee-field">
+          <span class="tdee-label" data-en="Visceral fat level (record only)" data-ar="مستوى دهون الأحشاء (للتسجيل فقط)">Visceral fat level</span>
+          <input type="number" id="tdeeVisceral" min="1" max="30" step="1" placeholder="—" />
+        </div>
+
+        <div class="tdee-field">
+          <span class="tdee-label" data-en="Body water % (record only)" data-ar="نسبة الماء % (للتسجيل فقط)">Body water %</span>
+          <input type="number" id="tdeeBodyWater" min="20" max="80" step="0.1" placeholder="—" />
+        </div>
+
+        <div class="tdee-field">
+          <span class="tdee-label" data-en="Waist (cm — record only)" data-ar="محيط الخصر (سم — للتسجيل فقط)">Waist (cm)</span>
+          <input type="number" id="tdeeWaist" min="40" max="200" step="0.1" placeholder="—" />
+        </div>
+      </details>
+
       <div class="tdee-field">
         <span class="tdee-label" data-en="Activity level" data-ar="مستوى النشاط">Activity level</span>
         <div class="tdee-chip-row" id="tdeeActivityRow">
@@ -4179,11 +4255,25 @@ body.ar .footer li::before {
       <div class="tdee-preview" id="tdeePreview">
         <div class="tdee-preview-row head"><span data-en="Estimate" data-ar="التقدير">Estimate</span><span></span></div>
         <div class="tdee-preview-row"><span data-en="BMR" data-ar="معدل الأيض الأساسي">BMR</span><span class="val" id="tdeeBmr">—</span></div>
+        <div class="tdee-preview-row"><span data-en="BMR source" data-ar="مصدر BMR">BMR source</span><span class="val" id="tdeeBmrSrc">—</span></div>
         <div class="tdee-preview-row"><span data-en="TDEE" data-ar="إجمالي الحرق اليومي">TDEE</span><span class="val" id="tdeeTdee">—</span></div>
         <div class="tdee-preview-row"><span data-en="Target calories" data-ar="السعرات المستهدفة">Target calories</span><span class="val" id="tdeeTarget">—</span></div>
         <div class="tdee-preview-row"><span data-en="Protein" data-ar="بروتين">Protein</span><span class="val" id="tdeeP">—</span></div>
         <div class="tdee-preview-row"><span data-en="Fat" data-ar="دهون">Fat</span><span class="val" id="tdeeF">—</span></div>
         <div class="tdee-preview-row"><span data-en="Carbs" data-ar="كارب">Carbs</span><span class="val" id="tdeeC">—</span></div>
+      </div>
+
+      <!-- Weight-log-driven analytics: pulls from `weights[]` + the target
+           weight set in the weight history modal. Surfaces actual progress
+           next to the formula-driven targets so the user sees both signals
+           in one place. Empty when no weight log entries exist. -->
+      <div class="tdee-progress" id="tdeeProgress" hidden>
+        <div class="tdee-preview-row head"><span data-en="Weight progress (from your log)" data-ar="تقدم الوزن (من السجل)">Weight progress (from your log)</span><span></span></div>
+        <div class="tdee-preview-row"><span data-en="Current weight" data-ar="الوزن الحالي">Current weight</span><span class="val" id="tdeeProgCurrent">—</span></div>
+        <div class="tdee-preview-row"><span data-en="7-day trend" data-ar="اتجاه ٧ أيام">7-day trend</span><span class="val" id="tdeeProg7d">—</span></div>
+        <div class="tdee-preview-row"><span data-en="30-day rate" data-ar="معدل ٣٠ يوم">30-day rate</span><span class="val" id="tdeeProg30d">—</span></div>
+        <div class="tdee-preview-row" id="tdeeProgTargetRow"><span data-en="Target" data-ar="الهدف">Target</span><span class="val" id="tdeeProgTarget">—</span></div>
+        <div class="tdee-preview-row" id="tdeeProgEtaRow"><span data-en="Projected ETA" data-ar="الوصول المتوقع">Projected ETA</span><span class="val" id="tdeeProgEta">—</span></div>
       </div>
 
       <div class="popup-actions">
@@ -7094,15 +7184,26 @@ document.getElementById('saveGoalsBtn').addEventListener('click', () => {
 // the resulting kcal/P/F/C to `mt-goals` on Apply. Profile inputs persist to
 // `mt-profile` so re-opening the modal restores the last values.
 
-// Compute BMR for given inputs. If bodyFatPct is a valid number, use
-// Katch-McArdle (more accurate when lean mass is known); otherwise Mifflin.
-function tdeeBMR(sex, age, heightCm, weightKg, bodyFatPct) {
+// Compute BMR + which source produced it. Priority:
+//   1. Measured BMR (directly user-supplied, e.g. from InBody / DEXA / RMR test)
+//   2. Lean body mass (Katch-McArdle directly: 370 + 21.6 × LBM)
+//   3. Body-fat % (Katch-McArdle with LBM = weight × (1 − bf/100))
+//   4. Mifflin-St Jeor formula (default — works without any body-comp data)
+// Returns { bmr, source } where source is a short label for the preview.
+function tdeeBMR(sex, age, heightCm, weightKg, bodyFatPct, lbmKg, measuredBmr) {
+  if (typeof measuredBmr === 'number' && isFinite(measuredBmr) && measuredBmr > 0) {
+    return { bmr: measuredBmr, source: 'measured' };
+  }
+  if (typeof lbmKg === 'number' && isFinite(lbmKg) && lbmKg > 0) {
+    return { bmr: 370 + 21.6 * lbmKg, source: 'katch-lbm' };
+  }
   if (typeof bodyFatPct === 'number' && isFinite(bodyFatPct) && bodyFatPct > 0 && bodyFatPct < 60) {
-    const lbm = weightKg * (1 - bodyFatPct / 100);
-    return 370 + 21.6 * lbm;
+    const derivedLbm = weightKg * (1 - bodyFatPct / 100);
+    return { bmr: 370 + 21.6 * derivedLbm, source: 'katch-bf' };
   }
   // Mifflin-St Jeor
-  return 10 * weightKg + 6.25 * heightCm - 5 * age + (sex === 'm' ? 5 : -161);
+  const m = 10 * weightKg + 6.25 * heightCm - 5 * age + (sex === 'm' ? 5 : -161);
+  return { bmr: m, source: 'mifflin' };
 }
 
 // Parse split id "P-F-C" into fractional protein/fat/carb percentages.
@@ -7124,25 +7225,41 @@ function tdeeReadForm() {
   const heightCm = parseFloat(document.getElementById('tdeeHeight').value);
   const weightKg = parseFloat(document.getElementById('tdeeWeight').value);
   const bf = parseFloat(document.getElementById('tdeeBodyFat').value);
+  // Advanced (InBody) fields — all optional, parsed loosely.
+  const numOrNull = (id) => {
+    const v = parseFloat(document.getElementById(id).value);
+    return isFinite(v) ? v : null;
+  };
+  const lbmKg = numOrNull('tdeeLbm');
+  const measuredBmr = numOrNull('tdeeMeasuredBmr');
+  const skeletalMuscleKg = numOrNull('tdeeSmm');
+  const visceralFat = numOrNull('tdeeVisceral');
+  const bodyWaterPct = numOrNull('tdeeBodyWater');
+  const waistCm = numOrNull('tdeeWaist');
   const activity = actChip ? parseFloat(actChip.dataset.act) : 1.55;
   const goalAdj = goalChip ? parseFloat(goalChip.dataset.goal) : 0;
   const split = splitChip ? splitChip.dataset.split : '30-30-40';
   if (!sex || !isFinite(age) || age < 10 || age > 100) return null;
   if (!isFinite(heightCm) || heightCm < 100 || heightCm > 250) return null;
   if (!isFinite(weightKg) || weightKg < 20 || weightKg > 400) return null;
-  return { sex, age, heightCm, weightKg, bodyFatPct: isFinite(bf) ? bf : null,
-           activity, goalAdj, split };
+  return {
+    sex, age, heightCm, weightKg,
+    bodyFatPct: isFinite(bf) ? bf : null,
+    lbmKg, measuredBmr, skeletalMuscleKg, visceralFat, bodyWaterPct, waistCm,
+    activity, goalAdj, split
+  };
 }
 
-// Compute the full estimate from a valid profile. Returns {bmr, tdee, kcal, p, f, c}
-// with macro grams rounded to whole numbers.
+// Compute the full estimate from a valid profile. Returns {bmr, bmrSource,
+// tdee, kcal, p, f, c} with macro grams rounded to whole numbers.
 function tdeeCompute(p) {
-  const bmr = tdeeBMR(p.sex, p.age, p.heightCm, p.weightKg, p.bodyFatPct);
-  const tdee = bmr * p.activity;
+  const r = tdeeBMR(p.sex, p.age, p.heightCm, p.weightKg, p.bodyFatPct, p.lbmKg, p.measuredBmr);
+  const tdee = r.bmr * p.activity;
   const kcal = tdee * (1 + p.goalAdj);
   const split = tdeeParseSplit(p.split);
   return {
-    bmr: Math.round(bmr),
+    bmr: Math.round(r.bmr),
+    bmrSource: r.source,
     tdee: Math.round(tdee),
     kcal: Math.round(kcal),
     protein: Math.round((kcal * split.p) / 4),
@@ -7151,17 +7268,105 @@ function tdeeCompute(p) {
   };
 }
 
+// Friendly label for the BMR source. Used in the preview row.
+function tdeeBmrSourceLabel(src) {
+  if (lang === 'ar') {
+    return ({
+      measured:   'مقاس (InBody/DEXA)',
+      'katch-lbm':'كاتش (من LBM)',
+      'katch-bf': 'كاتش (من BF%)',
+      mifflin:    'Mifflin-St Jeor'
+    })[src] || src;
+  }
+  return ({
+    measured:   'Measured (InBody/DEXA)',
+    'katch-lbm':'Katch-McArdle (LBM)',
+    'katch-bf': 'Katch-McArdle (BF%)',
+    mifflin:    'Mifflin-St Jeor'
+  })[src] || src;
+}
+
+// Render the weight-progress section using `weights[]` and `weightTarget`.
+// Hidden when no entries exist. ETA = (target − current) / (kg per day from
+// 30-day trend); shown only if the trend points toward the target.
+function tdeeRenderProgress() {
+  const wrap = document.getElementById('tdeeProgress');
+  if (!wrap) return;
+  if (!Array.isArray(weights) || !weights.length) {
+    wrap.hidden = true;
+    return;
+  }
+  wrap.hidden = false;
+  const sorted = weights.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const latest = sorted[sorted.length - 1];
+  const setText = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  setText('tdeeProgCurrent', fmt(latest.kg) + ' kg · ' + latest.date);
+
+  const avgs = weightMovingAvg(sorted, 7);
+  if (avgs.length >= 2) {
+    const cur7 = avgs[avgs.length - 1].avg;
+    const base7 = avgs[Math.max(0, avgs.length - 8)].avg;
+    const d = cur7 - base7;
+    const sign = d > 0.05 ? '↑' : (d < -0.05 ? '↓' : '→');
+    setText('tdeeProg7d', sign + ' ' + fmt(Math.abs(d)) + ' kg');
+  } else setText('tdeeProg7d', '—');
+
+  // 30-day rate: fit a slope across entries ≥30 days back. Expressed as kg/week.
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 29);
+  const cutStr = cutoff.toISOString().slice(0, 10);
+  const recent = sorted.filter(e => e.date >= cutStr);
+  let perWeek = null;
+  if (recent.length >= 2) {
+    const d0 = new Date(recent[0].date + 'T00:00:00');
+    const d1 = new Date(recent[recent.length - 1].date + 'T00:00:00');
+    const days = Math.max(1, Math.round((d1 - d0) / 86400000));
+    const net = recent[recent.length - 1].kg - recent[0].kg;
+    perWeek = (net / days) * 7;
+    setText('tdeeProg30d', (perWeek >= 0 ? '+' : '') + fmt(perWeek) + ' kg/wk');
+  } else setText('tdeeProg30d', '—');
+
+  // Target + ETA
+  const tgtRow = document.getElementById('tdeeProgTargetRow');
+  const etaRow = document.getElementById('tdeeProgEtaRow');
+  if (weightTarget == null) {
+    if (tgtRow) tgtRow.style.display = 'none';
+    if (etaRow) etaRow.style.display = 'none';
+    return;
+  }
+  if (tgtRow) tgtRow.style.display = '';
+  setText('tdeeProgTarget', fmt(weightTarget) + ' kg');
+  const remaining = weightTarget - latest.kg;
+  if (Math.abs(remaining) < 0.1) {
+    setText('tdeeProgEta', lang === 'ar' ? '🎯 وصلت!' : '🎯 Reached!');
+    if (etaRow) etaRow.style.display = '';
+  } else if (perWeek == null || Math.abs(perWeek) < 0.05) {
+    setText('tdeeProgEta', lang === 'ar' ? 'يحتاج بيانات أكثر' : 'Need more data');
+    if (etaRow) etaRow.style.display = '';
+  } else if ((remaining > 0 && perWeek > 0) || (remaining < 0 && perWeek < 0)) {
+    const weeksOut = remaining / perWeek;
+    const eta = new Date();
+    eta.setDate(eta.getDate() + Math.round(weeksOut * 7));
+    setText('tdeeProgEta', `~${Math.abs(weeksOut).toFixed(1)} ` +
+      (lang === 'ar' ? 'أسبوع · ' : 'wk · ') + eta.toISOString().slice(0, 10));
+    if (etaRow) etaRow.style.display = '';
+  } else {
+    setText('tdeeProgEta', lang === 'ar' ? 'الاتجاه عكس الهدف' : 'Trending away from target');
+    if (etaRow) etaRow.style.display = '';
+  }
+}
+
 // Refresh the preview pane to reflect current form state. Called on any
 // chip click or numeric input event. Shows "—" until form is fully valid.
 function tdeeUpdatePreview() {
   const p = tdeeReadForm();
   const setText = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
   if (!p) {
-    ['tdeeBmr','tdeeTdee','tdeeTarget','tdeeP','tdeeF','tdeeC'].forEach(id => setText(id, '—'));
+    ['tdeeBmr','tdeeBmrSrc','tdeeTdee','tdeeTarget','tdeeP','tdeeF','tdeeC'].forEach(id => setText(id, '—'));
     return;
   }
   const r = tdeeCompute(p);
   setText('tdeeBmr', r.bmr + ' kcal');
+  setText('tdeeBmrSrc', tdeeBmrSourceLabel(r.bmrSource));
   setText('tdeeTdee', r.tdee + ' kcal');
   setText('tdeeTarget', r.kcal + ' kcal');
   setText('tdeeP', r.protein + ' g');
@@ -7195,11 +7400,24 @@ function openTdeeModal() {
   document.getElementById('tdeeHeight').value = p.heightCm || '';
   document.getElementById('tdeeWeight').value = weightKg || '';
   document.getElementById('tdeeBodyFat').value = p.bodyFatPct || '';
+  // Advanced (InBody) fields — restored if previously saved.
+  document.getElementById('tdeeLbm').value = p.lbmKg || '';
+  document.getElementById('tdeeMeasuredBmr').value = p.measuredBmr || '';
+  document.getElementById('tdeeSmm').value = p.skeletalMuscleKg || '';
+  document.getElementById('tdeeVisceral').value = p.visceralFat || '';
+  document.getElementById('tdeeBodyWater').value = p.bodyWaterPct || '';
+  document.getElementById('tdeeWaist').value = p.waistCm || '';
+  // Open the Advanced section if any advanced value is set, so the user sees
+  // their stored data without having to expand manually.
+  const adv = document.getElementById('tdeeAdvanced');
+  if (adv) adv.open = !!(p.lbmKg || p.measuredBmr || p.skeletalMuscleKg ||
+                         p.visceralFat || p.bodyWaterPct || p.waistCm);
   tdeeSetChip('tdeeSexRow', 'sex', p.sex || 'm');
   tdeeSetChip('tdeeActivityRow', 'act', p.activity || 1.55);
   tdeeSetChip('tdeeGoalRow', 'goal', typeof p.goalAdj === 'number' ? p.goalAdj : 0);
   tdeeSetChip('tdeeSplitRow', 'split', p.split || '30-30-40');
   tdeeUpdatePreview();
+  tdeeRenderProgress();
   document.getElementById('tdeeOverlay').classList.add('active');
 }
 
@@ -7227,8 +7445,11 @@ function openTdeeModal() {
       tdeeUpdatePreview();
     });
   });
-  // Numeric inputs: live preview on every keystroke.
-  ['tdeeAge','tdeeHeight','tdeeWeight','tdeeBodyFat'].forEach(id => {
+  // Numeric inputs: live preview on every keystroke. Advanced fields included
+  // so changing LBM or measured BMR immediately re-routes the BMR source.
+  ['tdeeAge','tdeeHeight','tdeeWeight','tdeeBodyFat',
+   'tdeeLbm','tdeeMeasuredBmr','tdeeSmm','tdeeVisceral','tdeeBodyWater','tdeeWaist'
+  ].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', tdeeUpdatePreview);
   });

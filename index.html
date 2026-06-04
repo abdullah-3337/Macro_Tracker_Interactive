@@ -2211,6 +2211,107 @@ body.ar .activity-section h4 {
   .activity-add #workoutName { flex: 1 1 100%; }
 }
 
+/* ============ WEIGHT LOG ============ */
+.weight-section {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+}
+.weight-section h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin: 0 0 12px;
+}
+body.ar .weight-section h4 {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px;
+}
+.weight-summary {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 2px 10px;
+  border-bottom: 1px dashed var(--line);
+  font-size: 12px; color: var(--ink-soft);
+  gap: 12px;
+}
+.weight-summary .latest {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--ink); font-weight: 700; font-size: 14px;
+}
+.weight-summary .delta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+}
+.weight-summary .delta.up    { color: var(--carb); }
+.weight-summary .delta.down  { color: var(--protein); }
+.weight-summary .delta.flat  { color: var(--ink-soft); }
+.weight-chart {
+  margin: 12px 0;
+  width: 100%; height: 80px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.weight-chart svg { width: 100%; height: 100%; display: block; }
+.weight-chart .raw-dot { fill: var(--ink-soft); }
+.weight-chart .avg-line { fill: none; stroke: var(--accent); stroke-width: 2; }
+.weight-chart-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 80px; color: var(--ink-soft); font-size: 12px;
+}
+.weight-list {
+  display: flex; flex-direction: column; gap: 6px;
+  margin: 10px 0;
+  max-height: 200px; overflow-y: auto;
+}
+.weight-row {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 8px 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; font-size: 13px;
+}
+.weight-row .wdate {
+  color: var(--ink-soft); font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.weight-row .wkg {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; color: var(--ink);
+}
+.weight-empty { font-size: 13px; color: var(--ink-soft); padding: 8px 0; }
+.weight-add {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.weight-add input {
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 3px;
+  padding: 8px 10px;
+  font-size: 13px; font-family: inherit;
+  min-width: 0; flex: 1;
+}
+.weight-add input::placeholder { color: var(--ink-soft); opacity: 0.6; }
+.weight-add input:focus { outline: none; border-color: var(--accent); }
+.weight-add #weightKg { text-align: center; }
+.weight-add #addWeightBtn {
+  background: var(--accent); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 8px 14px; cursor: pointer;
+  font-size: 13px; font-weight: 600;
+  font-family: inherit;
+}
+.weight-add #addWeightBtn:hover { filter: brightness(1.05); }
+.remove-weight-btn {
+  background: var(--over); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 4px 10px; cursor: pointer; font-size: 11px;
+  font-family: inherit;
+}
+.remove-weight-btn:hover { filter: brightness(1.05); }
+body.feat-off-weight .weight-section { display: none !important; }
+
 /* ============ MEAL TEMPLATES ============ */
 .templates-pane {
   padding: 16px;
@@ -3257,6 +3358,24 @@ body.ar .footer li::before {
       </table>
     </div>
 
+    <!-- ============ WEIGHT LOG ============ -->
+    <div class="weight-section" id="weightSection">
+      <h4 data-en="⚖ Weight" data-ar="⚖ الوزن">⚖ Weight</h4>
+      <div class="weight-summary" id="weightSummary">
+        <span class="latest" id="weightLatest" data-en="—" data-ar="—">—</span>
+        <span class="delta" id="weightDelta"></span>
+      </div>
+      <div class="weight-chart" id="weightChart"></div>
+      <div id="weightListWrap">
+        <div class="weight-list" id="weightList"></div>
+      </div>
+      <div class="weight-add">
+        <input type="number" id="weightKg" step="0.1" min="20" max="400"
+               placeholder="kg" data-placeholder-en="kg" data-placeholder-ar="كجم" />
+        <button id="addWeightBtn" data-en="Log" data-ar="سجّل">Log</button>
+      </div>
+    </div>
+
     <!-- ============ ACTIVITY / WORKOUTS ============ -->
     <div class="activity-section" id="activitySection">
       <h4 data-en="Activity" data-ar="النشاط">Activity</h4>
@@ -3701,6 +3820,7 @@ body.ar .footer li::before {
           <label class="feat-row"><input type="checkbox" data-feat="barcode"><span class="feat-icon">🧾</span><span class="feat-name" data-en="Barcode scanner" data-ar="ماسح الباركود">Barcode scanner</span></label>
           <label class="feat-row"><input type="checkbox" data-feat="recipes"><span class="feat-icon">🥘</span><span class="feat-name" data-en="Recipe builder" data-ar="منشئ الوصفات">Recipe builder</span></label>
           <label class="feat-row"><input type="checkbox" data-feat="mealTemplates"><span class="feat-icon">💾</span><span class="feat-name" data-en="Meal templates" data-ar="قوالب الوجبات">Meal templates</span></label>
+          <label class="feat-row"><input type="checkbox" data-feat="weight"><span class="feat-icon">⚖</span><span class="feat-name" data-en="Weight log" data-ar="سجل الوزن">Weight log</span></label>
         </div>
       </div>
 
@@ -4544,8 +4664,12 @@ let savedDays = lsGet('mt-saved', []);
 if (!Array.isArray(savedDays)) savedDays = [];
 let waterState = lsGet('mt-water', {glasses:0, mlPerGlass:250, goalMl:2000});
 if (!waterState || typeof waterState !== 'object') waterState = {glasses:0, mlPerGlass:250, goalMl:2000};
+// Weight log: array of {id, date:'YYYY-MM-DD', kg} sorted by date asc.
+// One entry per day; logging twice on the same date overwrites the earlier value.
+let weights = lsGet('mt-weights', []);
+if (!Array.isArray(weights)) weights = [];
 
-const FEATURE_KEYS = ['water','training','smartSort','trends','ocr','barcode','recipes','mealTemplates'];
+const FEATURE_KEYS = ['water','training','smartSort','trends','ocr','barcode','recipes','mealTemplates','weight'];
 const DEFAULT_FEATURES = FEATURE_KEYS.reduce((acc, k) => (acc[k] = true, acc), {});
 let featureFlags = lsGet('mt-features', DEFAULT_FEATURES);
 if (!featureFlags || typeof featureFlags !== 'object') featureFlags = { ...DEFAULT_FEATURES };
@@ -6064,6 +6188,155 @@ document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
 });
 syncFeatureCheckboxes();
 
+// ============ WEIGHT LOG ============
+// Body-weight tracking with a 7-day moving-average sparkline. Single entry per
+// day (same-date logs overwrite). Powers the trend indicator that lets users
+// see real progress through daily noise (the highest-value missing piece per
+// MacroFactor's design philosophy). Entry points: addWeightEntry,
+// renderWeightSection. State: `weights[]` from mt-weights.
+
+// Compute a 7-day trailing moving average for each entry in a date-sorted
+// weight array. Returns parallel array of {date, avg} where avg = mean of all
+// entries in the trailing 7-day window ending on that date. Sparse logging is
+// fine — the window is by calendar date, not by entry count.
+function weightMovingAvg(arr, windowDays) {
+  if (!Array.isArray(arr) || !arr.length) return [];
+  const win = windowDays || 7;
+  const result = [];
+  for (let i = 0; i < arr.length; i++) {
+    const endDate = new Date(arr[i].date + 'T00:00:00');
+    const cutoff = new Date(endDate); cutoff.setDate(cutoff.getDate() - (win - 1));
+    let sum = 0, n = 0;
+    for (let j = i; j >= 0; j--) {
+      const d = new Date(arr[j].date + 'T00:00:00');
+      if (d < cutoff) break;
+      sum += arr[j].kg; n++;
+    }
+    result.push({ date: arr[i].date, avg: n ? sum / n : arr[i].kg });
+  }
+  return result;
+}
+
+// Render the weight chart as inline SVG: raw entries as small dots + a smooth
+// 7-day moving-average polyline overlay. Y-axis auto-scales to data range
+// (with ±1 kg padding). Falls back to empty state when no data.
+function renderWeightChart() {
+  const host = document.getElementById('weightChart');
+  if (!host) return;
+  const sorted = weights.slice().sort((a, b) => a.date.localeCompare(b.date));
+  if (!sorted.length) {
+    host.innerHTML = '<div class="weight-chart-empty" data-en="No data yet — log a weight to start." data-ar="لا توجد بيانات — سجّل وزناً للبدء.">' +
+      (lang === 'ar' ? 'لا توجد بيانات — سجّل وزناً للبدء.' : 'No data yet — log a weight to start.') + '</div>';
+    return;
+  }
+  const avgs = weightMovingAvg(sorted, 7);
+  const w = 300, h = 80, padX = 8, padY = 8;
+  const innerW = w - padX * 2, innerH = h - padY * 2;
+  const all = sorted.map(e => e.kg).concat(avgs.map(a => a.avg));
+  const minV = Math.min.apply(null, all) - 1;
+  const maxV = Math.max.apply(null, all) + 1;
+  const span = Math.max(0.1, maxV - minV);
+  const n = sorted.length;
+  const x = i => padX + (n === 1 ? innerW / 2 : (innerW * i) / (n - 1));
+  const y = v => padY + innerH - ((v - minV) / span) * innerH;
+  const dots = sorted.map((e, i) => `<circle class="raw-dot" cx="${x(i).toFixed(1)}" cy="${y(e.kg).toFixed(1)}" r="2"/>`).join('');
+  const path = avgs.map((a, i) => (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(a.avg).toFixed(1)).join(' ');
+  host.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">` +
+    `<path class="avg-line" d="${path}"/>` + dots + `</svg>`;
+}
+
+// Render the weight summary (latest reading + trend delta vs 7 days ago) and
+// the recent-entries list. Delta compares latest kg to the moving-average value
+// from ~7 entries earlier (or the earliest entry if shorter history).
+function renderWeightSection() {
+  renderWeightChart();
+  const sorted = weights.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const latestEl = document.getElementById('weightLatest');
+  const deltaEl = document.getElementById('weightDelta');
+  const listEl = document.getElementById('weightList');
+  if (!latestEl || !deltaEl || !listEl) return;
+  if (!sorted.length) {
+    latestEl.textContent = '—';
+    deltaEl.textContent = '';
+    deltaEl.className = 'delta';
+    listEl.innerHTML = '<div class="weight-empty">' +
+      (lang === 'ar' ? 'لا توجد إدخالات.' : 'No entries.') + '</div>';
+    return;
+  }
+  const latest = sorted[sorted.length - 1];
+  latestEl.textContent = fmt(latest.kg) + ' kg · ' + latest.date;
+  const avgs = weightMovingAvg(sorted, 7);
+  // Compare current 7-day avg to the avg from ~7 days earlier in the series.
+  if (avgs.length >= 2) {
+    const cur = avgs[avgs.length - 1].avg;
+    const baselineIdx = Math.max(0, avgs.length - 8);
+    const base = avgs[baselineIdx].avg;
+    const d = cur - base;
+    const sign = d > 0.05 ? '↑' : (d < -0.05 ? '↓' : '→');
+    const cls = d > 0.05 ? 'up' : (d < -0.05 ? 'down' : 'flat');
+    deltaEl.className = 'delta ' + cls;
+    deltaEl.textContent = sign + ' ' + fmt(Math.abs(d)) + ' kg · ' +
+      (lang === 'ar' ? '٧ أيام' : '7d trend');
+  } else {
+    deltaEl.textContent = '';
+    deltaEl.className = 'delta';
+  }
+  // Show last 10 entries newest-first.
+  const recent = sorted.slice(-10).reverse();
+  listEl.innerHTML = recent.map(e =>
+    `<div class="weight-row">` +
+      `<span class="wdate">${escapeHtml(e.date)}</span>` +
+      `<span class="wkg">${fmt(e.kg)} kg</span>` +
+      `<button class="remove-weight-btn" data-weight-id="${escapeHtml(e.id)}" ` +
+        `data-en="Remove" data-ar="حذف">${lang === 'ar' ? 'حذف' : 'Remove'}</button>` +
+    `</div>`
+  ).join('');
+}
+
+// Add or overwrite today's weight entry. Same-date overwrite keeps the series
+// one-entry-per-day, which makes the moving-average meaningful.
+function addWeightEntry(kg) {
+  const n = Number(kg);
+  if (!isFinite(n) || n <= 0) return false;
+  const today = todayStr();
+  const idx = weights.findIndex(w => w.date === today);
+  const entry = { id: 'w-' + Date.now(), date: today, kg: Math.round(n * 10) / 10 };
+  if (idx >= 0) weights[idx] = Object.assign({}, weights[idx], { kg: entry.kg });
+  else weights.push(entry);
+  weights.sort((a, b) => a.date.localeCompare(b.date));
+  lsSet('mt-weights', JSON.stringify(weights));
+  renderWeightSection();
+  return true;
+}
+
+// Remove a single weight entry by id and re-render. No confirmation — the data
+// is low-stakes and easily re-entered.
+function removeWeightEntry(id) {
+  weights = weights.filter(w => w.id !== id);
+  lsSet('mt-weights', JSON.stringify(weights));
+  renderWeightSection();
+}
+
+// Wire the entry form and the per-row remove buttons.
+(function initWeightLog() {
+  const btn = document.getElementById('addWeightBtn');
+  const input = document.getElementById('weightKg');
+  const list = document.getElementById('weightList');
+  if (!btn || !input || !list) return;
+  function submit() {
+    const v = input.value.trim();
+    if (!v) return;
+    if (addWeightEntry(v)) input.value = '';
+  }
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+  list.addEventListener('click', e => {
+    const b = e.target.closest('.remove-weight-btn');
+    if (!b) return;
+    removeWeightEntry(b.dataset.weightId);
+  });
+})();
+
 // ============ ADD METHOD CHOOSER ============
 // Open the add-method modal (manual entry, OCR, or barcode).
 function openAddMethodSheet() {
@@ -7563,6 +7836,7 @@ function buildBackupObject() {
       scheme: currentScheme,
       templates: mealTemplates,
       features: featureFlags,
+      weights: weights,
       displayModes: displayModes,
       smartSort: smartSortState,
       notifEnabled: localStorage.getItem('mt-notif-enabled') || '0',
@@ -7658,6 +7932,8 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (payload.goals) willRestore.push(lang === 'ar' ? 'الأهداف' : 'goals');
       if (Array.isArray(payload.templates) && payload.templates.length)
         willRestore.push(lang === 'ar' ? `قوالب الوجبات (${payload.templates.length})` : `meal templates (${payload.templates.length})`);
+      if (Array.isArray(payload.weights) && payload.weights.length)
+        willRestore.push(lang === 'ar' ? `إدخالات الوزن (${payload.weights.length})` : `weight entries (${payload.weights.length})`);
       if (payload.displayModes && typeof payload.displayModes === 'object' && Object.keys(payload.displayModes).length)
         willRestore.push(lang === 'ar' ? 'تفضيلات العرض' : 'display preferences');
       if (payload.smartSort && typeof payload.smartSort === 'object' && Object.keys(payload.smartSort).length)
@@ -7726,6 +8002,15 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         mealTemplates = payload.templates;
         lsSet('mt-templates', JSON.stringify(mealTemplates));
       }
+      if (Array.isArray(payload.weights)) {
+        weights = payload.weights.filter(w =>
+          w && typeof w === 'object' &&
+          typeof w.date === 'string' &&
+          typeof w.kg === 'number' && isFinite(w.kg) && w.kg > 0
+        );
+        weights.sort((a, b) => a.date.localeCompare(b.date));
+        lsSet('mt-weights', JSON.stringify(weights));
+      }
       if (payload.features && typeof payload.features === 'object') {
         FEATURE_KEYS.forEach(k => {
           if (typeof payload.features[k] === 'boolean') featureFlags[k] = payload.features[k];
@@ -7764,6 +8049,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       renderWater();
       applyLanguage();   // re-renders tables + filters + totals
       renderMealTemplates();
+      renderWeightSection();
       saveDayState();
       renderTotals();
 
@@ -7811,6 +8097,7 @@ function applyLanguage() {
   applyFilters();
   renderWorkoutsList();
   renderMealTemplates();
+  if (typeof renderWeightSection === 'function') renderWeightSection();
   renderTotals();
 
   // If the food popup is open, keep its action button / preview label in
@@ -7866,6 +8153,7 @@ applyLanguage();  // Master re-render: handles all table/filter/totals rendering
 renderMealTemplates();
 saveDayState();
 renderWorkoutsList();
+renderWeightSection();
 
 requestAnimationFrame(() => requestAnimationFrame(() => {
   document.documentElement.classList.remove('preload');

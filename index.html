@@ -520,12 +520,25 @@ header.cover::before {
                     radial-gradient(circle at 80% 70%, rgba(139, 58, 47, 0.12) 0%, transparent 50%);
   pointer-events: none;
 }
+/* Header layout: title flows naturally, tool buttons absolutely pinned to
+   the top-right corner so they stay in the same physical spot regardless
+   of language direction or title length. The right-side padding on the
+   title block reserves space so long EN headings cannot collide with the
+   pinned tools. */
 header.cover .row {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  flex-wrap: wrap; gap: 16px; position: relative;
+  position: relative;
   direction: ltr;
 }
-body.ar header.cover .row > div:first-child { direction: rtl; text-align: right; }
+header.cover .row > div:first-child {
+  padding-right: 200px;
+  min-height: 64px;
+}
+body.ar header.cover .row > div:first-child {
+  direction: rtl;
+  text-align: right;
+  padding-right: 0;
+  padding-left: 200px;
+}
 header.cover h1 {
   font-size: clamp(26px, 4vw, 42px);
   font-weight: 800; font-style: italic;
@@ -552,7 +565,16 @@ body.ar header.cover .sub { font-family: 'JetBrains Mono', monospace; }
 }
 .lang-toggle:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-.header-tools { display: flex; gap: 8px; align-items: center; direction: ltr; }
+/* Pinned to the top-right corner of header.cover in both LTR and RTL so
+   the buttons sit in the same physical spot regardless of language. The
+   forced direction:ltr keeps the button order (lang / theme / guide /
+   settings) identical across languages. */
+.header-tools {
+  display: flex; gap: 8px; align-items: center; direction: ltr;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 .hdr-btn {
   background: var(--on-grad-veil);
   border: 1px solid var(--on-grad-bd);
@@ -10035,6 +10057,11 @@ function applyLanguage() {
   renderMealTemplates();
   if (typeof renderWeightSection === 'function') renderWeightSection();
   renderTotals();
+  // #dayInfo is only rewritten by saveDayState(); without this call the
+  // date/items strip stays in whichever language was active when the day
+  // was last mutated. Calling it on every language flip keeps the strip
+  // (locale-formatted date + "items"/"صنف" suffix) in sync with `lang`.
+  saveDayState();
 
   // If the food popup is open, keep its action button / preview label in
   // sync with edit-vs-add mode (applyLanguage above would have reset them

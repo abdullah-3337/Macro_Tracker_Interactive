@@ -955,6 +955,49 @@ body.ar .filter-btn {
 }
 .filter-btn.rest { border-style: dashed; }
 .filter-btn.rest.active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); border-style: solid; }
+
+/* ============ DIET FILTER BAR ============ */
+.diet-filter-bar {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 8px 16px 4px;
+  align-items: center;
+}
+.diet-filter-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-right: 4px;
+}
+body.ar .diet-filter-label {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 12px; text-transform: none; letter-spacing: 0;
+  margin-right: 0; margin-left: 4px;
+}
+.diet-chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px; font-weight: 600;
+  font-family: inherit;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.diet-chip:hover { background: var(--veil-hi); }
+.diet-chip.active {
+  background: var(--accent); color: var(--on-accent);
+  border-color: var(--accent);
+}
+.diet-chip-clear {
+  background: transparent;
+  border: 1px dashed var(--line);
+  font-size: 11px; color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 4px 10px; cursor: pointer;
+  font-family: inherit;
+}
+.diet-chip-clear:hover { background: var(--veil-hi); }
 .portion-toggle {
   padding: 8px 14px; border: 1px solid var(--accent);
   background: var(--accent-soft); color: var(--accent-dk);
@@ -3246,6 +3289,16 @@ body.ar .footer li::before {
 </div>
 
 <!-- Floating search bar — sits over the page like the FAB on the opposite side. -->
+
+<div class="diet-filter-bar" id="dietFilterBar">
+  <span class="diet-filter-label" data-en="Diet" data-ar="نظام">Diet</span>
+  <button type="button" class="diet-chip" data-diet="halal"        data-en="☪ Halal"        data-ar="☪ حلال">☪ Halal</button>
+  <button type="button" class="diet-chip" data-diet="vegan"        data-en="🌱 Vegan"       data-ar="🌱 نباتي صرف">🌱 Vegan</button>
+  <button type="button" class="diet-chip" data-diet="vegetarian"   data-en="🥕 Vegetarian"  data-ar="🥕 نباتي">🥕 Vegetarian</button>
+  <button type="button" class="diet-chip" data-diet="gluten-free"  data-en="🚫🌾 Gluten-free" data-ar="🚫🌾 خالٍ من القمح">🚫🌾 Gluten-free</button>
+  <button type="button" class="diet-chip" data-diet="keto"         data-en="🥑 Keto"        data-ar="🥑 كيتو">🥑 Keto</button>
+  <button type="button" class="diet-chip-clear" id="dietClearBtn"  data-en="✕ Clear"       data-ar="✕ مسح">✕ Clear</button>
+</div>
 
 <div class="controls">
   <button class="filter-btn active" data-filter="all" data-en="All" data-ar="الكل">All</button>
@@ -6907,6 +6960,20 @@ function applyFilters() {
     });
   }
 
+  // Intersect with the diet-filter match set when any diet chip is active.
+  // A food matches the diet filter only if ALL active diet tags are in its
+  // effective tag set (badges + category-derived auto-tags). See dietTagsOf.
+  if (dietFilters && dietFilters.size > 0) {
+    const required = Array.from(dietFilters);
+    const dietMatch = new Set();
+    DB.forEach(f => {
+      const tags = dietTagsOf(f);
+      if (required.every(t => tags.has(t))) dietMatch.add(f.id);
+    });
+    if (matchIds === null) matchIds = dietMatch;
+    else matchIds = new Set(Array.from(matchIds).filter(id => dietMatch.has(id)));
+  }
+
   let firstVisible = null;
   document.querySelectorAll('.category-section').forEach(sec => {
     const cat = sec.dataset.cat;
@@ -6958,6 +7025,76 @@ filterBtns.forEach(btn => {
     applyFilters();
   });
 });
+
+// ============ DIETARY RESTRICTION FILTERS ============
+// Filter foods by intersection of selected diet tags (halal, vegan,
+// vegetarian, gluten-free, keto). A food's effective tag set is the union of
+// its explicit `badges[]` and a conservative category-derived auto-tag list
+// (so the seed DB filters sensibly without needing every item hand-tagged).
+// Users add/override per-item tags through the Edit Food modal.
+
+// Conservative auto-tags by category. Power users override by setting badges
+// directly. The 'protein-meat' default is 'halal' to match the Saudi-targeted
+// seed DB; users with non-halal meats in their DB should explicitly omit it.
+const DIET_AUTO_BY_CAT = {
+  'veg':            ['halal', 'vegan', 'vegetarian', 'gluten-free'],
+  'fruit':          ['halal', 'vegan', 'vegetarian', 'gluten-free'],
+  'protein-veg':    ['halal', 'vegan', 'vegetarian', 'gluten-free'],
+  'fats':           ['halal', 'vegan', 'vegetarian', 'gluten-free'],
+  'protein-fish':   ['halal', 'vegetarian'],
+  'protein-dairy':  ['halal', 'vegetarian'],
+  'carbs':          ['halal', 'vegan', 'vegetarian'],
+  'protein-meat':   ['halal']
+};
+
+// Return the effective diet-tag set for a food: union of explicit badges +
+// category-derived auto-tags. A Set is returned for O(1) membership checks.
+function dietTagsOf(f) {
+  const out = new Set(Array.isArray(f.badges) ? f.badges : []);
+  const auto = DIET_AUTO_BY_CAT[f.cat] || [];
+  auto.forEach(t => out.add(t));
+  return out;
+}
+
+// Persisted set of active diet filter tags. Loaded from mt-diet-filters on
+// boot; saved on any chip toggle. Empty Set = no diet filter applied.
+let dietFilters = new Set();
+try {
+  const saved = lsGet('mt-diet-filters', []);
+  if (Array.isArray(saved)) dietFilters = new Set(saved);
+} catch (e) { dietFilters = new Set(); }
+
+// Reflect current dietFilters into the chip-bar UI.
+function syncDietChips() {
+  document.querySelectorAll('#dietFilterBar .diet-chip').forEach(chip => {
+    chip.classList.toggle('active', dietFilters.has(chip.dataset.diet));
+  });
+}
+
+// Wire the diet chip bar: toggle on click, persist, re-filter.
+(function initDietFilters() {
+  const bar = document.getElementById('dietFilterBar');
+  if (!bar) return;
+  bar.addEventListener('click', e => {
+    const chip = e.target.closest('.diet-chip');
+    const clear = e.target.closest('#dietClearBtn');
+    if (chip) {
+      const tag = chip.dataset.diet;
+      if (!tag) return;
+      if (dietFilters.has(tag)) dietFilters.delete(tag);
+      else dietFilters.add(tag);
+    } else if (clear) {
+      if (!dietFilters.size) return;
+      dietFilters.clear();
+    } else {
+      return;
+    }
+    lsSet('mt-diet-filters', JSON.stringify(Array.from(dietFilters)));
+    syncDietChips();
+    applyFilters();
+  });
+  syncDietChips();
+})();
 
 // (Per-table display toggles live in each category header — see renderSection.)
 
@@ -8307,6 +8444,7 @@ function buildBackupObject() {
       features: featureFlags,
       weights: weights,
       profile: lsGet('mt-profile', null),
+      dietFilters: Array.from(dietFilters),
       displayModes: displayModes,
       smartSort: smartSortState,
       notifEnabled: localStorage.getItem('mt-notif-enabled') || '0',
@@ -8483,6 +8621,11 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       }
       if (payload.profile && typeof payload.profile === 'object') {
         lsSet('mt-profile', JSON.stringify(payload.profile));
+      }
+      if (Array.isArray(payload.dietFilters)) {
+        dietFilters = new Set(payload.dietFilters.filter(t => typeof t === 'string'));
+        lsSet('mt-diet-filters', JSON.stringify(Array.from(dietFilters)));
+        if (typeof syncDietChips === 'function') syncDietChips();
       }
       if (payload.features && typeof payload.features === 'object') {
         FEATURE_KEYS.forEach(k => {

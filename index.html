@@ -2425,6 +2425,57 @@ body.ar .weight-section h4 {
 .remove-weight-btn:hover { filter: brightness(1.05); }
 body.feat-off-weight .weight-section { display: none !important; }
 
+/* Activity section head matches weight head: title + Stats button right. */
+.activity-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.activity-section-head h4 {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+body.ar .activity-section-head h4 {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 13px;
+}
+
+/* Activity bank rows inside the stats modal. */
+.activity-bank-list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 320px; overflow-y: auto;
+}
+.activity-bank-row {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px;
+}
+.activity-bank-row .ab-name {
+  font-weight: 600; color: var(--ink);
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  cursor: pointer;
+}
+.activity-bank-row .ab-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-soft);
+  white-space: nowrap;
+}
+.activity-bank-row .ab-forget {
+  background: var(--over); color: var(--on-accent);
+  border: none; border-radius: 3px;
+  padding: 4px 10px; cursor: pointer; font-size: 11px;
+  font-family: inherit;
+}
+.activity-bank-row .ab-forget:hover { filter: brightness(1.05); }
+.activity-bank-empty { font-size: 13px; color: var(--ink-soft); padding: 10px 0; }
+
+
 /* Slim side panel header for weight: title on the left, history button right. */
 .weight-section-head {
   display: flex; align-items: center; justify-content: space-between;
@@ -4009,15 +4060,23 @@ body.ar .footer li::before {
 
     <!-- ============ ACTIVITY / WORKOUTS ============ -->
     <div class="activity-section" id="activitySection">
-      <h4 data-en="Activity" data-ar="النشاط">Activity</h4>
+      <div class="activity-section-head">
+        <h4 data-en="Activity" data-ar="النشاط">Activity</h4>
+        <button class="weight-history-btn" id="openActivityStatsBtn"
+                data-title-en="Activity stats" data-title-ar="إحصاءات النشاط"
+                aria-label="Activity stats">📊
+          <span data-en="Stats" data-ar="إحصاءات">Stats</span>
+        </button>
+      </div>
       <div id="workoutsList">
         <!-- Rendered list of workouts -->
       </div>
       <div class="activity-add">
-        <input type="text" id="workoutName" placeholder="Activity name" data-placeholder-en="Activity name" data-placeholder-ar="اسم النشاط" />
+        <input type="text" id="workoutName" placeholder="Activity name" data-placeholder-en="Activity name" data-placeholder-ar="اسم النشاط" list="activityNameList" autocomplete="off" />
         <input type="number" id="workoutKcal" placeholder="kcal" data-placeholder-en="kcal" data-placeholder-ar="سعر" />
         <button id="addWorkoutBtn" data-en="Add" data-ar="أضف">Add</button>
       </div>
+      <datalist id="activityNameList"><!-- populated from activityBank --></datalist>
     </div>
   </div>
 </div>
@@ -4717,6 +4776,42 @@ body.ar .footer li::before {
     </div>
     <div class="popup-actions">
       <button class="btn-cancel" id="addMethodCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ACTIVITY STATS MODAL ============ -->
+<div class="popup-overlay" id="activityStatsOverlay">
+  <div class="weight-history-modal">
+    <div class="weight-history-head">
+      <h3 data-en="📊 Activity Stats" data-ar="📊 إحصاءات النشاط">📊 Activity Stats</h3>
+      <button class="guide-modal-close" id="activityStatsCloseBtn" aria-label="Close">×</button>
+    </div>
+
+    <div class="weight-history-body">
+      <div class="wh-stats" id="activityStatsHeader">
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Unique activities" data-ar="أنشطة فريدة">Unique activities</span><span class="wh-stat-val" id="actStatUnique">0</span></div>
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Total sessions" data-ar="إجمالي الجلسات">Total sessions</span><span class="wh-stat-val" id="actStatSessions">0</span></div>
+        <div class="wh-stat"><span class="wh-stat-label" data-en="Total kcal" data-ar="إجمالي السعرات">Total kcal</span><span class="wh-stat-val" id="actStatKcal">0</span></div>
+      </div>
+
+      <div class="wh-list-head">
+        <h4 data-en="Top activities" data-ar="الأنشطة الأكثر استخداماً">Top activities</h4>
+        <span class="wh-count" data-en="by count" data-ar="حسب التكرار">by count</span>
+      </div>
+      <div class="activity-bank-list" id="activityBankList"></div>
+
+      <div class="wh-list-head" style="margin-top: 16px;">
+        <h4 data-en="Manage" data-ar="إدارة">Manage</h4>
+      </div>
+      <div class="tdee-help" data-en="Tap an activity to quick-log it again. Tap 🗑 to forget it (clears stats; existing workouts kept)."
+           data-ar="اضغط على نشاط لتسجيله مرة أخرى. اضغط 🗑 لحذفه من السجل (لا يحذف التمارين الموجودة).">
+        Tap an activity to quick-log it again.
+      </div>
+    </div>
+
+    <div class="popup-actions">
+      <button class="btn-cancel" id="activityStatsCloseBtn2" data-en="Close" data-ar="إغلاق">Close</button>
     </div>
   </div>
 </div>
@@ -5669,6 +5764,30 @@ if (!waterState || typeof waterState !== 'object') waterState = {glasses:0, mlPe
 // One entry per day; logging twice on the same date overwrites the earlier value.
 let weights = lsGet('mt-weights', []);
 if (!Array.isArray(weights)) weights = [];
+
+// Activity bank: keyed by activity name, holds usage stats so the input can
+// autocomplete from past entries and the stats modal can show top activities.
+// Shape: { [nameLowercase]: { displayName, count, totalKcal, lastKcal, lastUsed } }
+// Built from `workouts[]` on first read if the key is missing — keeps prior
+// user data accessible after upgrade.
+let activityBank = lsGet('mt-activity-bank', null);
+if (!activityBank || typeof activityBank !== 'object') {
+  activityBank = {};
+  if (Array.isArray(workouts)) {
+    workouts.forEach(w => {
+      if (!w || typeof w.name !== 'string') return;
+      const key = w.name.trim().toLowerCase();
+      if (!key) return;
+      const e = activityBank[key] || { displayName: w.name.trim(), count: 0, totalKcal: 0, lastKcal: 0, lastUsed: null };
+      e.count++;
+      e.totalKcal += (w.kcalBurned || 0);
+      e.lastKcal = w.kcalBurned || e.lastKcal;
+      e.lastUsed = w.timestamp || e.lastUsed;
+      activityBank[key] = e;
+    });
+    lsSet('mt-activity-bank', JSON.stringify(activityBank));
+  }
+}
 
 const FEATURE_KEYS = ['water','training','smartSort','trends','ocr','barcode','recipes','mealTemplates','weight'];
 const DEFAULT_FEATURES = FEATURE_KEYS.reduce((acc, k) => (acc[k] = true, acc), {});
@@ -8201,6 +8320,78 @@ function renderWorkoutsList() {
   `;
 }
 
+// Update the activity bank with one workout entry. Adds or merges by lower-
+// case name. Keeps the most-recent display casing.
+function activityBankRecord(name, kcal) {
+  const trimmed = String(name || '').trim();
+  if (!trimmed) return;
+  const key = trimmed.toLowerCase();
+  const e = activityBank[key] || { displayName: trimmed, count: 0, totalKcal: 0, lastKcal: 0, lastUsed: null };
+  e.displayName = trimmed; // refresh casing
+  e.count++;
+  e.totalKcal += (kcal || 0);
+  e.lastKcal = kcal || e.lastKcal;
+  e.lastUsed = new Date().toISOString();
+  activityBank[key] = e;
+  lsSet('mt-activity-bank', JSON.stringify(activityBank));
+  syncActivityDatalist();
+}
+
+// Remove an entry from the bank. Existing workouts in `workouts[]` are kept;
+// only the autocomplete + stats forget it.
+function activityBankForget(key) {
+  if (!activityBank[key]) return;
+  delete activityBank[key];
+  lsSet('mt-activity-bank', JSON.stringify(activityBank));
+  syncActivityDatalist();
+  renderActivityStatsModal();
+}
+
+// Re-populate the <datalist> from the bank, sorted by most-used first.
+function syncActivityDatalist() {
+  const dl = document.getElementById('activityNameList');
+  if (!dl) return;
+  const entries = Object.values(activityBank)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 50);
+  dl.innerHTML = entries.map(e =>
+    `<option value="${escapeHtml(e.displayName)}">${e.lastKcal ? e.lastKcal + ' kcal' : ''}</option>`
+  ).join('');
+}
+
+// Render the activity stats modal: header totals + sortable bank list. Empty
+// state when nothing logged. Clicking a row pre-fills the activity form so
+// the user can quickly re-log the same activity (kcal pre-filled from last
+// time, editable before tapping Add).
+function renderActivityStatsModal() {
+  const entries = Object.entries(activityBank); // [[key, e], ...]
+  // Header totals.
+  document.getElementById('actStatUnique').textContent = entries.length;
+  const sessions = entries.reduce((a, [, e]) => a + (e.count || 0), 0);
+  const kcal = entries.reduce((a, [, e]) => a + (e.totalKcal || 0), 0);
+  document.getElementById('actStatSessions').textContent = sessions;
+  document.getElementById('actStatKcal').textContent = Math.round(kcal);
+  // List sorted by count desc, then by lastUsed desc.
+  const sorted = entries.slice().sort((a, b) => {
+    if (b[1].count !== a[1].count) return b[1].count - a[1].count;
+    return (b[1].lastUsed || '').localeCompare(a[1].lastUsed || '');
+  });
+  const list = document.getElementById('activityBankList');
+  if (!list) return;
+  if (!sorted.length) {
+    list.innerHTML = `<div class="activity-bank-empty">${lang === 'ar' ? 'لا يوجد نشاط مسجّل بعد.' : 'No activities logged yet.'}</div>`;
+    return;
+  }
+  list.innerHTML = sorted.map(([key, e]) => {
+    const avg = e.count > 0 ? Math.round(e.totalKcal / e.count) : 0;
+    return `<div class="activity-bank-row" data-act-key="${escapeHtml(key)}">` +
+      `<span class="ab-name" data-act-fill="${escapeHtml(e.displayName)}" data-act-kcal="${e.lastKcal || avg}">${escapeHtml(e.displayName)}</span>` +
+      `<span class="ab-meta">${e.count}× · ${avg} kcal ${lang === 'ar' ? 'متوسط' : 'avg'}</span>` +
+      `<button class="ab-forget" data-act-forget="${escapeHtml(key)}" aria-label="Forget">🗑</button>` +
+    `</div>`;
+  }).join('');
+}
+
 document.getElementById('addWorkoutBtn').addEventListener('click', () => {
   const nameInput = document.getElementById('workoutName');
   const kcalInput = document.getElementById('workoutKcal');
@@ -8222,6 +8413,7 @@ document.getElementById('addWorkoutBtn').addEventListener('click', () => {
     kcalBurned: kcal,
     timestamp: new Date().toISOString()
   });
+  activityBankRecord(name, kcal);
 
   saveWorkoutState();
   renderWorkoutsList();
@@ -8229,6 +8421,57 @@ document.getElementById('addWorkoutBtn').addEventListener('click', () => {
   nameInput.value = '';
   kcalInput.value = '';
 });
+
+// Datalist hint: when the user picks an existing activity name, prefill the
+// kcal field with the last value used for that name (still editable).
+document.getElementById('workoutName').addEventListener('input', () => {
+  const name = document.getElementById('workoutName').value.trim().toLowerCase();
+  const e = activityBank[name];
+  if (!e) return;
+  const kcalInput = document.getElementById('workoutKcal');
+  if (!kcalInput.value) kcalInput.value = e.lastKcal || '';
+});
+
+// Activity stats modal: open, close, row click → prefill form, 🗑 → forget.
+(function initActivityStats() {
+  const openBtn = document.getElementById('openActivityStatsBtn');
+  const overlay = document.getElementById('activityStatsOverlay');
+  const closeBtn = document.getElementById('activityStatsCloseBtn');
+  const closeBtn2 = document.getElementById('activityStatsCloseBtn2');
+  const list = document.getElementById('activityBankList');
+  if (!openBtn || !overlay) return;
+  openBtn.addEventListener('click', () => {
+    renderActivityStatsModal();
+    overlay.classList.add('active');
+  });
+  const closeIt = () => overlay.classList.remove('active');
+  if (closeBtn) closeBtn.addEventListener('click', closeIt);
+  if (closeBtn2) closeBtn2.addEventListener('click', closeIt);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeIt(); });
+  if (list) {
+    list.addEventListener('click', e => {
+      const forget = e.target.closest('[data-act-forget]');
+      if (forget) {
+        const key = forget.dataset.actForget;
+        if (confirm(lang === 'ar' ? 'حذف هذا النشاط من السجل؟' : 'Forget this activity?')) {
+          activityBankForget(key);
+        }
+        return;
+      }
+      const name = e.target.closest('[data-act-fill]');
+      if (name) {
+        document.getElementById('workoutName').value = name.dataset.actFill;
+        document.getElementById('workoutKcal').value = name.dataset.actKcal || '';
+        closeIt();
+        // Focus kcal so user can tweak.
+        const kcalInput = document.getElementById('workoutKcal');
+        if (kcalInput) setTimeout(() => kcalInput.focus(), 80);
+      }
+    });
+  }
+  // Boot-time datalist sync.
+  syncActivityDatalist();
+})();
 
 // Event delegation for removing workouts
 document.addEventListener('click', (e) => {
@@ -9496,6 +9739,7 @@ function buildBackupObject() {
       features: featureFlags,
       weights: weights,
       weightTarget: weightTarget,
+      activityBank: activityBank,
       profile: lsGet('mt-profile', null),
       dietFilters: Array.from(dietFilters),
       displayModes: displayModes,
@@ -9675,6 +9919,23 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       if (typeof payload.weightTarget === 'number' && isFinite(payload.weightTarget) && payload.weightTarget > 0) {
         weightTarget = Math.round(payload.weightTarget * 10) / 10;
         localStorage.setItem('mt-weight-target', String(weightTarget));
+      }
+      if (payload.activityBank && typeof payload.activityBank === 'object' && !Array.isArray(payload.activityBank)) {
+        activityBank = {};
+        Object.keys(payload.activityBank).forEach(k => {
+          const e = payload.activityBank[k];
+          if (e && typeof e === 'object' && typeof e.displayName === 'string') {
+            activityBank[k] = {
+              displayName: e.displayName,
+              count: parseInt(e.count, 10) || 0,
+              totalKcal: parseFloat(e.totalKcal) || 0,
+              lastKcal: parseFloat(e.lastKcal) || 0,
+              lastUsed: typeof e.lastUsed === 'string' ? e.lastUsed : null
+            };
+          }
+        });
+        lsSet('mt-activity-bank', JSON.stringify(activityBank));
+        if (typeof syncActivityDatalist === 'function') syncActivityDatalist();
       }
       if (payload.profile && typeof payload.profile === 'object') {
         lsSet('mt-profile', JSON.stringify(payload.profile));

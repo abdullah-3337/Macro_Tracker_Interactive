@@ -2406,7 +2406,7 @@ body.ar .activity-section h4 {
   background: var(--paper); color: var(--ink);
   border: 1px solid var(--line); border-radius: 3px;
   padding: 8px 10px;
-  font-size: 13px; font-family: inherit;
+  font-size: 16px; font-family: inherit;
   min-width: 0;
 }
 .activity-add input::placeholder { color: var(--ink-soft); opacity: 0.6; }
@@ -2511,7 +2511,7 @@ body.ar .weight-section h4 {
   background: var(--paper); color: var(--ink);
   border: 1px solid var(--line); border-radius: 3px;
   padding: 8px 10px;
-  font-size: 13px; font-family: inherit;
+  font-size: 16px; font-family: inherit;
   min-width: 0; flex: 1;
 }
 .weight-add input::placeholder { color: var(--ink-soft); opacity: 0.6; }
@@ -10208,20 +10208,59 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 // On Android, `position: fixed; bottom: 0` anchors to the layout viewport, so
 // the soft keyboard hides the bottom dock when the page scrolls. This IIFE tracks
 // VisualViewport height and translates the dock up by the keyboard-occluded
-// amount, keeping it just above the keyboard. No-op on browsers without
-// VisualViewport API or when the keyboard is closed.
+// amount, keeping it just above the keyboard.
+//
+// iOS Safari quirk: visualViewport `resize`/`scroll` events also fire when the
+// URL bar collapses on page scroll, which would falsely translate the dock as
+// the user scrolls. To avoid that, we only apply the keyboard offset when
+// (a) a focused input is open AND (b) the occluded amount is above a sensible
+// keyboard-height threshold. On blur we reset immediately.
 (function initDockKeyboardTracking() {
   if (!window.visualViewport) return;
   const dock = document.getElementById('bottomDock');
   if (!dock) return;
   const vv = window.visualViewport;
-  function sync() {
-    const hidden = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-    dock.style.transform = hidden > 0 ? `translateY(-${hidden}px)` : '';
+  let keyboardActive = false;
+
+  function isEditable(el) {
+    if (!el) return false;
+    if (el.tagName === 'TEXTAREA') return true;
+    if (el.tagName === 'INPUT') {
+      const t = (el.getAttribute('type') || 'text').toLowerCase();
+      // Inputs that summon the soft keyboard. Excludes button/checkbox/radio/file/etc.
+      return ['text','number','email','search','tel','url','password','date','datetime-local','time','month','week'].indexOf(t) !== -1;
+    }
+    if (el.isContentEditable) return true;
+    return false;
   }
+
+  function reset() {
+    dock.style.transform = '';
+  }
+
+  function sync() {
+    if (!keyboardActive) { reset(); return; }
+    const hidden = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    // ~120 px guards against URL-bar collapse noise while still catching the
+    // smallest soft keyboards (e.g., iPhone SE landscape ~ 180 px).
+    if (hidden > 120) {
+      dock.style.transform = `translateY(-${hidden}px)`;
+    } else {
+      reset();
+    }
+  }
+
+  document.addEventListener('focusin', e => {
+    if (isEditable(e.target)) { keyboardActive = true; sync(); }
+  });
+  document.addEventListener('focusout', () => {
+    // Defer so a focus-shift between two inputs doesn't flicker the dock.
+    setTimeout(() => {
+      if (!isEditable(document.activeElement)) { keyboardActive = false; reset(); }
+    }, 50);
+  });
   vv.addEventListener('resize', sync);
   vv.addEventListener('scroll', sync);
-  sync();
 })();
 
 // ============ GLOBAL SORT MENU HANDLERS ============

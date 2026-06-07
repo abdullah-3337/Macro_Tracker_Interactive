@@ -487,6 +487,37 @@ body.ar {
     scroll-behavior: auto !important;
   }
 }
+
+/* iOS / Safari zoom guard: any input under 16px font-size triggers
+   Safari's auto-zoom-on-focus. Force 16px on touch inputs so focus
+   never zooms the viewport. */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"],
+input:not([type]),
+select, textarea {
+  font-size: 16px;
+}
+
+/* iOS smoothness: promote animated overlays/popups to their own
+   compositor layer so transforms/opacity don't repaint sibling content
+   on every frame. */
+.popup, .panel-overlay, .side-panel, .fab,
+.activity-row, .selected-table tbody tr,
+.category-section table.sort-fade-in,
+.ocr-spinner {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
 .container { max-width: 1400px; margin: 0 auto; padding: 24px 16px; }
 
 /* Numbers in JetBrains Mono must render identically regardless of page
@@ -556,7 +587,7 @@ body.ar header.cover .sub { font-family: 'JetBrains Mono', monospace; }
   font-size: 12px; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase;
   cursor: pointer; border-radius: 2px;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 .lang-toggle:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
@@ -577,7 +608,7 @@ body.ar .header-tools { align-self: flex-end; }
   width: 40px; height: 40px;
   font-size: 18px; line-height: 1;
   cursor: pointer; border-radius: 2px;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   display: flex; align-items: center; justify-content: center;
 }
 .hdr-btn:hover { background: var(--on-grad-veil-hover); transform: translateY(-1px); }
@@ -592,7 +623,7 @@ body.ar .header-tools { align-self: flex-end; }
   flex: 1; padding: 11px 8px; border: none;
   background: var(--paper); color: var(--ink);
   font-family: inherit; font-size: 13px; cursor: pointer;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   border-right: 1px solid var(--line);
 }
 .theme-seg button:last-child { border-right: none; }
@@ -605,7 +636,7 @@ body.ar .header-tools { align-self: flex-end; }
 .scheme-card {
   border: 2px solid var(--line); border-radius: 6px;
   padding: 12px; cursor: pointer; background: var(--paper);
-  transition: all 0.15s; text-align: left;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; text-align: left;
 }
 body.ar .scheme-card { text-align: right; }
 .scheme-card:hover { border-color: var(--accent-bright); transform: translateY(-2px); }
@@ -656,7 +687,7 @@ body.ar .trends-modal h3 { font-style: normal; }
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
   border-radius: 3px;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 body.ar .window-btn {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -735,7 +766,7 @@ body.ar .analytics-head h3 { font-style: normal; }
   font-size: 11px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
   cursor: pointer; border-radius: 3px;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 body.ar .analytics-tab {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -788,7 +819,7 @@ body.ar .goals-card-title { font-style: normal; font-family: 'IBM Plex Sans Arab
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.15s;
+  cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 body.ar .goals-edit-btn {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -906,7 +937,7 @@ body.ar .water-summary { font-family: 'IBM Plex Sans Arabic', sans-serif; font-s
   font-weight: 700; font-size: 18px;
   cursor: pointer; border-radius: 4px;
   padding: 0;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 .water-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .water-btn:active { transform: scale(0.95); }
@@ -919,7 +950,7 @@ body.ar .water-summary { font-family: 'IBM Plex Sans Arabic', sans-serif; font-s
   font-size: 12px; font-weight: 700;
   letter-spacing: 0.06em;
   border-radius: 4px; cursor: pointer;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 body.ar .water-quick {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -1021,7 +1052,7 @@ body.ar .dock-search::before { left: auto; right: 16px; }
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.15s;
+  cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   color: var(--ink);
 }
 body.ar .filter-btn {
@@ -1097,7 +1128,7 @@ body.ar .diet-filter-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; font-weight: 700;
   border-radius: 2px; cursor: pointer;
-  transition: all 0.15s; white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; white-space: nowrap;
 }
 body.ar .portion-toggle { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
 .portion-toggle:hover { background: var(--accent); color: var(--on-accent); }
@@ -1162,7 +1193,7 @@ body.ar .category-header h2 { font-style: normal; }
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; font-weight: 700;
   border-radius: 2px; cursor: pointer;
-  transition: all 0.15s; white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; white-space: nowrap;
   box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 body.ar .table-portion-toggle {
@@ -1191,7 +1222,7 @@ body.ar .table-portion-toggle {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; font-weight: 700;
   border-radius: 2px; cursor: pointer;
-  transition: all 0.15s; white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; white-space: nowrap;
   box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 body.ar .sort-menu-btn {
@@ -1346,7 +1377,7 @@ body.ar tbody td.num { text-align: center; }
   font-size: 12px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   padding: 0;
 }
 .row-edit-btn:hover {
@@ -1364,7 +1395,7 @@ body.ar tbody td.num { text-align: center; }
   font-size: 12px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   padding: 0;
   margin-inline-start: 4px;
 }
@@ -1383,7 +1414,7 @@ body.ar tbody td.num { text-align: center; }
   font-size: 12px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   padding: 0;
   margin-inline-start: 4px;
 }
@@ -1501,6 +1532,7 @@ body.ar .badge-key-text { font-style: normal; }
 .popup-overlay {
   position: fixed; inset: 0;
   background: var(--scrim);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   display: none; align-items: center; justify-content: center;
   z-index: 100; padding: 16px;
@@ -1624,7 +1656,7 @@ body.ar .meal-group-header {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 body.ar .macro-edit-toggle {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -1688,7 +1720,7 @@ body.ar .popup-macro .l { font-family: 'IBM Plex Sans Arabic', sans-serif; font-
   font-size: 11px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
   cursor: pointer; border-radius: 2px;
-  color: var(--ink); transition: all 0.15s;
+  color: var(--ink); transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 body.ar .tab-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
 .tab-btn.active {
@@ -1780,7 +1812,7 @@ body.ar .preview .label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-
   font-size: 12px; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase;
   cursor: pointer; border-radius: 3px;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 body.ar .popup-actions button { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
 .btn-cancel {
@@ -1954,7 +1986,7 @@ body.ar .add-method-modal h3 { font-style: normal; }
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   box-sizing: border-box;
 }
 body.ar .add-method-btn {
@@ -1996,7 +2028,7 @@ body.ar .fab-row { right: auto; left: 24px; flex-direction: row-reverse; }
   box-shadow: 0 8px 28px -6px rgba(86,86,128,0.55),
               0 2px 8px rgba(46,49,66,0.25),
               inset 0 1px 0 rgba(255,255,255,0.25);
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
   font-family: 'JetBrains Mono', monospace;
 }
 body.ar .fab { right: auto; left: auto; }
@@ -2044,7 +2076,7 @@ body.ar .fab .fab-kcal {
   box-shadow: 0 8px 28px -6px rgba(86,86,128,0.55),
               0 2px 8px rgba(46,49,66,0.25),
               inset 0 1px 0 rgba(255,255,255,0.25);
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 body.ar .fab-add { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 .fab-add .fab-add-icon { font-size: 18px; }
@@ -2065,6 +2097,7 @@ body.ar .fab-add { font-family: 'IBM Plex Sans Arabic', sans-serif; }
 .panel-overlay {
   position: fixed; inset: 0;
   background: rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
   z-index: 70;
   opacity: 0; pointer-events: none;
@@ -2226,7 +2259,7 @@ body.ar .selected-table td.num { text-align: center; }
   background: transparent; border: 1px solid var(--line);
   color: var(--ink); padding: 3px 9px;
   font-size: 11px; cursor: pointer; border-radius: 2px;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 .remove-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .row-actions {
@@ -2237,7 +2270,7 @@ body.ar .selected-table td.num { text-align: center; }
   background: transparent; border: 1px solid var(--accent);
   color: var(--accent); padding: 3px 9px;
   font-size: 11px; cursor: pointer; border-radius: 2px;
-  transition: all 0.15s; font-family: inherit;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; font-family: inherit;
 }
 .edit-row-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
@@ -2725,7 +2758,7 @@ body.ar .templates-header h4 { font-family: 'IBM Plex Sans Arabic', sans-serif; 
   padding: 6px 12px; font-size: 11px; font-weight: 600;
   background: var(--accent); color: var(--on-accent);
   border: 1px solid var(--accent); border-radius: 3px;
-  cursor: pointer; transition: all 0.15s;
+  cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   font-family: 'JetBrains Mono', monospace;
 }
 body.ar .template-action-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
@@ -2755,7 +2788,7 @@ body.ar .template-action-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; 
 .template-apply-btn, .template-delete-btn {
   padding: 4px 8px; font-size: 11px; font-weight: 600;
   border: 1px solid var(--line); border-radius: 2px; cursor: pointer;
-  transition: all 0.15s; font-family: 'JetBrains Mono', monospace;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; font-family: 'JetBrains Mono', monospace;
 }
 body.ar .template-apply-btn, body.ar .template-delete-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
 .template-apply-btn {
@@ -2798,7 +2831,7 @@ body.ar .data-tools .dt-label {
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.05em;
   display: flex; align-items: center; justify-content: center; gap: 6px;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   color: var(--ink);
 }
 body.ar .dt-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
@@ -2929,7 +2962,7 @@ body.ar .ocr-modal h3 { font-style: normal; }
   padding: 28px 18px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   background: var(--bg);
 }
 .ocr-dropzone:hover { border-color: var(--accent); background: var(--accent-soft); }
@@ -3088,6 +3121,7 @@ body.ar .addfood-form label {
 body.ar .addfood-form label .req { margin-left: 0; margin-right: 3px; }
 .addfood-form input[type="text"],
 .addfood-form input[type="number"],
+.addfood-form input[inputmode="decimal"],
 .addfood-form select {
   width: 100%; padding: 10px 12px;
   border: 1px solid var(--line); border-radius: 3px;
@@ -3361,14 +3395,16 @@ body.ar .tdee-label {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   font-size: 13px; text-transform: none; letter-spacing: 0;
 }
-.tdee-field input[type="number"] {
+.tdee-field input[type="number"],
+.tdee-field input[type="text"][inputmode="decimal"] {
   width: 100%; padding: 9px 12px;
   background: var(--paper); color: var(--ink);
   border: 1px solid var(--line); border-radius: 3px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 16px;
 }
-.tdee-field input[type="number"]:focus { outline: none; border-color: var(--accent); }
+.tdee-field input[type="number"]:focus,
+.tdee-field input[type="text"][inputmode="decimal"]:focus { outline: none; border-color: var(--accent); }
 .tdee-chip-row {
   display: flex; flex-wrap: wrap; gap: 6px;
 }
@@ -4123,7 +4159,7 @@ body.ar .footer li::before {
         <span class="delta" id="weightDelta"></span>
       </div>
       <div class="weight-add">
-        <input type="number" id="weightKg" step="0.1" min="20" max="400"
+        <input type="text" inputmode="decimal" id="weightKg" step="0.1" min="20" max="400"
                placeholder="kg" data-placeholder-en="Today's weight in kg" data-placeholder-ar="وزن اليوم بالكجم" />
         <button id="addWeightBtn" data-en="Log" data-ar="سجّل">Log</button>
       </div>
@@ -4139,7 +4175,7 @@ body.ar .footer li::before {
       </div>
       <div class="activity-add">
         <input type="text" id="workoutName" placeholder="Activity name" data-placeholder-en="Activity name" data-placeholder-ar="اسم النشاط" list="activityNameList" autocomplete="off" />
-        <input type="number" id="workoutKcal" placeholder="kcal" data-placeholder-en="kcal" data-placeholder-ar="سعر" />
+        <input type="text" inputmode="decimal" id="workoutKcal" placeholder="kcal" data-placeholder-en="kcal" data-placeholder-ar="سعر" />
         <button id="addWorkoutBtn" data-en="Add" data-ar="أضف">Add</button>
       </div>
       <datalist id="activityNameList"><!-- populated from activityBank --></datalist>
@@ -4204,14 +4240,14 @@ body.ar .footer li::before {
       <div class="tab-content active" id="tab-grams">
         <div class="input-row">
           <label data-en="Grams:" data-ar="الجرامات:">Grams:</label>
-          <input type="number" id="inputGrams" min="0" step="1" value="100">
+          <input type="text" inputmode="decimal" id="inputGrams" min="0" step="1" value="100">
         </div>
       </div>
 
       <div class="tab-content" id="tab-multiples">
         <div class="input-row">
           <label data-en="Multiplier:" data-ar="المضاعف:">Multiplier:</label>
-          <input type="number" id="inputMultiples" min="0" step="0.5" value="1">
+          <input type="text" inputmode="decimal" id="inputMultiples" min="0" step="0.5" value="1">
           <span style="font-size:13px; color:var(--ink-soft); flex-shrink:0; white-space:nowrap;">× 100 g</span>
         </div>
       </div>
@@ -4219,7 +4255,7 @@ body.ar .footer li::before {
       <div class="tab-content" id="tab-easy">
         <div class="input-row">
           <label data-en="Quantity:" data-ar="الكمية:">Quantity:</label>
-          <input type="number" id="inputEasyQty" min="0" step="0.5" value="1">
+          <input type="text" inputmode="decimal" id="inputEasyQty" min="0" step="0.5" value="1">
         </div>
         <div class="input-row stacked">
           <label data-en="Measure:" data-ar="المعيار:">Measure:</label>
@@ -4258,10 +4294,10 @@ body.ar .footer li::before {
   <div class="goals-modal">
     <h3 data-en="Edit Daily Targets" data-ar="تعديل الأهداف اليومية">Edit Daily Targets</h3>
     <div class="goals-form">
-      <div class="input-row"><label data-en="Calories:" data-ar="السعرات:">Calories:</label><input type="number" id="editKcal"></div>
-      <div class="input-row"><label data-en="Protein (g):" data-ar="بروتين (جم):">Protein (g):</label><input type="number" id="editProtein"></div>
-      <div class="input-row"><label data-en="Fat (g):" data-ar="دهون (جم):">Fat (g):</label><input type="number" id="editFat"></div>
-      <div class="input-row"><label data-en="Carbs (g):" data-ar="كارب (جم):">Carbs (g):</label><input type="number" id="editCarbs"></div>
+      <div class="input-row"><label data-en="Calories:" data-ar="السعرات:">Calories:</label><input type="text" inputmode="decimal" id="editKcal"></div>
+      <div class="input-row"><label data-en="Protein (g):" data-ar="بروتين (جم):">Protein (g):</label><input type="text" inputmode="decimal" id="editProtein"></div>
+      <div class="input-row"><label data-en="Fat (g):" data-ar="دهون (جم):">Fat (g):</label><input type="text" inputmode="decimal" id="editFat"></div>
+      <div class="input-row"><label data-en="Carbs (g):" data-ar="كارب (جم):">Carbs (g):</label><input type="text" inputmode="decimal" id="editCarbs"></div>
       <div class="popup-actions">
         <button class="btn-cancel" id="cancelGoalsBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
         <button class="btn-add" id="saveGoalsBtn" data-en="Save" data-ar="حفظ">Save</button>
@@ -4286,23 +4322,23 @@ body.ar .footer li::before {
 
       <div class="tdee-field">
         <span class="tdee-label" data-en="Age (years)" data-ar="العمر (سنوات)">Age (years)</span>
-        <input type="number" id="tdeeAge" min="10" max="100" placeholder="30" />
+        <input type="text" inputmode="decimal" id="tdeeAge" min="10" max="100" placeholder="30" />
       </div>
 
       <div class="tdee-field">
         <span class="tdee-label" data-en="Height (cm)" data-ar="الطول (سم)">Height (cm)</span>
-        <input type="number" id="tdeeHeight" min="100" max="250" placeholder="175" />
+        <input type="text" inputmode="decimal" id="tdeeHeight" min="100" max="250" placeholder="175" />
       </div>
 
       <div class="tdee-field">
         <span class="tdee-label" data-en="Weight (kg)" data-ar="الوزن (كجم)">Weight (kg)</span>
-        <input type="number" id="tdeeWeight" min="20" max="400" step="0.1" placeholder="70" />
+        <input type="text" inputmode="decimal" id="tdeeWeight" min="20" max="400" step="0.1" placeholder="70" />
         <div class="tdee-help" data-en="Auto-filled from latest weight log entry if available." data-ar="يُملأ تلقائياً من آخر إدخال في سجل الوزن إن وُجد.">Auto-filled from latest weight log entry if available.</div>
       </div>
 
       <div class="tdee-field">
         <span class="tdee-label" data-en="Body fat % (optional — enables Katch-McArdle)" data-ar="نسبة الدهون % (اختياري — تفعّل صيغة كاتش-مكاردل)">Body fat % (optional)</span>
-        <input type="number" id="tdeeBodyFat" min="3" max="60" step="0.1" placeholder="—" />
+        <input type="text" inputmode="decimal" id="tdeeBodyFat" min="3" max="60" step="0.1" placeholder="—" />
       </div>
 
       <!-- Advanced / InBody-style optional inputs. Collapsed by default; tap
@@ -4312,36 +4348,36 @@ body.ar .footer li::before {
 
         <div class="tdee-field">
           <span class="tdee-label" data-en="Lean body mass (kg)" data-ar="الكتلة الخالية من الدهون (كجم)">Lean body mass (kg)</span>
-          <input type="number" id="tdeeLbm" min="20" max="200" step="0.1" placeholder="—" />
+          <input type="text" inputmode="decimal" id="tdeeLbm" min="20" max="200" step="0.1" placeholder="—" />
           <div class="tdee-help" data-en="If supplied, used directly in Katch-McArdle (more accurate than BF%-derived LBM)."
                data-ar="إذا أُدخلت، تُستخدم مباشرةً في كاتش-مكاردل (أدق من اشتقاقها من BF%).">If supplied, used directly in Katch-McArdle.</div>
         </div>
 
         <div class="tdee-field">
           <span class="tdee-label" data-en="Measured BMR (kcal — overrides formula)" data-ar="معدل الأيض المقاس (سعر — يتجاوز الصيغة)">Measured BMR (kcal)</span>
-          <input type="number" id="tdeeMeasuredBmr" min="600" max="3500" step="1" placeholder="—" />
+          <input type="text" inputmode="decimal" id="tdeeMeasuredBmr" min="600" max="3500" step="1" placeholder="—" />
           <div class="tdee-help" data-en="From an InBody / DEXA / metabolic cart reading. Overrides Mifflin and Katch."
                data-ar="من جهاز InBody أو DEXA أو قياس استقلابي. يتجاوز Mifflin و Katch.">From InBody / DEXA / metabolic cart.</div>
         </div>
 
         <div class="tdee-field">
           <span class="tdee-label" data-en="Skeletal muscle mass (kg — record only)" data-ar="الكتلة العضلية الهيكلية (كجم — للتسجيل فقط)">Skeletal muscle mass (kg)</span>
-          <input type="number" id="tdeeSmm" min="10" max="100" step="0.1" placeholder="—" />
+          <input type="text" inputmode="decimal" id="tdeeSmm" min="10" max="100" step="0.1" placeholder="—" />
         </div>
 
         <div class="tdee-field">
           <span class="tdee-label" data-en="Visceral fat level (record only)" data-ar="مستوى دهون الأحشاء (للتسجيل فقط)">Visceral fat level</span>
-          <input type="number" id="tdeeVisceral" min="1" max="30" step="1" placeholder="—" />
+          <input type="text" inputmode="decimal" id="tdeeVisceral" min="1" max="30" step="1" placeholder="—" />
         </div>
 
         <div class="tdee-field">
           <span class="tdee-label" data-en="Body water % (record only)" data-ar="نسبة الماء % (للتسجيل فقط)">Body water %</span>
-          <input type="number" id="tdeeBodyWater" min="20" max="80" step="0.1" placeholder="—" />
+          <input type="text" inputmode="decimal" id="tdeeBodyWater" min="20" max="80" step="0.1" placeholder="—" />
         </div>
 
         <div class="tdee-field">
           <span class="tdee-label" data-en="Waist (cm — record only)" data-ar="محيط الخصر (سم — للتسجيل فقط)">Waist (cm)</span>
-          <input type="number" id="tdeeWaist" min="40" max="200" step="0.1" placeholder="—" />
+          <input type="text" inputmode="decimal" id="tdeeWaist" min="40" max="200" step="0.1" placeholder="—" />
         </div>
       </details>
 
@@ -4463,11 +4499,11 @@ body.ar .footer li::before {
           <div class="grid2">
             <div class="field">
               <label data-en="Portion weight (g)" data-ar="وزن الحصة (جم)">Portion weight (g)</label>
-              <input type="number" id="afRecipePortionG" min="0" step="1" placeholder="auto-sum of items">
+              <input type="text" inputmode="decimal" id="afRecipePortionG" min="0" step="1" placeholder="auto-sum of items">
             </div>
             <div class="field">
               <label data-en="Easy-measure weight (g)" data-ar="وزن المعيار السهل (جم)">Easy-measure weight (g)</label>
-              <input type="number" id="afRecipeEasyG" min="0" step="0.1" placeholder="optional">
+              <input type="text" inputmode="decimal" id="afRecipeEasyG" min="0" step="0.1" placeholder="optional">
             </div>
           </div>
         </div>
@@ -4496,26 +4532,26 @@ body.ar .footer li::before {
       <div class="grid2">
         <div class="field">
           <label data-en="Calories (kcal)" data-ar="السعرات (kcal)">Calories (kcal)<span class="req">*</span></label>
-          <input type="number" id="afKcal" min="0" step="1" placeholder="auto from macros if blank">
+          <input type="text" inputmode="decimal" id="afKcal" min="0" step="1" placeholder="auto from macros if blank">
         </div>
         <div class="field">
           <label data-en="Base amount (g)" data-ar="الكمية الأساسية (جم)">Base amount (g)</label>
-          <input type="number" id="afBase" min="1" step="1" value="100">
+          <input type="text" inputmode="decimal" id="afBase" min="1" step="1" value="100">
         </div>
       </div>
 
       <div class="grid3">
         <div class="field">
           <label data-en="Protein (g)" data-ar="بروتين (جم)">Protein (g)</label>
-          <input type="number" id="afP" min="0" step="0.1" placeholder="0">
+          <input type="text" inputmode="decimal" id="afP" min="0" step="0.1" placeholder="0">
         </div>
         <div class="field">
           <label data-en="Fat (g)" data-ar="دهون (جم)">Fat (g)</label>
-          <input type="number" id="afF" min="0" step="0.1" placeholder="0">
+          <input type="text" inputmode="decimal" id="afF" min="0" step="0.1" placeholder="0">
         </div>
         <div class="field">
           <label data-en="Carbs (g)" data-ar="كارب (جم)">Carbs (g)</label>
-          <input type="number" id="afC" min="0" step="0.1" placeholder="0">
+          <input type="text" inputmode="decimal" id="afC" min="0" step="0.1" placeholder="0">
         </div>
       </div>
       <div class="hint" id="afKcalHint" data-en="Tip: leave Calories blank and it’s computed as P×4 + F×9 + C×4."
@@ -4546,7 +4582,7 @@ body.ar .footer li::before {
       </div>
       <div class="field">
         <label data-en="Easy measure size (g per 1 unit)" data-ar="وزن المعيار السهل (جم للوحدة)">Easy measure size (g per 1 unit)</label>
-        <input type="number" id="afEasyG" min="0" step="0.1" placeholder="e.g. 15" value="15">
+        <input type="text" inputmode="decimal" id="afEasyG" min="0" step="0.1" placeholder="e.g. 15" value="15">
         <div class="hint" data-en="Grams of ONE easy unit (e.g. 1 slice = 15 g). Used by the Easy tab in the calculator. Leave blank if you don't want an easy measure."
              data-ar="وزن وحدة واحدة من المعيار السهل (مثلاً: شريحة = 15 جم). يُستخدَم في تبويب المعيار السهل في الحاسبة. اتركه فارغاً إذا لم يوجد معيار سهل.">Grams of ONE easy unit (e.g. 1 slice = 15 g).</div>
       </div>
@@ -4731,8 +4767,8 @@ body.ar .footer li::before {
       <!-- WATER TAB -->
       <div class="settings-pane" data-pane="water" role="tabpanel">
         <div class="settings-pane-label" data-en="Water tracker config" data-ar="إعدادات متتبع المياه">Water tracker config</div>
-        <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="number" id="waterMlPerGlass" min="100" max="500" value="250"></div>
-        <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="number" id="waterGoalMl" min="500" max="5000" value="2000"></div>
+        <div class="input-row"><label data-en="ml per glass:" data-ar="مل للكوب:">ml per glass:</label><input type="text" inputmode="decimal" id="waterMlPerGlass" min="100" max="500" value="250"></div>
+        <div class="input-row"><label data-en="Daily goal (ml):" data-ar="الهدف اليومي (مل):">Daily goal (ml):</label><input type="text" inputmode="decimal" id="waterGoalMl" min="500" max="5000" value="2000"></div>
         <button class="dt-btn primary" id="saveWaterSettingsBtn" data-en="Save" data-ar="حفظ">Save</button>
       </div>
 
@@ -4845,7 +4881,7 @@ body.ar .footer li::before {
         </div>
         <div class="wh-target-row">
           <label class="wh-target-label" data-en="Target weight (kg, optional):" data-ar="الوزن المستهدف (كجم، اختياري):">Target weight (kg, optional):</label>
-          <input type="number" id="whTargetInput" min="20" max="400" step="0.1" />
+          <input type="text" inputmode="decimal" id="whTargetInput" min="20" max="400" step="0.1" />
           <button id="whTargetSaveBtn" data-en="Save" data-ar="حفظ">Save</button>
         </div>
         <div class="wh-target-distance" id="whTargetDistance"></div>
@@ -5879,6 +5915,22 @@ function getDB(id) { return DB.find(f => f.id === id); }
 
 // Format a number to 1 decimal place. Used throughout for macro display.
 function fmt(n) { return Math.round(n * 10) / 10; }
+
+// Convert Arabic-Indic (٠-٩) and Persian (۰-۹) digits to ASCII (0-9).
+// Also normalize Arabic decimal separator (٫) and thousands (٬) to '.' and ''.
+// Lets Arabic-keyboard users type macros without switching keyboards.
+function toAsciiDigits(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/[٠-٩]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48))
+    .replace(/[۰-۹]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x06F0 + 48))
+    .replace(/٫/g, '.')
+    .replace(/٬/g, '');
+}
+// parseFloat that first converts Arabic/Persian digits to ASCII.
+function parseNum(v) { return parseFloat(toAsciiDigits(v)); }
+// parseInt that first converts Arabic/Persian digits to ASCII.
+function parseIntNum(v, radix) { return parseInt(toAsciiDigits(v), radix || 10); }
 
 // Escape user/imported strings before they go into innerHTML. XSS guard:
 // every DB/import/API value passed to innerHTML must go through this first.
@@ -8201,7 +8253,7 @@ function runSearchFromInput() {
     firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
-searchInput.addEventListener('input', debounce(runSearchFromInput, 250));
+searchInput.addEventListener('input', debounce(runSearchFromInput, 400));
 // Scroll the first visible section into view after a filter change. Mirrors
 // runSearchFromInput's behavior so all filter mutations (search, category
 // chips, diet chips) share the same "show me the first hit" feedback.
@@ -9058,7 +9110,7 @@ function recipeRenderPicked() {
     }).join('');
     return `<div class="af-picked-row" data-idx="${idx}">
       <div class="af-picked-name" title="${name}">${name}</div>
-      <input type="number" class="af-picked-qty" min="0" step="0.5" value="${pk.qty}">
+      <input type="text" inputmode="decimal" class="af-picked-qty" min="0" step="0.5" value="${pk.qty}">
       <select class="af-picked-unit">${optHtml}</select>
       <button type="button" class="af-remove" title="${lang === 'ar' ? 'حذف' : 'Remove'}">×</button>
     </div>`;
@@ -10120,6 +10172,37 @@ renderWeightSection();
 requestAnimationFrame(() => requestAnimationFrame(() => {
   document.documentElement.classList.remove('preload');
 }));
+
+// ============ NUMERIC INPUT BEHAVIOR ============
+// 1) On focus, select existing value so iOS Safari doesn't drop the caret
+//    before the first digit (default behavior on text/decimal inputs).
+// 2) On input/paste, transliterate Arabic-Indic and Persian digits to ASCII
+//    in place so downstream parseFloat() / parseNum() get clean values.
+(function initNumericInputBehavior() {
+  function isNumericInput(el) {
+    if (!el || el.tagName !== 'INPUT') return false;
+    const t = (el.getAttribute('type') || '').toLowerCase();
+    const im = (el.getAttribute('inputmode') || '').toLowerCase();
+    return t === 'number' || im === 'decimal' || im === 'numeric';
+  }
+  document.addEventListener('focusin', e => {
+    if (!isNumericInput(e.target)) return;
+    // Defer so iOS finishes its focus-driven caret placement first.
+    setTimeout(() => { try { e.target.select(); } catch (_) {} }, 0);
+  });
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (!isNumericInput(el)) return;
+    const v = el.value;
+    if (!v) return;
+    const ascii = toAsciiDigits(v);
+    if (ascii !== v) {
+      const start = el.selectionStart, end = el.selectionEnd;
+      el.value = ascii;
+      try { el.setSelectionRange(start, end); } catch (_) {}
+    }
+  });
+})();
 
 // ============ DOCK ABOVE KEYBOARD ============
 // On Android, `position: fixed; bottom: 0` anchors to the layout viewport, so

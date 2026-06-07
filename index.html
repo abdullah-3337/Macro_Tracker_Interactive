@@ -2700,7 +2700,7 @@ body.ar .wh-target-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font
   padding: 6px 10px;
   background: var(--paper); color: var(--ink);
   border: 1px solid var(--line); border-radius: 3px;
-  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  font-family: 'JetBrains Mono', monospace; font-size: 16px;
 }
 .wh-target-row button {
   background: var(--accent); color: var(--on-accent);
@@ -2888,7 +2888,7 @@ body.ar .db-empty-sub { font-family: 'IBM Plex Sans Arabic', sans-serif; font-si
   border: 1px solid var(--line); border-radius: 3px;
   background: var(--bg); color: var(--ink);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 16px;
 }
 .apikey-input.saved { border-color: var(--accent); background: var(--accent-soft); }
 .apikey-status {
@@ -3261,12 +3261,12 @@ body.ar .af-recipe-picked:empty::after { font-style: normal; }
   width: 100%; padding: 6px 6px;
   border: 1px solid var(--line); border-radius: 3px;
   background: var(--paper-soft); color: var(--ink);
-  font-family: 'JetBrains Mono', monospace; font-size: 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 16px;
   text-align: center;
 }
 .af-picked-row select {
   font-family: inherit;
-  font-size: 11px;
+  font-size: 16px;
   text-align: left;
   padding: 6px 4px;
 }
@@ -3638,7 +3638,7 @@ body.ar .off-search-modal h3 { font-style: normal; }
   flex: 1; padding: 10px 12px;
   background: var(--paper); color: var(--ink);
   border: 1px solid var(--line); border-radius: 3px;
-  font-family: inherit; font-size: 14px;
+  font-family: inherit; font-size: 16px;
   min-width: 0;
 }
 .off-search-row input:focus { outline: none; border-color: var(--accent); }
@@ -10240,14 +10240,12 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 
   function sync() {
     if (!keyboardActive) { reset(); return; }
+    // While an input is focused, always translate by the visualViewport's
+    // occlusion. No threshold — iOS Safari changes vv.height during page
+    // scroll (URL-bar collapse, rubber-banding) and previous threshold
+    // logic was dropping the dock under the keyboard mid-scroll.
     const hidden = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-    // ~120 px guards against URL-bar collapse noise while still catching the
-    // smallest soft keyboards (e.g., iPhone SE landscape ~ 180 px).
-    if (hidden > 120) {
-      dock.style.transform = `translateY(-${hidden}px)`;
-    } else {
-      reset();
-    }
+    dock.style.transform = hidden > 0 ? `translateY(-${hidden}px)` : '';
   }
 
   document.addEventListener('focusin', e => {

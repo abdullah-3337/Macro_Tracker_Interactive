@@ -668,8 +668,9 @@ body.ar .scheme-card { text-align: right; }
   display: flex; flex-direction: column;
   min-height: 0;
 }
-.trends-modal h3 { flex-shrink: 0; }
-.trends-modal h3 {
+/* h3 styling scoped to direct child only; .analytics-head owns its own
+   gradient + close button so the wrapped h3 must not re-paint the bg. */
+.trends-modal > h3 {
   padding: 18px 24px;
   background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
   color: var(--on-grad); font-size: 18px;
@@ -677,7 +678,7 @@ body.ar .scheme-card { text-align: right; }
   border-bottom: 3px solid var(--gold);
   flex-shrink: 0;
 }
-body.ar .trends-modal h3 { font-style: normal; }
+body.ar .trends-modal > h3 { font-style: normal; }
 .trends-body {
   padding: 18px 24px; overflow-y: auto; flex: 1;
   display: flex; flex-direction: column; gap: 16px;
@@ -2590,6 +2591,21 @@ body.ar .activity-section-head h4 {
 }
 .activity-bank-row .ab-forget:hover { filter: brightness(1.05); }
 .activity-bank-empty { font-size: 13px; color: var(--ink-soft); padding: 10px 0; }
+.activity-chart-filter {
+  background: var(--paper-soft); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 4px;
+  padding: 4px 8px; font-family: inherit; font-size: 12px;
+  max-width: 60%;
+}
+body.ar .activity-chart-filter { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 13px; }
+.activity-chart-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; color: var(--ink-soft); font-size: 12px;
+  font-style: italic;
+}
+body.ar .activity-chart-empty { font-style: normal; font-size: 13px; }
+.wh-chart .session-dot { fill: var(--accent); }
+.wh-chart .session-line { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-opacity: 0.55; }
 
 
 /* Slim side panel header for weight: title on the left, history button right. */
@@ -5080,6 +5096,13 @@ body.ar .footer li::before {
           <div class="wh-stat"><span class="wh-stat-label" data-en="Total sessions" data-ar="إجمالي الجلسات">Total sessions</span><span class="wh-stat-val" id="actStatSessions">0</span></div>
           <div class="wh-stat"><span class="wh-stat-label" data-en="Total kcal" data-ar="إجمالي السعرات">Total kcal</span><span class="wh-stat-val" id="actStatKcal">0</span></div>
         </div>
+        <div class="wh-list-head">
+          <h4 data-en="Training graph" data-ar="مخطط التدريب">Training graph</h4>
+          <select id="activityChartFilter" class="activity-chart-filter" aria-label="Filter">
+            <option value="" data-en="All activities" data-ar="كل الأنشطة">All activities</option>
+          </select>
+        </div>
+        <div class="wh-chart" id="activityChart"></div>
         <div class="wh-list-head">
           <h4 data-en="Top activities" data-ar="الأنشطة الأكثر استخداماً">Top activities</h4>
           <span class="wh-count" data-en="by count" data-ar="حسب التكرار">by count</span>
@@ -8226,7 +8249,10 @@ function renderWeightLineChart(hostEl, entries, opts) {
     return;
   }
   const avgs = weightMovingAvg(entries, 7);
-  const w = 600, h = 200, padL = 36, padR = 12, padT = 12, padB = 22;
+  // Size the viewBox to the host element so glyphs render at native scale.
+  // Falls back to 600 when the host is hidden (display:none) at render time.
+  const hostW = Math.max(280, Math.round(hostEl.clientWidth || 600));
+  const w = hostW, h = 200, padL = 36, padR = 12, padT = 12, padB = 22;
   const innerW = w - padL - padR, innerH = h - padT - padB;
   const all = entries.map(e => e.kg).concat(avgs.map(a => a.avg));
   if (opts.target) all.push(opts.target);
@@ -8251,7 +8277,9 @@ function renderWeightLineChart(hostEl, entries, opts) {
     const ty = y(opts.target).toFixed(1);
     targetLine = `<line class="target-line" x1="${padL}" y1="${ty}" x2="${w - padR}" y2="${ty}"/>`;
   }
-  hostEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">` +
+  // ViewBox matches host width; preserveAspectRatio defaults to meet, but
+  // since w === hostW, scaling is 1:1 and glyphs render at intended size.
+  hostEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">` +
     grids.join('') + targetLine +
     `<path class="avg-line" d="${path}"/>` + dots + `</svg>`;
 }
@@ -8869,7 +8897,88 @@ function renderActivityStatsModal() {
       `<button class="ab-forget" data-act-forget="${escapeHtml(key)}" aria-label="Forget">🗑</button>` +
     `</div>`;
   }).join('');
+
+  // Filter dropdown + chart. The chart pulls from `workouts[]` (raw session
+  // history), filtered by the picked activity name. Empty when there are no
+  // sessions (or none for the selected activity).
+  const filter = document.getElementById('activityChartFilter');
+  if (filter) {
+    const allLabel = lang === 'ar' ? 'كل الأنشطة' : 'All activities';
+    const prev = filter.value || '';
+    filter.innerHTML = `<option value="">${escapeHtml(allLabel)}</option>` +
+      sorted.map(([key, e]) =>
+        `<option value="${escapeHtml(key)}">${escapeHtml(e.displayName)}</option>`
+      ).join('');
+    // Restore prior selection if still present, else default to "all".
+    if (prev && sorted.some(([k]) => k === prev)) filter.value = prev;
+    else filter.value = '';
+  }
+  renderActivityChart();
 }
+
+// Plot kcal-per-session over time for the picked activity (or all sessions
+// when nothing is filtered). Sessions come from `workouts[]`; the bank list
+// is the aggregate, so we read raw history here to get one point per session.
+function renderActivityChart() {
+  const hostEl = document.getElementById('activityChart');
+  if (!hostEl) return;
+  const filter = document.getElementById('activityChartFilter');
+  const sel = filter ? (filter.value || '') : '';
+  const filtered = workouts.filter(w => {
+    if (!sel) return true;
+    return (w.name || '').trim().toLowerCase() === sel;
+  });
+  // Sort by timestamp ascending so the line connects oldest → newest.
+  filtered.sort((a, b) => String(a.timestamp).localeCompare(String(b.timestamp)));
+  if (!filtered.length) {
+    hostEl.innerHTML = `<div class="activity-chart-empty">${
+      lang === 'ar' ? 'لا توجد جلسات لعرضها بعد.' : 'No sessions to plot yet.'
+    }</div>`;
+    return;
+  }
+  const hostW = Math.max(280, Math.round(hostEl.clientWidth || 600));
+  const w = hostW, h = 200, padL = 36, padR = 12, padT = 12, padB = 22;
+  const innerW = w - padL - padR, innerH = h - padT - padB;
+  const kcals = filtered.map(s => +s.kcalBurned || 0);
+  const minK = Math.min.apply(null, kcals);
+  const maxK = Math.max.apply(null, kcals);
+  const lo = Math.max(0, minK - Math.max(10, (maxK - minK) * 0.1));
+  const hi = maxK + Math.max(10, (maxK - minK) * 0.1);
+  const span = Math.max(1, hi - lo);
+  const ts = filtered.map(s => new Date(s.timestamp).getTime());
+  const tMin = ts[0], tMax = ts[ts.length - 1];
+  const tSpan = Math.max(1, tMax - tMin);
+  const xAt = i => padL + (filtered.length === 1
+    ? innerW / 2
+    : ((ts[i] - tMin) / tSpan) * innerW);
+  const yAt = v => padT + innerH - ((v - lo) / span) * innerH;
+  const grids = [];
+  for (let g = 0; g <= 3; g++) {
+    const v = lo + (span * g / 3);
+    const yy = yAt(v).toFixed(1);
+    grids.push(`<line class="grid-line" x1="${padL}" y1="${yy}" x2="${w - padR}" y2="${yy}"/>`);
+    grids.push(`<text class="grid-text" x="4" y="${(parseFloat(yy) + 3).toFixed(1)}">${Math.round(v)}</text>`);
+  }
+  const path = filtered.map((s, i) =>
+    (i === 0 ? 'M' : 'L') + xAt(i).toFixed(1) + ' ' + yAt(kcals[i]).toFixed(1)
+  ).join(' ');
+  const dots = filtered.map((s, i) =>
+    `<circle class="session-dot" cx="${xAt(i).toFixed(1)}" cy="${yAt(kcals[i]).toFixed(1)}" r="3"><title>${escapeHtml(s.name || '')} · ${Math.round(kcals[i])} kcal · ${escapeHtml(String(s.timestamp).slice(0, 10))}</title></circle>`
+  ).join('');
+  hostEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">` +
+    grids.join('') +
+    `<path class="session-line" d="${path}"/>` +
+    dots +
+    `</svg>`;
+}
+
+// Wire filter dropdown — re-renders the chart on change. Uses event delegation
+// so dynamic re-population of the <select> options doesn't drop the listener.
+(function initActivityChartFilter() {
+  const filter = document.getElementById('activityChartFilter');
+  if (!filter) return;
+  filter.addEventListener('change', renderActivityChart);
+})();
 
 document.getElementById('addWorkoutBtn').addEventListener('click', () => {
   const nameInput = document.getElementById('workoutName');
@@ -10992,7 +11101,10 @@ function openAnalyticsModal(tabId) {
   document.getElementById('trendsOverlay').classList.add('active');
 }
 
-// Activate one tab + pane. Defaults to 'trends'.
+// Activate one tab + pane. Defaults to 'trends'. Re-renders the pane's
+// SVG chart so it can read the now-visible host's real clientWidth — panes
+// rendered while display:none have width 0, which produces a 600-px viewBox
+// stretched into a narrow box and squishes the y-axis labels.
 function selectAnalyticsTab(tabId) {
   const id = tabId || 'trends';
   document.querySelectorAll('.analytics-tab').forEach(b => {
@@ -11001,6 +11113,11 @@ function selectAnalyticsTab(tabId) {
   document.querySelectorAll('.analytics-pane').forEach(p => {
     p.classList.toggle('active', p.dataset.pane === id);
   });
+  if (id === 'weight' && typeof renderWeightHistoryModal === 'function') {
+    renderWeightHistoryModal();
+  } else if (id === 'activity' && typeof renderActivityStatsModal === 'function') {
+    renderActivityStatsModal();
+  }
 }
 
 // Backwards-compatible alias — older code paths may still call openTrendsModal().

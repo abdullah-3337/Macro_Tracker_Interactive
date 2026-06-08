@@ -11,7 +11,7 @@
 //   - Other cross-origin (Gemini, CDN libs, OpenFoodFacts): pass through.
 //
 // Bump CACHE_VERSION whenever shell files change to invalidate old caches.
-const CACHE_VERSION = 'mt-v8';
+const CACHE_VERSION = 'mt-v9';
 const FONT_CACHE    = 'mt-fonts-v1';
 const SHELL = [
   './',

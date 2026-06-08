@@ -766,6 +766,49 @@ body.ar .trend-chart-title {
   flex-shrink: 0;
 }
 
+/* Shared chart legend + tap-to-value tooltip used by both the macro
+   trend charts and the weight history chart. */
+.chart-legend {
+  display: flex; flex-wrap: wrap; gap: 12px 16px;
+  padding: 4px 0 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink-soft);
+}
+body.ar .chart-legend {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 12px;
+}
+.chart-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.chart-legend-swatch {
+  width: 16px; height: 0;
+  border-top: 2px solid currentColor;
+  display: inline-block; flex-shrink: 0;
+}
+.chart-legend-swatch.dashed { border-top-style: dashed; }
+
+.chart-canvas { position: relative; }
+.chart-canvas .tappable-dot { cursor: pointer; }
+/* Slightly larger hit area on touch: the visual dot is r=3-4 but the
+   easier way to widen the tap target is to lean on CSS hover/focus
+   on touch and let the SVG ignore pointer events outside the circle. */
+.chart-tooltip {
+  position: absolute;
+  background: var(--ink); color: var(--bg);
+  padding: 4px 8px; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  white-space: nowrap;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 2px 8px var(--shadow-modal-soft);
+}
+body.ar .chart-tooltip {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 12px;
+}
+.chart-tooltip[hidden] { display: none; }
+
 /* ============ ANALYTICS HUB ============ */
 /* Three-tab modal that hosts macro trends, weight history, and activity
    stats under one entry point so the main page exposes a single analytics
@@ -6322,9 +6365,26 @@ function _mtToastHostEl() {
 
 function _mtCloseAlert(result) {
   if (!_mtAlertActive) return;
+  // Pop history first so Android back doesn't leave a dangling state.
+  // mtBackPop runs _doMtCloseAlert via popstate; mark a flag so that
+  // path resolves the current promise too.
+  if (typeof mtBackPop === 'function' && mtBackPop('mtAlert')) {
+    _mtPendingAlertResult = result;
+    return;
+  }
+  _doMtCloseAlert(result);
+}
+let _mtPendingAlertResult = undefined;
+function _doMtCloseAlert(result) {
+  if (!_mtAlertActive) return;
   const host = _mtAlertHost;
   const active = _mtAlertActive;
   _mtAlertActive = null;
+  // If popstate triggered this, use the pending result stashed by the caller.
+  if (result === undefined && _mtPendingAlertResult !== undefined) {
+    result = _mtPendingAlertResult;
+  }
+  _mtPendingAlertResult = undefined;
   host.classList.add('closing');
   setTimeout(() => {
     host.classList.remove('active', 'closing');
@@ -6363,6 +6423,7 @@ function _mtBuildAlert({ kind, title, message, html, actions, input }) {
   // Force reflow then activate so the opacity transition runs.
   void host.offsetWidth;
   host.classList.add('active');
+  if (typeof mtBackPush === 'function') mtBackPush('mtAlert', () => _doMtCloseAlert(undefined));
   return host;
 }
 
@@ -6486,6 +6547,41 @@ function showToast(message, opts) {
   el.addEventListener('click', () => { clearTimeout(timer); remove(); });
   return el;
 }
+
+// ============ BACK-BUTTON MODAL STACK ============
+// Push a history entry whenever a modal opens so the Android (and browser)
+// back button closes the topmost modal instead of navigating away from
+// the PWA. Each opener registers a dispose fn; the popstate handler runs
+// it when the user hits back. Closer functions call mtBackPop() which
+// rewinds history and suppresses re-entry into the popstate handler.
+const _mtBackStack = []; // [{ id, dispose }]
+let _mtBackInternal = 0; // history.go counter we must swallow
+
+function mtBackPush(id, dispose) {
+  _mtBackStack.push({ id, dispose });
+  try { history.pushState({ mtBack: id, d: _mtBackStack.length }, ''); } catch (e) {}
+}
+
+// Called by X / cancel / outside-tap / programmatic close. Returns true
+// if the id was tracked and history was rewound; the caller can skip its
+// own DOM cleanup because the registered dispose fn will run via popstate.
+function mtBackPop(id) {
+  const idx = _mtBackStack.map(m => m.id).lastIndexOf(id);
+  if (idx < 0) return false;
+  const removed = _mtBackStack.splice(idx);
+  removed.slice().reverse().forEach(m => { try { m.dispose(); } catch (e) {} });
+  _mtBackInternal += removed.length;
+  try { history.go(-removed.length); } catch (e) { _mtBackInternal -= removed.length; }
+  return true;
+}
+
+window.addEventListener('popstate', () => {
+  if (_mtBackInternal > 0) { _mtBackInternal--; return; }
+  // System / hardware back: dispose the topmost tracked modal.
+  if (!_mtBackStack.length) return;
+  const top = _mtBackStack.pop();
+  try { top.dispose(); } catch (e) { console.warn('modal back-dispose failed', e); }
+});
 
 // ============ LAZY-LOAD CDN SCRIPTS ============
 // On-demand loading for Excel/PDF export libs (heavy, rarely used).
@@ -7475,10 +7571,15 @@ function openPopup(id, editIdx) {
 
   updatePopupPreview();
   document.getElementById('popupOverlay').classList.add('active');
+  mtBackPush('popupOverlay', _doClosePopup);
 }
 
 // Close the popup, reset currentFood/editingIndex/popupOverride, and hide the overlay.
 function closePopup() {
+  if (mtBackPop('popupOverlay')) return;
+  _doClosePopup();
+}
+function _doClosePopup() {
   document.getElementById('popupOverlay').classList.remove('active');
   currentFood = null;
   editingIndex = -1;
@@ -8431,7 +8532,13 @@ function renderWeightLineChart(hostEl, entries, opts) {
     grids.push(`<line class="grid-line" x1="${padL}" y1="${yy}" x2="${w - padR}" y2="${yy}"/>`);
     grids.push(`<text class="grid-text" x="4" y="${(parseFloat(yy) + 3).toFixed(1)}">${v.toFixed(1)}</text>`);
   }
-  const dots = entries.map((e, i) => `<circle class="raw-dot" cx="${x(i).toFixed(1)}" cy="${y(e.kg).toFixed(1)}" r="2.5"/>`).join('');
+  const unit = lang === 'ar' ? 'كجم' : 'kg';
+  const dots = entries.map((e, i) => {
+    const dateLabel = (typeof isoToDisplay === 'function')
+      ? isoToDisplay(e.date)
+      : e.date;
+    return `<circle class="raw-dot tappable-dot" cx="${x(i).toFixed(1)}" cy="${y(e.kg).toFixed(1)}" r="3.5" data-val="${escapeHtml(e.kg.toFixed(1) + ' ' + unit)}" data-label="${escapeHtml(dateLabel)}"/>`;
+  }).join('');
   // Primary line connects every raw weight so the chart literally joins
   // the dots the user sees. The 7-day moving avg used to drive this path
   // but drifted away from individual readings, leaving floating dots.
@@ -8442,12 +8549,57 @@ function renderWeightLineChart(hostEl, entries, opts) {
     const ty = y(opts.target).toFixed(1);
     targetLine = `<line class="target-line" x1="${padL}" y1="${ty}" x2="${w - padR}" y2="${ty}"/>`;
   }
+  // Build legend HTML — three entries (raw line, trend, target if set).
+  const L = {
+    raw: lang === 'ar' ? 'الوزن اليومي' : 'Daily weight',
+    trend: lang === 'ar' ? 'متوسط 7 أيام' : '7-day avg',
+    target: lang === 'ar' ? 'الهدف' : 'Target',
+  };
+  let legend = '<div class="chart-legend">' +
+    `<span class="chart-legend-item"><span class="chart-legend-swatch" style="color:var(--accent)"></span>${L.raw}</span>` +
+    `<span class="chart-legend-item"><span class="chart-legend-swatch dashed" style="color:var(--accent)"></span>${L.trend}</span>`;
+  if (opts.target && isFinite(opts.target)) {
+    legend += `<span class="chart-legend-item"><span class="chart-legend-swatch dashed" style="color:var(--protein)"></span>${L.target}</span>`;
+  }
+  legend += '</div>';
   // ViewBox matches host width; preserveAspectRatio defaults to meet, but
   // since w === hostW, scaling is 1:1 and glyphs render at intended size.
-  hostEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">` +
+  hostEl.innerHTML = legend +
+    `<div class="chart-canvas"><svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">` +
     grids.join('') + targetLine +
     `<path class="trend-line" d="${avgPath}"/>` +
-    `<path class="raw-line" d="${rawPath}"/>` + dots + `</svg>`;
+    `<path class="raw-line" d="${rawPath}"/>` + dots + `</svg>` +
+    `<div class="chart-tooltip" hidden></div></div>`;
+  attachChartDotTooltip(hostEl);
+}
+
+// Click delegation for tappable dots inside any chart host. Shows a
+// floating value/date bubble over the tapped point; tapping elsewhere
+// or the dot again hides it.
+function attachChartDotTooltip(hostEl) {
+  if (!hostEl || hostEl.dataset.chartTipBound === '1') return;
+  hostEl.dataset.chartTipBound = '1';
+  hostEl.addEventListener('click', e => {
+    const dot = e.target.closest && e.target.closest('.tappable-dot');
+    const tip = hostEl.querySelector('.chart-tooltip');
+    if (!tip) return;
+    if (!dot) { tip.hidden = true; return; }
+    const svg = dot.ownerSVGElement;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    const cx = parseFloat(dot.getAttribute('cx'));
+    const cy = parseFloat(dot.getAttribute('cy'));
+    const x = (cx / vb.width) * rect.width;
+    const y = (cy / vb.height) * rect.height;
+    const val = dot.getAttribute('data-val') || '';
+    const lbl = dot.getAttribute('data-label') || '';
+    tip.textContent = lbl ? (val + ' · ' + lbl) : val;
+    // Position relative to the .chart-canvas (the SVG's offset parent).
+    tip.style.left = x + 'px';
+    tip.style.top = Math.max(y - 8, 4) + 'px';
+    tip.hidden = false;
+  });
 }
 
 // Render the slim side-panel weight section: today's reading + trend delta +
@@ -8670,10 +8822,15 @@ function removeWeightEntry(id) {
 // Open the add-method modal (manual entry, OCR, or barcode).
 function openAddMethodSheet() {
   document.getElementById('addMethodOverlay').classList.add('active');
+  mtBackPush('addMethodOverlay', _doCloseAddMethodSheet);
 }
 
 // Close the add-method modal overlay.
 function closeAddMethodSheet() {
+  if (mtBackPop('addMethodOverlay')) return;
+  _doCloseAddMethodSheet();
+}
+function _doCloseAddMethodSheet() {
   document.getElementById('addMethodOverlay').classList.remove('active');
 }
 
@@ -8954,10 +9111,15 @@ function syncDietChips() {
 function openPanel() {
   document.getElementById('sidePanel').classList.add('active');
   document.getElementById('panelOverlay').classList.add('active');
+  mtBackPush('sidePanel', _doClosePanel);
 }
 
 // Close the side panel and overlay.
 function closePanel() {
+  if (mtBackPop('sidePanel')) return;
+  _doClosePanel();
+}
+function _doClosePanel() {
   document.getElementById('sidePanel').classList.remove('active');
   document.getElementById('panelOverlay').classList.remove('active');
 }
@@ -9941,6 +10103,7 @@ function openAddFood() {
   recipeReset();
 
   document.getElementById('addFoodOverlay').classList.add('active');
+  mtBackPush('addFoodOverlay', _doCloseAddFood);
 }
 
 // Open the same modal in "edit" mode for an existing food. Pre-fills every
@@ -10013,10 +10176,15 @@ function openEditFood(foodId) {
   document.getElementById('afCatNew').style.display = 'none';
 
   document.getElementById('addFoodOverlay').classList.add('active');
+  mtBackPush('addFoodOverlay', _doCloseAddFood);
 }
 
 // Close the add-food modal overlay.
 function closeAddFood() {
+  if (mtBackPop('addFoodOverlay')) return;
+  _doCloseAddFood();
+}
+function _doCloseAddFood() {
   document.getElementById('addFoodOverlay').classList.remove('active');
 }
 
@@ -11058,8 +11226,13 @@ document.addEventListener('keydown', e => {
     if (typeof syncSchemeModalUI === 'function') syncSchemeModalUI();
     if (typeof syncFeatureCheckboxes === 'function') syncFeatureCheckboxes();
     overlay.classList.add('active');
+    if (typeof mtBackPush === 'function') mtBackPush('settingsOverlay', _doCloseSettings);
   }
-  function closeSettings() { overlay.classList.remove('active'); }
+  function _doCloseSettings() { overlay.classList.remove('active'); }
+  function closeSettings() {
+    if (typeof mtBackPop === 'function' && mtBackPop('settingsOverlay')) return;
+    _doCloseSettings();
+  }
 
   openBtn.addEventListener('click', () => openSettings());
   closeBtn.addEventListener('click', closeSettings);
@@ -11221,11 +11394,13 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
   });
   svg += `<polyline points="${polylinePoints.trim()}" fill="none" stroke-width="2" style="stroke: var(--${cssVar});"/>`;
 
-  // Data points (circles)
+  // Data points (circles) — tappable for value tooltips. data-val
+  // includes the unit so the tooltip reads e.g. "1820 kcal · 5 يونيو".
   values.forEach((val, idx) => {
     const x = margin.left + idx * scaleX;
     const y = margin.top + plotHeight - (val - minValue) * scaleY;
-    svg += `<circle cx="${x}" cy="${y}" r="3" fill="var(--${cssVar})" style="fill: var(--${cssVar});"/>`;
+    const dateLabel = dates[idx];
+    svg += `<circle class="tappable-dot" cx="${x}" cy="${y}" r="4" fill="var(--${cssVar})" style="fill: var(--${cssVar});" data-val="${escapeHtml(fmt(val) + ' ' + unit)}" data-label="${escapeHtml(dateLabel)}"/>`;
   });
 
   // X-axis labels — pick ~5 evenly-distributed indices. Use Math.round on
@@ -11258,14 +11433,30 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
 
   svg += `</svg>`;
 
+  const legendL = {
+    actual: lang === 'ar' ? 'القيمة اليومية' : 'Daily value',
+    goal: lang === 'ar' ? 'الهدف' : 'Goal',
+  };
+  const legend = '<div class="chart-legend">' +
+    `<span class="chart-legend-item"><span class="chart-legend-swatch" style="color:var(--${cssVar})"></span>${legendL.actual}</span>` +
+    `<span class="chart-legend-item"><span class="chart-legend-swatch dashed" style="color:var(--accent)"></span>${legendL.goal}</span>` +
+    '</div>';
+
   const chartHtml = `
     <div class="trend-chart">
       <div class="trend-chart-title">${escapeHtml(label)} (${unit})</div>
-      ${svg}
+      ${legend}
+      <div class="chart-canvas">
+        ${svg}
+        <div class="chart-tooltip" hidden></div>
+      </div>
     </div>
   `;
 
   container.insertAdjacentHTML('beforeend', chartHtml);
+  // Bind tooltip on the newly-inserted .trend-chart wrapper.
+  const lastChart = container.lastElementChild;
+  if (lastChart) attachChartDotTooltip(lastChart);
 }
 
 // Open the unified Analytics hub modal. Optional tabId param ('trends',
@@ -11298,6 +11489,7 @@ function openAnalyticsModal(tabId) {
   selectAnalyticsTab(tabId || 'trends');
 
   document.getElementById('trendsOverlay').classList.add('active');
+  mtBackPush('trendsOverlay', _doCloseTrendsModal);
 }
 
 // Activate one tab + pane. Defaults to 'trends'. Re-renders the pane's
@@ -11323,6 +11515,10 @@ function selectAnalyticsTab(tabId) {
 function openTrendsModal() { openAnalyticsModal('trends'); }
 
 function closeTrendsModal() {
+  if (mtBackPop('trendsOverlay')) return;
+  _doCloseTrendsModal();
+}
+function _doCloseTrendsModal() {
   document.getElementById('trendsOverlay').classList.remove('active');
 }
 
@@ -11438,10 +11634,15 @@ async function openOcrModal() {
   document.getElementById('ocrUseBtn').style.display = 'none';
   document.getElementById('ocrFileInput').value = '';
   document.getElementById('ocrOverlay').classList.add('active');
+  mtBackPush('ocrOverlay', _doCloseOcrModal);
 }
 
 // Close the OCR modal.
 function closeOcrModal() {
+  if (mtBackPop('ocrOverlay')) return;
+  _doCloseOcrModal();
+}
+function _doCloseOcrModal() {
   document.getElementById('ocrOverlay').classList.remove('active');
 }
 
@@ -11753,6 +11954,7 @@ async function openBarcodeModal() {
   barcodeClearError();
   barcodeShowStep('check');
   document.getElementById('barcodeOverlay').classList.add('active');
+  mtBackPush('barcodeOverlay', _doCloseBarcodeModal);
 
   // Check if device supports BarcodeDetector.
   const supported = await initBarcodeDetector();
@@ -11786,6 +11988,10 @@ async function openBarcodeModal() {
 
 // Close the barcode modal and stop the camera stream.
 function closeBarcodeModal() {
+  if (mtBackPop('barcodeOverlay')) return;
+  _doCloseBarcodeModal();
+}
+function _doCloseBarcodeModal() {
   document.getElementById('barcodeOverlay').classList.remove('active');
   if (barcodeCameraStream) {
     barcodeCameraStream.getTracks().forEach(track => track.stop());

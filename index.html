@@ -3083,6 +3083,178 @@ body.ar .ocr-err { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 1
 }
 .ocr-actions button { flex: 1; }
 
+/* ============ CUSTOM ALERTS / CONFIRMS / PROMPTS / TOASTS ============ */
+.mt-alert-overlay {
+  position: fixed; inset: 0;
+  background: var(--scrim);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000; padding: 16px;
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+  -webkit-transform: translateZ(0); transform: translateZ(0);
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.mt-alert-overlay.active { display: flex; opacity: 1; }
+.mt-alert {
+  background: var(--paper);
+  border-radius: 8px;
+  max-width: 420px; width: 100%;
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  display: flex; flex-direction: column;
+}
+.mt-alert-header {
+  padding: 14px 18px;
+  background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
+  color: var(--on-grad);
+  border-bottom: 3px solid var(--gold);
+  display: flex; align-items: center; gap: 10px;
+}
+.mt-alert-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; flex-shrink: 0;
+  background: var(--on-grad-veil);
+  border: 1px solid var(--on-grad-bd);
+}
+.mt-alert-header h3 {
+  font-size: 16px; font-weight: 600; margin: 0;
+  font-family: 'Fraunces', serif; font-style: italic;
+}
+body.ar .mt-alert-header h3 { font-family: 'IBM Plex Sans Arabic', sans-serif; font-style: normal; font-size: 17px; }
+.mt-alert-body {
+  padding: 18px;
+  font-size: 14px; line-height: 1.55;
+  color: var(--ink);
+  overflow-y: auto;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+body.ar .mt-alert-body { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 15px; }
+.mt-alert-body strong { font-weight: 700; color: var(--ink); }
+.mt-alert-input {
+  width: 100%; box-sizing: border-box;
+  margin-top: 12px;
+  padding: 10px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mt-alert-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-veil, rgba(0,0,0,0.05));
+}
+body.ar .mt-alert-input { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+.mt-alert-actions {
+  display: flex; gap: 8px;
+  padding: 12px 18px 16px;
+  border-top: 1px solid var(--line-soft, var(--line));
+}
+.mt-alert-btn {
+  flex: 1;
+  padding: 11px 14px;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--paper-soft); color: var(--ink);
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+body.ar .mt-alert-btn { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 15px; }
+.mt-alert-btn:hover { background: var(--veil-hi); }
+.mt-alert-btn:active { transform: scale(0.97); }
+.mt-alert-btn.primary {
+  background: var(--accent); color: var(--on-accent);
+  border-color: var(--accent);
+}
+.mt-alert-btn.primary:hover { filter: brightness(1.08); }
+.mt-alert-btn.danger {
+  background: var(--over); color: #fff;
+  border-color: var(--over);
+}
+.mt-alert-btn.danger:hover { filter: brightness(1.08); }
+.mt-alert.kind-success .mt-alert-icon { background: var(--success); color: #fff; border-color: var(--success); }
+.mt-alert.kind-warn    .mt-alert-icon { background: var(--warn);    color: #fff; border-color: var(--warn);    }
+.mt-alert.kind-error   .mt-alert-icon { background: var(--over);    color: #fff; border-color: var(--over);    }
+.mt-alert.kind-info    .mt-alert-icon { background: var(--accent);  color: var(--on-accent); border-color: var(--accent); }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mt-alert-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+  }
+  .mt-alert-overlay.active .mt-alert { animation: mt-alert-in 0.18s cubic-bezier(0.25, 0.8, 0.3, 1); }
+  @keyframes mt-alert-out {
+    to { opacity: 0; transform: translateY(6px) scale(0.97); }
+  }
+  .mt-alert-overlay.closing .mt-alert { animation: mt-alert-out 0.14s ease-in forwards; }
+}
+
+/* Toast host: stacked transient messages anchored bottom-center */
+.mt-toast-host {
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+  display: flex; flex-direction: column-reverse;
+  gap: 8px; z-index: 1100;
+  pointer-events: none;
+  max-width: calc(100vw - 32px);
+}
+.mt-toast {
+  pointer-events: auto;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  display: flex; align-items: center; gap: 10px;
+  max-width: 360px;
+  min-width: 200px;
+}
+[dir="rtl"] .mt-toast { border-left: 1px solid var(--line); border-right: 4px solid var(--accent); }
+body.ar .mt-toast { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 14px; }
+.mt-toast.kind-success { border-left-color: var(--success); }
+[dir="rtl"] .mt-toast.kind-success { border-right-color: var(--success); }
+.mt-toast.kind-warn    { border-left-color: var(--warn); }
+[dir="rtl"] .mt-toast.kind-warn { border-right-color: var(--warn); }
+.mt-toast.kind-error   { border-left-color: var(--over); }
+[dir="rtl"] .mt-toast.kind-error { border-right-color: var(--over); }
+.mt-toast-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  background: var(--accent); color: var(--on-accent);
+}
+.mt-toast.kind-success .mt-toast-icon { background: var(--success); color: #fff; }
+.mt-toast.kind-warn    .mt-toast-icon { background: var(--warn);    color: #fff; }
+.mt-toast.kind-error   .mt-toast-icon { background: var(--over);    color: #fff; }
+.mt-toast-msg { flex: 1; line-height: 1.4; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mt-toast-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+  @keyframes mt-toast-out {
+    to { opacity: 0; transform: translateY(8px); }
+  }
+  .mt-toast { animation: mt-toast-in 0.2s ease-out; }
+  .mt-toast.closing { animation: mt-toast-out 0.18s ease-in forwards; }
+}
+
 /* ============ DELETE FOOD MODAL ============ */
 
 /* Add-food modal — reuses goals-modal shell, adds a scrollable body
@@ -5950,6 +6122,208 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
+// ============ CUSTOM ALERTS / CONFIRMS / PROMPTS / TOASTS ============
+// Promise-based replacements for native alert/confirm/prompt + lightweight
+// toast. Use:
+//   await showAlert('message', { title?, kind?, okText? })
+//   const ok = await showConfirm('message', { title?, okText?, cancelText?, danger? })
+//   const val = await showPrompt('label', { title?, defaultValue?, placeholder?, okText?, cancelText? })   // resolves '' on cancel? -> null on cancel
+//   showToast('message', { kind?, ms? })   // non-blocking, auto-dismisses
+// kind: 'info' | 'success' | 'warn' | 'error'
+// All messages are escaped before injection.
+
+const MT_ALERT_ICONS = { info: 'i', success: '✓', warn: '!', error: '!' };
+let _mtAlertHost = null;
+let _mtAlertActive = null;
+let _mtToastHost = null;
+
+function _mtT(en, ar) { return (typeof lang !== 'undefined' && lang === 'ar') ? ar : en; }
+
+function _mtAlertHostEl() {
+  if (_mtAlertHost) return _mtAlertHost;
+  _mtAlertHost = document.createElement('div');
+  _mtAlertHost.className = 'mt-alert-overlay';
+  _mtAlertHost.setAttribute('role', 'dialog');
+  _mtAlertHost.setAttribute('aria-modal', 'true');
+  document.body.appendChild(_mtAlertHost);
+  return _mtAlertHost;
+}
+
+function _mtToastHostEl() {
+  if (_mtToastHost) return _mtToastHost;
+  _mtToastHost = document.createElement('div');
+  _mtToastHost.className = 'mt-toast-host';
+  document.body.appendChild(_mtToastHost);
+  return _mtToastHost;
+}
+
+function _mtCloseAlert(result) {
+  if (!_mtAlertActive) return;
+  const host = _mtAlertHost;
+  const active = _mtAlertActive;
+  _mtAlertActive = null;
+  host.classList.add('closing');
+  setTimeout(() => {
+    host.classList.remove('active', 'closing');
+    host.innerHTML = '';
+    if (active.lastFocused && document.contains(active.lastFocused)) {
+      try { active.lastFocused.focus(); } catch (e) {}
+    }
+    active.resolve(result);
+  }, 140);
+}
+
+function _mtBuildAlert({ kind, title, message, html, actions, input }) {
+  const host = _mtAlertHostEl();
+  const kindClass = kind || 'info';
+  const iconChar = MT_ALERT_ICONS[kindClass] || 'i';
+  const titleText = title != null ? title : _mtT('Notice', 'تنبيه');
+  const bodyHtml = html != null ? html : escapeHtml(message || '');
+  let inputHtml = '';
+  if (input) {
+    const placeholder = input.placeholder ? ' placeholder="' + escapeHtml(input.placeholder) + '"' : '';
+    const def = input.defaultValue != null ? ' value="' + escapeHtml(input.defaultValue) + '"' : '';
+    inputHtml = '<input type="text" class="mt-alert-input" id="_mtAlertInput"' + placeholder + def + ' autocomplete="off" autocapitalize="off" spellcheck="false">';
+  }
+  const btnsHtml = actions.map((a, i) =>
+    '<button type="button" class="mt-alert-btn ' + escapeHtml(a.cls || '') + '" data-mt-action="' + i + '">' + escapeHtml(a.label) + '</button>'
+  ).join('');
+  host.innerHTML =
+    '<div class="mt-alert kind-' + escapeHtml(kindClass) + '">' +
+      '<div class="mt-alert-header">' +
+        '<span class="mt-alert-icon">' + escapeHtml(iconChar) + '</span>' +
+        '<h3>' + escapeHtml(titleText) + '</h3>' +
+      '</div>' +
+      '<div class="mt-alert-body">' + bodyHtml + inputHtml + '</div>' +
+      '<div class="mt-alert-actions">' + btnsHtml + '</div>' +
+    '</div>';
+  // Force reflow then activate so the opacity transition runs.
+  void host.offsetWidth;
+  host.classList.add('active');
+  return host;
+}
+
+function showAlert(message, opts) {
+  opts = opts || {};
+  if (_mtAlertActive) _mtCloseAlert(null);
+  return new Promise((resolve) => {
+    const lastFocused = document.activeElement;
+    _mtAlertActive = { resolve, lastFocused };
+    const okLabel = opts.okText != null ? opts.okText : _mtT('OK', 'حسناً');
+    const host = _mtBuildAlert({
+      kind: opts.kind || 'info',
+      title: opts.title,
+      message: message,
+      html: opts.html,
+      actions: [{ label: okLabel, cls: 'primary' }],
+    });
+    const btn = host.querySelector('[data-mt-action="0"]');
+    btn.addEventListener('click', () => _mtCloseAlert(true));
+    setTimeout(() => { try { btn.focus(); } catch (e) {} }, 60);
+  });
+}
+
+function showConfirm(message, opts) {
+  opts = opts || {};
+  if (_mtAlertActive) _mtCloseAlert(null);
+  return new Promise((resolve) => {
+    const lastFocused = document.activeElement;
+    _mtAlertActive = { resolve, lastFocused };
+    const okLabel = opts.okText != null ? opts.okText : _mtT('OK', 'تأكيد');
+    const cancelLabel = opts.cancelText != null ? opts.cancelText : _mtT('Cancel', 'إلغاء');
+    const okCls = opts.danger ? 'danger' : 'primary';
+    const kind = opts.kind || (opts.danger ? 'warn' : 'info');
+    const isAr = (typeof lang !== 'undefined' && lang === 'ar');
+    const actions = isAr
+      ? [{ label: okLabel, cls: okCls }, { label: cancelLabel, cls: '' }]
+      : [{ label: cancelLabel, cls: '' }, { label: okLabel, cls: okCls }];
+    const host = _mtBuildAlert({
+      kind: kind,
+      title: opts.title || _mtT('Confirm', 'تأكيد'),
+      message: message,
+      html: opts.html,
+      actions: actions,
+    });
+    const okIdx = isAr ? 0 : 1;
+    const cancelIdx = isAr ? 1 : 0;
+    const okBtn = host.querySelector('[data-mt-action="' + okIdx + '"]');
+    const cancelBtn = host.querySelector('[data-mt-action="' + cancelIdx + '"]');
+    okBtn.addEventListener('click', () => _mtCloseAlert(true));
+    cancelBtn.addEventListener('click', () => _mtCloseAlert(false));
+    setTimeout(() => { try { (opts.danger ? cancelBtn : okBtn).focus(); } catch (e) {} }, 60);
+  });
+}
+
+function showPrompt(message, opts) {
+  opts = opts || {};
+  if (_mtAlertActive) _mtCloseAlert(null);
+  return new Promise((resolve) => {
+    const lastFocused = document.activeElement;
+    _mtAlertActive = { resolve, lastFocused };
+    const okLabel = opts.okText != null ? opts.okText : _mtT('OK', 'حفظ');
+    const cancelLabel = opts.cancelText != null ? opts.cancelText : _mtT('Cancel', 'إلغاء');
+    const isAr = (typeof lang !== 'undefined' && lang === 'ar');
+    const actions = isAr
+      ? [{ label: okLabel, cls: 'primary' }, { label: cancelLabel, cls: '' }]
+      : [{ label: cancelLabel, cls: '' }, { label: okLabel, cls: 'primary' }];
+    const host = _mtBuildAlert({
+      kind: opts.kind || 'info',
+      title: opts.title || _mtT('Input', 'إدخال'),
+      message: message,
+      actions: actions,
+      input: {
+        placeholder: opts.placeholder || '',
+        defaultValue: opts.defaultValue != null ? opts.defaultValue : '',
+      },
+    });
+    const okIdx = isAr ? 0 : 1;
+    const cancelIdx = isAr ? 1 : 0;
+    const okBtn = host.querySelector('[data-mt-action="' + okIdx + '"]');
+    const cancelBtn = host.querySelector('[data-mt-action="' + cancelIdx + '"]');
+    const input = host.querySelector('#_mtAlertInput');
+    function submit() { _mtCloseAlert(input.value); }
+    okBtn.addEventListener('click', submit);
+    cancelBtn.addEventListener('click', () => _mtCloseAlert(null));
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); submit(); }
+    });
+    setTimeout(() => { try { input.focus(); input.select(); } catch (e) {} }, 80);
+  });
+}
+
+// Global Escape key + overlay click → cancel current alert.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || !_mtAlertActive) return;
+  e.preventDefault();
+  _mtCloseAlert(null); // null = cancel/false-ish
+});
+document.addEventListener('click', (e) => {
+  if (!_mtAlertActive) return;
+  if (e.target === _mtAlertHost) _mtCloseAlert(null);
+});
+
+function showToast(message, opts) {
+  opts = opts || {};
+  const host = _mtToastHostEl();
+  const kindClass = opts.kind || 'info';
+  const iconChar = MT_ALERT_ICONS[kindClass] || 'i';
+  const ms = opts.ms != null ? opts.ms : 2400;
+  const el = document.createElement('div');
+  el.className = 'mt-toast kind-' + kindClass;
+  el.innerHTML =
+    '<span class="mt-toast-icon">' + escapeHtml(iconChar) + '</span>' +
+    '<span class="mt-toast-msg">' + escapeHtml(message) + '</span>';
+  host.appendChild(el);
+  const remove = () => {
+    if (!el.parentNode) return;
+    el.classList.add('closing');
+    setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 180);
+  };
+  const timer = setTimeout(remove, ms);
+  el.addEventListener('click', () => { clearTimeout(timer); remove(); });
+  return el;
+}
+
 // ============ LAZY-LOAD CDN SCRIPTS ============
 // On-demand loading for Excel/PDF export libs (heavy, rarely used).
 // Deferred from startup via explicit user action (click Export).
@@ -7276,10 +7650,10 @@ function saveDayState() {
 // Supports saving/loading historical days. savedDays is capped at 60 entries.
 // Entry points: New Day (clear all), Save Day (archive current), Clear Day (reset),
 // Load Day (restore from archive), loadSaved/deleteSaved (window global handlers).
-document.getElementById('newDayBtn').addEventListener('click', () => {
+document.getElementById('newDayBtn').addEventListener('click', async () => {
   if (dayItems.length > 0) {
     const msg = lang === 'ar' ? 'مسح اليوم الحالي وبدء يوم جديد؟' : 'Clear current day and start fresh?';
-    if (!confirm(msg)) return;
+    if (!(await showConfirm(msg))) return;
   }
   dayItems = [];
   workouts = [];
@@ -7293,7 +7667,7 @@ document.getElementById('newDayBtn').addEventListener('click', () => {
 
 document.getElementById('saveDayBtn').addEventListener('click', () => {
   if (dayItems.length === 0) {
-    alert(lang === 'ar' ? 'اليوم فاضي. اختر أكل أول' : 'Nothing to save yet. Add some items first.');
+    showToast(lang === 'ar' ? 'اليوم فاضي. اختر أكل أول' : 'Nothing to save yet. Add some items first.', { kind: 'warn' });
     return;
   }
   const totals = dayItems.reduce((acc, it) => {
@@ -7308,13 +7682,13 @@ document.getElementById('saveDayBtn').addEventListener('click', () => {
   });
   if (savedDays.length > 60) savedDays = savedDays.slice(0, 60);
   lsSet('mt-saved', JSON.stringify(savedDays));
-  alert(lang === 'ar' ? `تم حفظ اليوم! (${savedDays.length} يوم محفوظ)` : `Day saved! (${savedDays.length} total saved)`);
+  showToast(lang === 'ar' ? `تم حفظ اليوم! (${savedDays.length} يوم محفوظ)` : `Day saved! (${savedDays.length} total saved)`, { kind: 'success' });
 });
 
-document.getElementById('clearDayBtn').addEventListener('click', () => {
+document.getElementById('clearDayBtn').addEventListener('click', async () => {
   if (dayItems.length === 0) return;
   const msg = lang === 'ar' ? 'مسح أكل اليوم؟ متأكد؟' : 'Clear today\'s items?';
-  if (!confirm(msg)) return;
+  if (!(await showConfirm(msg, { danger: true }))) return;
   dayItems = [];
   workouts = [];
   saveDayState();
@@ -7345,19 +7719,19 @@ document.getElementById('loadDayBtn').addEventListener('click', () => {
   document.getElementById('savedOverlay').classList.add('active');
 });
 
-window.loadSaved = function(idx) {
+window.loadSaved = async function(idx) {
   const d = savedDays[idx];
   if (!d) return;
   const msg = lang === 'ar' ? 'التحميل هيمسح اليوم الحالي. متأكد؟' : 'This will replace today\'s items. Continue?';
-  if (dayItems.length > 0 && !confirm(msg)) return;
+  if (dayItems.length > 0 && !(await showConfirm(msg))) return;
   dayItems = JSON.parse(JSON.stringify(d.items));
   saveDayState();
   renderTotals();
   document.getElementById('savedOverlay').classList.remove('active');
 };
 
-window.deleteSaved = function(idx) {
-  if (!confirm(lang === 'ar' ? 'حذف اليوم ده؟' : 'Delete this saved day?')) return;
+window.deleteSaved = async function(idx) {
+  if (!(await showConfirm(lang === 'ar' ? 'حذف اليوم ده؟' : 'Delete this saved day?', { danger: true }))) return;
   savedDays.splice(idx, 1);
   lsSet('mt-saved', JSON.stringify(savedDays));
   document.getElementById('loadDayBtn').click();
@@ -7681,9 +8055,9 @@ function openTdeeModal() {
   applyBtn.addEventListener('click', () => {
     const p = tdeeReadForm();
     if (!p) {
-      alert(lang === 'ar'
+      showToast(lang === 'ar'
         ? 'املأ السن والطول والوزن قبل التطبيق.'
-        : 'Fill age, height, and weight before applying.');
+        : 'Fill age, height, and weight before applying.', { kind: 'warn' });
       return;
     }
     const r = tdeeCompute(p);
@@ -7765,7 +8139,7 @@ document.getElementById('saveWaterSettingsBtn').addEventListener('click', () => 
   waterState.goalMl = parseFloat(document.getElementById('waterGoalMl').value) || 2000;
   lsSet('mt-water', JSON.stringify(waterState));
   renderWater();
-  alert(lang === 'ar' ? 'تم حفظ إعدادات الماء ✓' : 'Water settings saved ✓');
+  showToast(lang === 'ar' ? 'تم حفظ إعدادات الماء ✓' : 'Water settings saved ✓', { kind: 'success' });
 });
 
 // Sync all feature flag checkboxes with their current values from the featureFlags object.
@@ -8504,11 +8878,11 @@ document.getElementById('addWorkoutBtn').addEventListener('click', () => {
   const kcal = parseFloat(kcalInput.value) || 0;
 
   if (!name) {
-    alert(lang === 'ar' ? 'أدخل اسم النشاط' : 'Enter activity name');
+    showToast(lang === 'ar' ? 'أدخل اسم النشاط' : 'Enter activity name', { kind: 'warn' });
     return;
   }
   if (kcal <= 0) {
-    alert(lang === 'ar' ? 'أدخل سعرات صحيحة' : 'Enter valid kcal value');
+    showToast(lang === 'ar' ? 'أدخل سعرات صحيحة' : 'Enter valid kcal value', { kind: 'warn' });
     return;
   }
 
@@ -8543,11 +8917,11 @@ document.getElementById('workoutName').addEventListener('input', () => {
 (function initActivityStatsListHandlers() {
   const list = document.getElementById('activityBankList');
   if (!list) return;
-  list.addEventListener('click', e => {
+  list.addEventListener('click', async e => {
     const forget = e.target.closest('[data-act-forget]');
     if (forget) {
       const key = forget.dataset.actForget;
-      if (confirm(lang === 'ar' ? 'حذف هذا النشاط من السجل؟' : 'Forget this activity?')) {
+      if (await showConfirm(lang === 'ar' ? 'حذف هذا النشاط من السجل؟' : 'Forget this activity?', { danger: true })) {
         activityBankForget(key);
       }
       return;
@@ -8639,17 +9013,17 @@ function renderMealTemplates() {
 }
 
 // Save current day as a meal template
-function saveCurrentDayAsTemplate() {
+async function saveCurrentDayAsTemplate() {
   if (dayItems.length === 0) {
-    alert(lang === 'ar'
+    showToast(lang === 'ar'
       ? 'لا توجد عناصر في اليوم لحفظها كقالب'
-      : 'No items in today\'s meal to save as template');
+      : 'No items in today\'s meal to save as template', { kind: 'warn' });
     return;
   }
 
   const prompt_en = 'Name for this meal template:';
   const prompt_ar = 'اسم قالب الوجبة:';
-  const name = window.prompt(lang === 'ar' ? prompt_ar : prompt_en);
+  const name = await showPrompt(lang === 'ar' ? prompt_ar : prompt_en);
 
   if (name === null || !name.trim()) return; // User cancelled
 
@@ -8669,14 +9043,14 @@ function saveCurrentDayAsTemplate() {
   mealTemplates.push(newTemplate);
   lsSet('mt-templates', JSON.stringify(mealTemplates));
   renderMealTemplates();
-  alert((lang === 'ar' ? 'تم حفظ القالب: ' : 'Template saved: ') + escapeHtml(trimmedName));
+  showToast((lang === 'ar' ? 'تم حفظ القالب: ' : 'Template saved: ') + escapeHtml(trimmedName), { kind: 'success' });
 }
 
 // Apply a meal template to today's meal
 function applyMealTemplate(tplId) {
   const tpl = mealTemplates.find(t => t.id === tplId);
   if (!tpl) {
-    alert(lang === 'ar' ? 'لم يتم العثور على القالب' : 'Template not found');
+    showToast(lang === 'ar' ? 'لم يتم العثور على القالب' : 'Template not found', { kind: 'warn' });
     return;
   }
 
@@ -8695,11 +9069,11 @@ function applyMealTemplate(tplId) {
   renderTotals();
 
   const tplName = escapeHtml(lang === 'ar' ? (tpl.name.ar || tpl.name.en) : (tpl.name.en || tpl.name.ar));
-  alert((lang === 'ar' ? 'تم إضافة القالب: ' : 'Template applied: ') + tplName);
+  showToast((lang === 'ar' ? 'تم إضافة القالب: ' : 'Template applied: ') + tplName, { kind: 'success' });
 }
 
 // Delete a meal template
-function deleteMealTemplate(tplId) {
+async function deleteMealTemplate(tplId) {
   const tpl = mealTemplates.find(t => t.id === tplId);
   if (!tpl) return;
 
@@ -8708,7 +9082,7 @@ function deleteMealTemplate(tplId) {
     ? `هل متأكد من حذف القالب "${tplName}"؟`
     : `Delete template "${tplName}"?`;
 
-  if (!confirm(msg)) return;
+  if (!(await showConfirm(msg, { danger: true }))) return;
 
   mealTemplates = mealTemplates.filter(t => t.id !== tplId);
   lsSet('mt-templates', JSON.stringify(mealTemplates));
@@ -8783,7 +9157,7 @@ document.getElementById('exportExcelBtn').addEventListener('click', async functi
       XLSX.utils.book_append_sheet(wb, ws, 'FoodDatabase');
       XLSX.writeFile(wb, 'food_database.xlsx');
     } catch(e) {
-      alert((lang === 'ar' ? 'خطأ في التصدير: ' : 'Export error: ') + e.message);
+      await showAlert((lang === 'ar' ? 'خطأ في التصدير: ' : 'Export error: ') + e.message, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
     }
   });
 });
@@ -8837,7 +9211,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', async function
     });
     doc.save('food_database.pdf');
   } catch(e) {
-    alert((lang === 'ar' ? 'خطأ في تصدير PDF: ' : 'PDF export error: ') + e.message);
+    await showAlert((lang === 'ar' ? 'خطأ في تصدير PDF: ' : 'PDF export error: ') + e.message, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
   }
   });
 });
@@ -8849,7 +9223,7 @@ document.getElementById('importExcelBtn').addEventListener('click', async functi
       await loadScript(CDN.xlsx);
       document.getElementById('importFileInput').click();
     } catch (e) {
-      alert((lang === 'ar' ? 'فشل تحميل المكتبة: ' : 'Library load failed: ') + e.message);
+      await showAlert((lang === 'ar' ? 'فشل تحميل المكتبة: ' : 'Library load failed: ') + e.message, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
     }
   });
 });
@@ -8858,7 +9232,7 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = (ev) => {
+  reader.onload = async (ev) => {
     try {
       const data = new Uint8Array(ev.target.result);
       const wb = XLSX.read(data, { type: 'array' });
@@ -8866,7 +9240,7 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
       const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
 
       if (!rows.length) {
-        alert(lang === 'ar' ? 'الملف فاضي' : 'The file is empty.');
+        showToast(lang === 'ar' ? 'الملف فاضي' : 'The file is empty.', { kind: 'warn' });
         return;
       }
       // Validate schema — required columns must exist
@@ -8874,13 +9248,13 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
       const cols = Object.keys(rows[0]);
       const missing = required.filter(c => !cols.includes(c));
       if (missing.length) {
-        alert((lang === 'ar' ? 'الملف لا يطابق السكيما. أعمدة ناقصة: ' : 'File does not match the schema. Missing columns: ') + missing.join(', '));
+        showToast((lang === 'ar' ? 'الملف لا يطابق السكيما. أعمدة ناقصة: ' : 'File does not match the schema. Missing columns: ') + missing.join(', '), { kind: 'warn' });
         return;
       }
       // Validate rows have ids
       const badRows = rows.filter(r => !String(r.id).trim());
       if (badRows.length) {
-        alert((lang === 'ar' ? 'يوجد صفوف بدون id (عددها ' : 'Some rows are missing an id (count: ') + badRows.length + ')');
+        showToast((lang === 'ar' ? 'يوجد صفوف بدون id (عددها ' : 'Some rows are missing an id (count: ') + badRows.length + ')', { kind: 'warn' });
         return;
       }
       const newDb = rowsToDb(rows);
@@ -8902,22 +9276,22 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
         const sample = mismatches.slice(0, 8).join('\n')
           + (mismatches.length > 8 ? '\n…' : '');
         const tail = lang === 'ar' ? '\n\nأكمل الاستيراد؟' : '\n\nImport anyway?';
-        if (!confirm(head + sample + tail)) return;
+        if (!(await showConfirm(head + sample + tail))) return;
       }
 
       const confirmMsg = lang === 'ar'
         ? `سيتم استبدال قاعدة البيانات بالكامل بـ ${newDb.length} صنف. متأكد؟`
         : `This will completely replace the food database with ${newDb.length} items. Continue?`;
-      if (!confirm(confirmMsg)) return;
+      if (!(await showConfirm(confirmMsg))) return;
 
       DB = newDb;
       lsSet('mt-db', JSON.stringify(DB));
       rebuildSearchIndex();
       renderTables();
       applyFilters();
-      alert((lang === 'ar' ? 'تم الاستيراد بنجاح! ' : 'Imported successfully! ') + DB.length + (lang === 'ar' ? ' صنف' : ' items'));
+      showToast((lang === 'ar' ? 'تم الاستيراد بنجاح! ' : 'Imported successfully! ') + DB.length + (lang === 'ar' ? ' صنف' : ' items'), { kind: 'success' });
     } catch(err) {
-      alert((lang === 'ar' ? 'خطأ في قراءة الملف: ' : 'Error reading file: ') + err.message);
+      await showAlert((lang === 'ar' ? 'خطأ في قراءة الملف: ' : 'Error reading file: ') + err.message, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
     }
     // reset so same file can be re-imported
     e.target.value = '';
@@ -9395,7 +9769,7 @@ document.getElementById('afCatSelect').addEventListener('change', e => {
   }
 });
 
-document.getElementById('afSaveBtn').addEventListener('click', () => {
+document.getElementById('afSaveBtn').addEventListener('click', async () => {
   const en = document.getElementById('afEn').value.trim();
   const ar = document.getElementById('afAr').value.trim();
   const kcalRaw = document.getElementById('afKcal').value.trim();
@@ -9550,7 +9924,7 @@ document.getElementById('afSaveBtn').addEventListener('click', () => {
         const msg = lang === 'ar'
           ? `تنبيه: السعرات (${fmt(kcal)}) بعيدة عن المحسوب من الماكروز (${fmt(calc)}). أكمل الحفظ؟`
           : `Heads up: calories (${fmt(kcal)}) differ a lot from the macro-computed value (${fmt(calc)}). Save anyway?`;
-        if (!confirm(msg)) return;
+        if (!(await showConfirm(msg))) return;
       }
     }
   }
@@ -9589,14 +9963,14 @@ document.getElementById('afSaveBtn').addEventListener('click', () => {
 
   // Brief confirmation. On NEW items, also offer to copy a share link.
   if (isEditing) {
-    alert(lang === 'ar'
+    showToast(lang === 'ar'
       ? `تم تعديل "${ar}".`
-      : `Updated "${en}".`);
+      : `Updated "${en}".`, { kind: 'success' });
   } else {
     var addedMsg = lang === 'ar'
       ? `تمت إضافة "${ar}" لقاعدة البيانات (${DB.length} صنف).`
       : `Added "${en}" to the database (${DB.length} items).`;
-    alert(addedMsg);
+    showToast(addedMsg, { kind: 'success' });
   }
 });
 
@@ -9628,14 +10002,15 @@ function buildShareUrl(food) {
 // Share a food item via navigator.share() or fallback to clipboard copy.
 function shareFood(food) {
   var url = buildShareUrl(food);
-  var done = function (ok) {
+  var done = async function (ok) {
     var msg;
     if (ok) {
       msg = lang === 'ar' ? 'تم نسخ الرابط ✓' : 'Link copied ✓';
+      showToast(msg, { kind: 'success' });
     } else {
       msg = (lang === 'ar' ? 'انسخ الرابط:\n\n' : 'Copy this link:\n\n') + url;
+      await showAlert(msg);
     }
-    alert(msg);
   };
   if (navigator.share) {
     navigator.share({
@@ -9667,7 +10042,7 @@ function copyToClipboard(text, cb) {
   } catch (e) { cb(false); }
 }
 // Check for #share= in the URL hash, decode and validate the food, confirm with user, then add to DB.
-function handleShareHash() {
+async function handleShareHash() {
   try {
     var h = window.location.hash || '';
     if (h.indexOf('#share=') !== 0) return;
@@ -9686,7 +10061,7 @@ function handleShareHash() {
     if (window.history && window.history.replaceState) {
       window.history.replaceState({}, '', window.location.pathname);
     }
-    if (!confirm(msg)) return;
+    if (!(await showConfirm(msg))) return;
     var newItem = Object.assign({}, f, {
       id: (f.en || f.ar || 'shared').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now()
     });
@@ -9697,7 +10072,7 @@ function handleShareHash() {
     renderTables();
     applyFilters();
     renderTotals();
-    alert(lang === 'ar' ? 'تم الإضافة ✓' : 'Added ✓');
+    showToast(lang === 'ar' ? 'تم الإضافة ✓' : 'Added ✓', { kind: 'success' });
   } catch (e) {
     console.warn('share-hash parse failed:', e);
   }
@@ -9856,23 +10231,23 @@ function downloadBlob(content, filename, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-document.getElementById('exportJsonBtn').addEventListener('click', () => {
+document.getElementById('exportJsonBtn').addEventListener('click', async () => {
   try {
     const json = JSON.stringify(buildBackupObject(), null, 2);
     const stamp = new Date().toISOString().slice(0,10);
     downloadBlob(json, `macro_tracker_backup_${stamp}.json`, 'application/json');
   } catch (e) {
-    alert((lang === 'ar' ? 'خطأ في تصدير JSON: ' : 'JSON export error: ') + e.message);
+    await showAlert((lang === 'ar' ? 'خطأ في تصدير JSON: ' : 'JSON export error: ') + e.message, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
   }
 });
 
 // Export just the food database as JSON (lighter, for sharing the DB)
-document.getElementById('exportDbJsonBtn').addEventListener('click', () => {
+document.getElementById('exportDbJsonBtn').addEventListener('click', async () => {
   try {
     const json = JSON.stringify(DB, null, 2);
     downloadBlob(json, 'food_database.json', 'application/json');
   } catch (e) {
-    alert((lang === 'ar' ? 'خطأ: ' : 'Error: ') + e.message);
+    await showAlert((lang === 'ar' ? 'خطأ: ' : 'Error: ') + e.message, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
   }
 });
 
@@ -9900,7 +10275,7 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = ev => {
+  reader.onload = async ev => {
     try {
       const parsed = JSON.parse(ev.target.result);
 
@@ -9913,9 +10288,9 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       } else if (parsed && Array.isArray(parsed.db)) {
         payload = parsed;
       } else {
-        alert(lang === 'ar'
+        await showAlert(lang === 'ar'
           ? 'الملف ليس نسخة احتياطية صحيحة.'
-          : 'This file is not a valid backup.');
+          : 'This file is not a valid backup.', { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
         e.target.value = ''; return;
       }
 
@@ -9940,15 +10315,15 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
         : 'This will restore: ') + willRestore.join(', ') +
         (lang === 'ar' ? '\nويستبدل بياناتك الحالية. متابعة؟'
                         : '\nand replace your current data. Continue?');
-      if (!confirm(msg)) { e.target.value = ''; return; }
+      if (!(await showConfirm(msg))) { e.target.value = ''; return; }
 
       // Validate DB before accepting: all items must pass schema check.
       if (Array.isArray(payload.db) && payload.db.length) {
         const badItems = payload.db.filter(f => !validateFood(f));
         if (badItems.length) {
-          alert(lang === 'ar'
-            ? `خطأ: ${badItems.length} أصناف غير صحيحة (كل صنف يحتاج id + cat + أرقام للماكروز).`
-            : `Error: ${badItems.length} items have invalid schema (each needs id, cat, and numeric macros).`);
+          await showAlert(lang === 'ar'
+            ? `${badItems.length} أصناف غير صحيحة (كل صنف يحتاج id + cat + أرقام للماكروز).`
+            : `${badItems.length} items have invalid schema (each needs id, cat, and numeric macros).`, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
           e.target.value = ''; return;
         }
         DB = payload.db;
@@ -9970,9 +10345,9 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       // Validate goals: must have numeric kcal/protein/fat/carbs.
       if (payload.goals && typeof payload.goals === 'object') {
         if (!validateGoals(payload.goals)) {
-          alert(lang === 'ar'
-            ? 'خطأ: الأهداف يجب أن تحتوي على أرقام موجبة لـ kcal/protein/fat/carbs.'
-            : 'Error: goals must contain positive numbers for kcal, protein, fat, carbs.');
+          await showAlert(lang === 'ar'
+            ? 'الأهداف يجب أن تحتوي على أرقام موجبة لـ kcal/protein/fat/carbs.'
+            : 'Goals must contain positive numbers for kcal, protein, fat, carbs.', { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
           e.target.value = ''; return;
         }
         goals = payload.goals;
@@ -10078,9 +10453,9 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
       saveDayState();
       renderTotals();
 
-      alert(lang === 'ar' ? 'تم الاسترجاع بنجاح ✓' : 'Restored successfully ✓');
+      showToast(lang === 'ar' ? 'تم الاسترجاع بنجاح ✓' : 'Restored successfully ✓', { kind: 'success' });
     } catch (err) {
-      alert((lang === 'ar' ? 'خطأ في قراءة JSON: ' : 'JSON read error: ') + err.message);
+      await showAlert((lang === 'ar' ? 'خطأ في قراءة JSON: ' : 'JSON read error: ') + err.message, { kind: 'error', title: lang === 'ar' ? 'خطأ' : 'Error' });
     }
     e.target.value = '';
   };
@@ -10440,29 +10815,29 @@ function refreshWaterSettingsUI() {
   if (goalMlInput) goalMlInput.value = waterState.goalMl;
 }
 
-document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
+document.getElementById('saveApiKeyBtn').addEventListener('click', async () => {
   const input = document.getElementById('apiKeyInput');
   const key = input.value.trim();
   if (!key) {
-    alert(lang === 'ar' ? 'الصق المفتاح أولاً' : 'Please paste your API key first');
+    showToast(lang === 'ar' ? 'الصق المفتاح أولاً' : 'Please paste your API key first', { kind: 'warn' });
     return;
   }
   if (!key.startsWith('AIzaSy')) {
-    const ok = confirm(lang === 'ar'
+    const ok = await showConfirm(lang === 'ar'
       ? 'المفتاح لا يبدو كمفتاح Gemini عادي (يبدأ عادة ب AIzaSy). حفظ على أي حال؟'
       : 'Key does not look like a typical Gemini key (usually starts with AIzaSy). Save anyway?');
     if (!ok) return;
   }
   lsSet(MT_API_KEY, key);
   refreshApiKeyStatus();
-  alert(lang === 'ar' ? '✓ تم حفظ المفتاح' : '✓ Key saved');
+  showToast(lang === 'ar' ? '✓ تم حفظ المفتاح' : '✓ Key saved', { kind: 'success' });
 });
 
-document.getElementById('clearApiKeyBtn').addEventListener('click', () => {
+document.getElementById('clearApiKeyBtn').addEventListener('click', async () => {
   if (!getGeminiKey()) return;
-  const ok = confirm(lang === 'ar'
+  const ok = await showConfirm(lang === 'ar'
     ? 'إزالة المفتاح المحفوظ من هذا المتصفح؟'
-    : 'Remove the saved key from this browser?');
+    : 'Remove the saved key from this browser?', { danger: true });
   if (!ok) return;
   localStorage.removeItem(MT_API_KEY);
   idbDel(MT_API_KEY).catch(function(){});
@@ -10726,11 +11101,11 @@ function ocrClearError() {
 }
 
 // Open the OCR modal, check for Gemini API key, and show the file picker step.
-function openOcrModal() {
+async function openOcrModal() {
   if (!getGeminiKey()) {
-    alert(lang === 'ar'
+    await showAlert(lang === 'ar'
       ? 'تحتاج إلى تعيين مفتاح Gemini API أولاً. سأفتح لك الإعدادات.'
-      : 'You need to set a Gemini API key first. Opening Settings for you.');
+      : 'You need to set a Gemini API key first. Opening Settings for you.', { kind: 'warn' });
     if (typeof window.openSettingsAt === 'function') {
       window.openSettingsAt('apikey');
       setTimeout(() => { const el = document.getElementById('apiKeyInput'); if (el) el.focus(); }, 50);

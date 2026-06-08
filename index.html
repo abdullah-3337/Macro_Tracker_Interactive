@@ -2686,6 +2686,14 @@ body.ar .weight-history-head h3 { font-style: normal; }
   fill: var(--ink-soft); font-size: 10px;
   font-family: 'JetBrains Mono', monospace;
 }
+/* SVG <text> inherits document direction. In Arabic (rtl) mode the default
+   text-anchor effectively becomes "end", so the x position marks the right
+   edge and the label extends off-screen to the left, leaving only the last
+   digit visible. Force LTR on all chart labels so axis numerals render
+   normally regardless of body language. */
+.wh-chart text, .trend-chart-svg text {
+  direction: ltr; unicode-bidi: bidi-override;
+}
 .wh-stats {
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 8px; margin-bottom: 14px;
@@ -6050,6 +6058,37 @@ if (!waterState || typeof waterState !== 'object') waterState = {glasses:0, mlPe
 let weights = lsGet('mt-weights', []);
 if (!Array.isArray(weights)) weights = [];
 
+// Migrate pre-fix weight entries: prior versions stored `.date` as a locale-
+// formatted string (e.g. "Sun, 7 Jun 2026" or "الأحد، ٧ يونيو ٢٠٢٦") which
+// `new Date(...)` can't parse back, breaking the per-week rate calc and
+// chronological sort. Recover the real date from the `id` field, which is
+// `w-<ms>`, and rewrite to ISO YYYY-MM-DD. Persists only if anything changed.
+(function migrateWeightDates() {
+  let changed = false;
+  weights = weights.map(w => {
+    if (w && typeof w.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(w.date)) return w;
+    let iso = null;
+    const m = String(w && w.id || '').match(/^w-(\d+)$/);
+    if (m) {
+      const ms = parseInt(m[1], 10);
+      if (isFinite(ms) && ms > 0) {
+        const d = new Date(ms);
+        const yy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        iso = `${yy}-${mm}-${dd}`;
+      }
+    }
+    if (!iso) {
+      const d = new Date();
+      iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+    changed = true;
+    return Object.assign({}, w, { date: iso });
+  });
+  if (changed) lsSet('mt-weights', JSON.stringify(weights));
+})();
+
 // Activity bank: keyed by activity name, holds usage stats so the input can
 // autocomplete from past entries and the stats modal can show top activities.
 // Shape: { [nameLowercase]: { displayName, count, totalKcal, lastKcal, lastUsed } }
@@ -6407,6 +6446,27 @@ function fadeAndRemove(el, doRemove) {
 function todayStr() {
   const d = new Date();
   return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+
+// Stable, locale-independent date key for stored entries. Always YYYY-MM-DD
+// so localeCompare gives chronological order and Date(d + 'T00:00:00') parses.
+function todayIso() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Render an ISO YYYY-MM-DD as a human-friendly bilingual string.
+function isoToDisplay(iso) {
+  if (!iso) return '';
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) return iso; // fallback: display whatever's there
+  const d = new Date(+m[1], +m[2] - 1, +m[3]);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB',
+    { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ============ WORKOUT OFFSET ============
@@ -8299,10 +8359,10 @@ function renderWeightSection() {
     return;
   }
   const latest = sorted[sorted.length - 1];
-  const today = todayStr();
+  const today = todayIso();
   const isToday = latest.date === today;
   latestEl.textContent = fmt(latest.kg) + ' kg · ' +
-    (isToday ? (lang === 'ar' ? 'اليوم' : 'today') : latest.date);
+    (isToday ? (lang === 'ar' ? 'اليوم' : 'today') : isoToDisplay(latest.date));
   const avgs = weightMovingAvg(sorted, 7);
   if (avgs.length >= 2) {
     const cur = avgs[avgs.length - 1].avg;
@@ -8402,7 +8462,7 @@ function renderWeightHistoryModal() {
     } else {
       listEl.innerHTML = sortedAll.slice().reverse().map(e =>
         `<div class="weight-row">` +
-          `<span class="wdate">${escapeHtml(e.date)}</span>` +
+          `<span class="wdate">${escapeHtml(isoToDisplay(e.date))}</span>` +
           `<span class="wkg">${fmt(e.kg)} kg</span>` +
           `<button class="remove-weight-btn" data-weight-id="${escapeHtml(e.id)}" ` +
             `data-en="Remove" data-ar="حذف">${lang === 'ar' ? 'حذف' : 'Remove'}</button>` +
@@ -8417,7 +8477,7 @@ function renderWeightHistoryModal() {
 function addWeightEntry(kg) {
   const n = Number(kg);
   if (!isFinite(n) || n <= 0) return false;
-  const today = todayStr();
+  const today = todayIso();
   const idx = weights.findIndex(w => w.date === today);
   const entry = { id: 'w-' + Date.now(), date: today, kg: Math.round(n * 10) / 10 };
   if (idx >= 0) weights[idx] = Object.assign({}, weights[idx], { kg: entry.kg });

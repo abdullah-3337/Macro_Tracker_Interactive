@@ -10125,6 +10125,23 @@ document.getElementById('afSaveBtn').addEventListener('click', async () => {
     DB.push(newItem);
   }
   lsSet('mt-db', JSON.stringify(DB));
+  if (typeof rebuildSearchIndex === 'function') rebuildSearchIndex();
+
+  // Clear any active search/category filter so the new (or edited) item is
+  // visible immediately. Without this, an active query or non-"all" category
+  // filter hides the row until the user clears it manually (or reloads).
+  if (!isEditing) {
+    if (searchInput) {
+      searchInput.value = '';
+      _lastSearchQuery = '';
+    }
+    if (currentFilter !== 'all') {
+      currentFilter = 'all';
+      filterBtns.forEach(b => {
+        b.classList.toggle('active', b.dataset.filter === 'all');
+      });
+    }
+  }
 
   renderTables();
   applyFilters();

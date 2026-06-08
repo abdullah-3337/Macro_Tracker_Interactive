@@ -10208,6 +10208,25 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
   });
 })();
 
+// ============ ORIENTATION LOCK ============
+// PWA installs honor the manifest's `orientation: portrait`. For the
+// in-browser tab we attempt `screen.orientation.lock('portrait')` on the
+// first user gesture — most browsers require fullscreen or an installed
+// PWA for this to succeed; the catch swallows the rejection silently when
+// it doesn't.
+(function initOrientationLock() {
+  if (!screen.orientation || typeof screen.orientation.lock !== 'function') return;
+  function tryLock() {
+    try {
+      const p = screen.orientation.lock('portrait');
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    } catch (_) { /* not supported / not allowed in this context */ }
+  }
+  tryLock();
+  document.addEventListener('click', tryLock, { once: true, passive: true });
+  document.addEventListener('touchstart', tryLock, { once: true, passive: true });
+})();
+
 // ============ DOCK ABOVE KEYBOARD ============
 // On iOS Safari and Android Chrome, `position: fixed; bottom: 0` anchors to
 // the *layout* viewport, so the soft keyboard covers the bottom dock. We
@@ -10263,15 +10282,23 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
   }
 
   document.addEventListener('focusin', e => {
-    if (isEditable(e.target)) { keyboardActive = true; sync(); }
+    if (isEditable(e.target)) {
+      keyboardActive = true;
+      // Wait for the keyboard's slide-up animation to settle so the first
+      // sync reads the final vv.height, not a mid-animation value.
+      setTimeout(sync, 300);
+    }
   });
   document.addEventListener('focusout', () => {
     setTimeout(() => {
       if (!isEditable(document.activeElement)) { keyboardActive = false; reset(); }
     }, 50);
   });
+  // Only resize re-syncs the dock. vv.scroll fires during normal page
+  // scrolling on iOS (URL-bar collapse, rubber-band) and was making the
+  // dock visibly jump during a scroll-while-keyboard-open. The keyboard
+  // height itself only changes on resize events.
   vv.addEventListener('resize', sync);
-  vv.addEventListener('scroll', sync);
 })();
 
 // ============ GLOBAL SORT MENU HANDLERS ============

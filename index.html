@@ -488,38 +488,12 @@ body.ar {
   }
 }
 
-/* ============ HARD PORTRAIT LOCK (BODY ROTATION) ============ */
-/* iOS Safari ignores manifest.orientation for installed PWAs and blocks
-   screen.orientation.lock() in non-fullscreen contexts. The only way to
-   actually prevent the app from rotating on iOS is to rotate the *content*
-   in the opposite direction whenever the device is held in landscape, so
-   the UI stays visually upright as if the phone was still in portrait.
-   Targeting (max-height: 500px) catches phones in landscape (iPhone Pro
-   Max landscape ≈ 430 px tall) while leaving tablets (iPad mini landscape
-   ≈ 744 px tall) and desktops untouched. */
-@media (orientation: landscape) and (max-height: 500px) {
-  html {
-    overflow: hidden;
-    width: 100vw;
-    height: 100vh;
-  }
-  body {
-    /* Rotate the body 90° CCW around the top-left corner, then slide it
-       down by its own (post-rotation) height so the rotated content sits
-       inside the visible viewport. */
-    transform: rotate(-90deg);
-    transform-origin: left top;
-    position: absolute;
-    top: 100vh;
-    left: 0;
-    /* Body's own box is sized in pre-rotation coordinates: its width
-       becomes the device's *short* side, its height the *long* side. */
-    width: 100vh;
-    height: 100vw;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-}
+/* Portrait lock is enforced via manifest.orientation = "portrait-primary"
+   (honored by Android Chrome installed PWAs) and a best-effort
+   screen.orientation.lock() call from JS. iOS Safari/WebKit does not
+   implement either path for in-page or PWA contexts as of iOS 26.x — this
+   is a platform limitation we cannot work around from JS without rotating
+   the body's content (which the user explicitly does not want). */
 
 /* iOS / Safari zoom guard: any input under 16px font-size triggers
    Safari's auto-zoom-on-focus. Force 16px on touch inputs so focus

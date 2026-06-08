@@ -488,38 +488,36 @@ body.ar {
   }
 }
 
-/* ============ ROTATION LOCK (CSS FALLBACK) ============ */
-/* iOS Safari ignores manifest.orientation for installed PWAs, and browser
-   tabs can't be locked by screen.orientation.lock() unless the page is in
-   fullscreen. The reliable cross-platform fix is a CSS overlay: when a
-   phone-sized viewport is held in landscape we cover the page with a
-   full-screen message asking the user to rotate. Targeting by
-   (max-height: 500px) catches phones in landscape (iPhone Pro Max
-   landscape ≈ 430 px tall) while leaving tablets (iPad mini landscape ≈
-   744 px tall) and desktops unaffected. */
+/* ============ HARD PORTRAIT LOCK (BODY ROTATION) ============ */
+/* iOS Safari ignores manifest.orientation for installed PWAs and blocks
+   screen.orientation.lock() in non-fullscreen contexts. The only way to
+   actually prevent the app from rotating on iOS is to rotate the *content*
+   in the opposite direction whenever the device is held in landscape, so
+   the UI stays visually upright as if the phone was still in portrait.
+   Targeting (max-height: 500px) catches phones in landscape (iPhone Pro
+   Max landscape ≈ 430 px tall) while leaving tablets (iPad mini landscape
+   ≈ 744 px tall) and desktops untouched. */
 @media (orientation: landscape) and (max-height: 500px) {
-  body::before {
-    content: "↻  Rotate your device to portrait";
-    position: fixed;
-    inset: 0;
-    z-index: 100000;
-    background: var(--bg);
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    text-align: center;
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: 22px;
-    font-weight: 600;
-    font-style: italic;
-    letter-spacing: -0.01em;
+  html {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
   }
-  body.ar::before {
-    content: "↻  يرجى تدوير الجهاز عمودياً";
-    font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
-    font-style: normal;
+  body {
+    /* Rotate the body 90° CCW around the top-left corner, then slide it
+       down by its own (post-rotation) height so the rotated content sits
+       inside the visible viewport. */
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    position: absolute;
+    top: 100vh;
+    left: 0;
+    /* Body's own box is sized in pre-rotation coordinates: its width
+       becomes the device's *short* side, its height the *long* side. */
+    width: 100vh;
+    height: 100vw;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 

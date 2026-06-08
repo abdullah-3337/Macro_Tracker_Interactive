@@ -8002,7 +8002,16 @@ document.getElementById('loadDayBtn').addEventListener('click', () => {
     }).join('');
   }
   document.getElementById('savedOverlay').classList.add('active');
+  mtBackPush('savedOverlay', _doCloseSaved);
 });
+
+function _doCloseSaved() {
+  document.getElementById('savedOverlay').classList.remove('active');
+}
+function closeSavedOverlay() {
+  if (mtBackPop('savedOverlay')) return;
+  _doCloseSaved();
+}
 
 window.loadSaved = async function(idx) {
   const d = savedDays[idx];
@@ -8012,7 +8021,7 @@ window.loadSaved = async function(idx) {
   dayItems = JSON.parse(JSON.stringify(d.items));
   saveDayState();
   renderTotals();
-  document.getElementById('savedOverlay').classList.remove('active');
+  closeSavedOverlay();
 };
 
 window.deleteSaved = async function(idx) {
@@ -8022,9 +8031,7 @@ window.deleteSaved = async function(idx) {
   document.getElementById('loadDayBtn').click();
 };
 
-document.getElementById('closeSavedBtn').addEventListener('click', () => {
-  document.getElementById('savedOverlay').classList.remove('active');
-});
+document.getElementById('closeSavedBtn').addEventListener('click', closeSavedOverlay);
 
 // ============ GOALS ============
 // Daily macro target setters. Persists to localStorage and updates the goals
@@ -8038,17 +8045,24 @@ function renderGoals() {
   document.getElementById('goalCarbs').textContent = goals.carbs;
 }
 
+function _doCloseGoals() {
+  document.getElementById('goalsOverlay').classList.remove('active');
+}
+function closeGoalsOverlay() {
+  if (mtBackPop('goalsOverlay')) return;
+  _doCloseGoals();
+}
+
 document.getElementById('editGoalsBtn').addEventListener('click', () => {
   document.getElementById('editKcal').value = goals.kcal;
   document.getElementById('editProtein').value = goals.protein;
   document.getElementById('editFat').value = goals.fat;
   document.getElementById('editCarbs').value = goals.carbs;
   document.getElementById('goalsOverlay').classList.add('active');
+  mtBackPush('goalsOverlay', _doCloseGoals);
 });
 
-document.getElementById('cancelGoalsBtn').addEventListener('click', () => {
-  document.getElementById('goalsOverlay').classList.remove('active');
-});
+document.getElementById('cancelGoalsBtn').addEventListener('click', closeGoalsOverlay);
 
 document.getElementById('saveGoalsBtn').addEventListener('click', () => {
   goals.kcal = parseFloat(document.getElementById('editKcal').value) || 1900;
@@ -8058,7 +8072,7 @@ document.getElementById('saveGoalsBtn').addEventListener('click', () => {
   lsSet('mt-goals', JSON.stringify(goals));
   renderGoals();
   renderTotals();
-  document.getElementById('goalsOverlay').classList.remove('active');
+  closeGoalsOverlay();
 });
 
 // ============ TDEE CALCULATOR ============
@@ -8303,6 +8317,15 @@ function openTdeeModal() {
   tdeeUpdatePreview();
   tdeeRenderProgress();
   document.getElementById('tdeeOverlay').classList.add('active');
+  mtBackPush('tdeeOverlay', _doCloseTdee);
+}
+
+function _doCloseTdee() {
+  document.getElementById('tdeeOverlay').classList.remove('active');
+}
+function closeTdeeOverlay() {
+  if (mtBackPop('tdeeOverlay')) return;
+  _doCloseTdee();
 }
 
 // Wire the entire TDEE modal: open button, chip toggles, input updates,
@@ -8315,8 +8338,8 @@ function openTdeeModal() {
   const applyBtn = document.getElementById('applyTdeeBtn');
   if (!openBtn || !overlay) return;
   openBtn.addEventListener('click', openTdeeModal);
-  cancelBtn.addEventListener('click', () => overlay.classList.remove('active'));
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
+  cancelBtn.addEventListener('click', closeTdeeOverlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeTdeeOverlay(); });
   // Chip rows: single-select within each row.
   ['tdeeSexRow', 'tdeeActivityRow', 'tdeeGoalRow', 'tdeeSplitRow'].forEach(rowId => {
     const row = document.getElementById(rowId);
@@ -8354,7 +8377,7 @@ function openTdeeModal() {
     lsSet('mt-profile', JSON.stringify(p));
     renderGoals();
     renderTotals();
-    overlay.classList.remove('active');
+    closeTdeeOverlay();
   });
 })();
 
@@ -12250,9 +12273,14 @@ function guideSelectTab(id) {
 function openGuide(tabId) {
   guideSelectTab(tabId || 'welcome');
   document.getElementById('guideOverlay').classList.add('active');
+  if (typeof mtBackPush === 'function') mtBackPush('guideOverlay', _doCloseGuide);
+}
+function _doCloseGuide() {
+  document.getElementById('guideOverlay').classList.remove('active');
 }
 function closeGuide() {
-  document.getElementById('guideOverlay').classList.remove('active');
+  if (typeof mtBackPop === 'function' && mtBackPop('guideOverlay')) return;
+  _doCloseGuide();
 }
 
 // Wire the open button, tab clicks, close button, overlay click-out, and the
@@ -12321,6 +12349,7 @@ let offLastResults = [];      // Last result set, used by row click handler.
 // Open the OFF search modal and focus the input.
 function openOffSearchModal() {
   document.getElementById('offSearchOverlay').classList.add('active');
+  if (typeof mtBackPush === 'function') mtBackPush('offSearchOverlay', _doCloseOffSearchModal);
   const err = document.getElementById('offSearchErr');
   if (err) { err.classList.remove('active'); err.textContent = ''; }
   const input = document.getElementById('offSearchInput');
@@ -12328,6 +12357,10 @@ function openOffSearchModal() {
 }
 
 function closeOffSearchModal() {
+  if (typeof mtBackPop === 'function' && mtBackPop('offSearchOverlay')) return;
+  _doCloseOffSearchModal();
+}
+function _doCloseOffSearchModal() {
   document.getElementById('offSearchOverlay').classList.remove('active');
 }
 

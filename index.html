@@ -8243,35 +8243,26 @@ function applyFilters() {
 }
 
 let _lastSearchQuery = searchInput.value;
-// Filter on every keystroke. Do NOT auto-scroll while the user is typing —
-// on iOS Safari, a smooth `scrollIntoView` while the soft keyboard is open
-// makes the page jump under the focused input and visibly drops the
-// fixed-position dock (containing the search box) off-screen for a frame.
-// Auto-scrolling on Enter / blur is handled below.
+// Auto-scroll to the first visible section after search input changes.
+//
+// iOS Safari quirk: `scrollIntoView({behavior:'smooth'})` while the soft
+// keyboard is open visibly drops fixed-position elements (the bottom dock)
+// off the visual viewport for the duration of the animation. The bug is in
+// the smooth-scroll path, not in fixed positioning itself. Workaround:
+// - Use `behavior:'auto'` (instant) so there is no animation frame for the
+//   compositor to drop the dock during.
+// - Use `block:'nearest'` so we only scroll when the target is out of view,
+//   keeping the dock perfectly still when the first match was already
+//   visible (most keystrokes after the first one).
 function runSearchFromInput() {
   const before = _lastSearchQuery;
   const now = searchInput.value;
   const firstVisible = applyFilters();
   _lastSearchQuery = now;
-  if (!firstVisible || now === before) return;
-  // Skip auto-scroll if the search input is still focused — the user is
-  // mid-typing, the visible region above the keyboard is already updated,
-  // and any scroll-into-view here will fight iOS's keyboard layout.
-  if (document.activeElement === searchInput) return;
-  firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (firstVisible && now !== before) {
+    firstVisible.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+  }
 }
-// On Enter / blur, scroll to the first visible match (deferred so iOS
-// finishes dismissing the keyboard before we animate the scroll).
-function scrollToFirstVisibleDeferred() {
-  setTimeout(() => {
-    const firstVisible = applyFilters();
-    if (firstVisible) firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 60);
-}
-searchInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') { searchInput.blur(); scrollToFirstVisibleDeferred(); }
-});
-searchInput.addEventListener('blur', scrollToFirstVisibleDeferred);
 searchInput.addEventListener('input', debounce(runSearchFromInput, 400));
 // Scroll the first visible section into view after a filter change. Mirrors
 // runSearchFromInput's behavior so all filter mutations (search, category

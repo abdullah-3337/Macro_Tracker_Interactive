@@ -45,7 +45,7 @@
   }
 })();
 </script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <title>Daily Macro Tracker · جدول الأكل اليومي</title>
 
 <!-- iOS standalone-app behaviour: open fullscreen from the Home Screen icon -->
@@ -8243,24 +8243,18 @@ function applyFilters() {
 }
 
 let _lastSearchQuery = searchInput.value;
-// Auto-scroll to the first visible section after search input changes.
-//
-// iOS Safari quirk: `scrollIntoView({behavior:'smooth'})` while the soft
-// keyboard is open visibly drops fixed-position elements (the bottom dock)
-// off the visual viewport for the duration of the animation. The bug is in
-// the smooth-scroll path, not in fixed positioning itself. Workaround:
-// - Use `behavior:'auto'` (instant) so there is no animation frame for the
-//   compositor to drop the dock during.
-// - Use `block:'nearest'` so we only scroll when the target is out of view,
-//   keeping the dock perfectly still when the first match was already
-//   visible (most keystrokes after the first one).
+// Auto-scroll to the first visible section after a search input change.
+// `block:'nearest'` keeps the page still when the first match is already
+// in view (no scroll = no chance to fight the keyboard layout). The dock
+// is now driven by `bottom` (not `transform`), so smooth scroll while the
+// keyboard is open no longer drops it off the visual viewport.
 function runSearchFromInput() {
   const before = _lastSearchQuery;
   const now = searchInput.value;
   const firstVisible = applyFilters();
   _lastSearchQuery = now;
   if (firstVisible && now !== before) {
-    firstVisible.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
 searchInput.addEventListener('input', debounce(runSearchFromInput, 400));
@@ -10215,16 +10209,28 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
 })();
 
 // ============ DOCK ABOVE KEYBOARD ============
-// On Android, `position: fixed; bottom: 0` anchors to the layout viewport, so
-// the soft keyboard hides the bottom dock when the page scrolls. This IIFE tracks
-// VisualViewport height and translates the dock up by the keyboard-occluded
-// amount, keeping it just above the keyboard.
+// On iOS Safari and Android Chrome, `position: fixed; bottom: 0` anchors to
+// the *layout* viewport, so the soft keyboard covers the bottom dock. We
+// track the visualViewport and bump the dock's `bottom` style by the
+// keyboard-occluded amount so it sits just above the keyboard.
 //
-// iOS Safari quirk: visualViewport `resize`/`scroll` events also fire when the
-// URL bar collapses on page scroll, which would falsely translate the dock as
-// the user scrolls. To avoid that, we only apply the keyboard offset when
-// (a) a focused input is open AND (b) the occluded amount is above a sensible
-// keyboard-height threshold. On blur we reset immediately.
+// Why `bottom` and not `transform`:
+//   - Smooth-scroll animations (`scrollIntoView({behavior:'smooth'})`) while
+//     an iOS soft keyboard is open visibly drop transform-animated fixed
+//     elements off the visual viewport for the duration of the scroll. This
+//     is a long-standing WebKit compositor bug. Driving the dock via
+//     `bottom` instead of `transform` sidesteps that path entirely — the
+//     dock stays anchored during scroll-in-search.
+//
+// Why we still gate on focus:
+//   - visualViewport `resize`/`scroll` also fires during iOS URL-bar
+//     collapse on plain page scroll (no keyboard). Translating then would
+//     shove the dock mid-page. We only apply the offset while an editable
+//     input is focused.
+//
+// iOS 26 forum reports note `vv.offsetTop` and `vv.height` may stay stale
+// after keyboard dismissal — `focusout` triggers a reset that clears the
+// inline `bottom` style and forces the dock back to its CSS bottom.
 (function initDockKeyboardTracking() {
   if (!window.visualViewport) return;
   const dock = document.getElementById('bottomDock');
@@ -10237,7 +10243,6 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
     if (el.tagName === 'TEXTAREA') return true;
     if (el.tagName === 'INPUT') {
       const t = (el.getAttribute('type') || 'text').toLowerCase();
-      // Inputs that summon the soft keyboard. Excludes button/checkbox/radio/file/etc.
       return ['text','number','email','search','tel','url','password','date','datetime-local','time','month','week'].indexOf(t) !== -1;
     }
     if (el.isContentEditable) return true;
@@ -10245,24 +10250,22 @@ requestAnimationFrame(() => requestAnimationFrame(() => {
   }
 
   function reset() {
+    dock.style.bottom = '';
     dock.style.transform = '';
   }
 
   function sync() {
     if (!keyboardActive) { reset(); return; }
-    // While an input is focused, always translate by the visualViewport's
-    // occlusion. No threshold — iOS Safari changes vv.height during page
-    // scroll (URL-bar collapse, rubber-banding) and previous threshold
-    // logic was dropping the dock under the keyboard mid-scroll.
     const hidden = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-    dock.style.transform = hidden > 0 ? `translateY(-${hidden}px)` : '';
+    // Drive `bottom` instead of `transform`. Transform-driven fixed
+    // elements vanish during iOS smooth-scroll; `bottom` stays anchored.
+    dock.style.bottom = hidden > 0 ? hidden + 'px' : '';
   }
 
   document.addEventListener('focusin', e => {
     if (isEditable(e.target)) { keyboardActive = true; sync(); }
   });
   document.addEventListener('focusout', () => {
-    // Defer so a focus-shift between two inputs doesn't flicker the dock.
     setTimeout(() => {
       if (!isEditable(document.activeElement)) { keyboardActive = false; reset(); }
     }, 50);

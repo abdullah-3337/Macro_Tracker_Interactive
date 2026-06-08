@@ -2762,7 +2762,9 @@ body.ar .weight-history-head h3 { font-style: normal; }
   overflow: hidden;
 }
 .wh-chart svg { width: 100%; height: 100%; display: block; }
-.wh-chart .raw-dot { fill: var(--ink-soft); }
+.wh-chart .raw-dot { fill: var(--accent); }
+.wh-chart .raw-line { fill: none; stroke: var(--accent); stroke-width: 2; }
+.wh-chart .trend-line { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 4; opacity: 0.45; }
 .wh-chart .avg-line { fill: none; stroke: var(--accent); stroke-width: 2; }
 .wh-chart .target-line { fill: none; stroke: var(--protein); stroke-width: 1.5; stroke-dasharray: 6 4; }
 .wh-chart .grid-line { stroke: var(--line); stroke-width: 1; }
@@ -2776,7 +2778,12 @@ body.ar .weight-history-head h3 { font-style: normal; }
    digit visible. Force LTR on all chart labels so axis numerals render
    normally regardless of body language. */
 .wh-chart text, .trend-chart-svg text {
-  direction: ltr; unicode-bidi: bidi-override;
+  /* Isolate, don't override. bidi-override forced Arabic month names to
+     render left-to-right character-by-character, so "يونيو" came out
+     reversed. unicode-bidi: isolate creates an independent bidi context
+     per label — Latin numerals respect direction:ltr, Arabic glyphs
+     still flow RTL within their run. */
+  direction: ltr; unicode-bidi: isolate;
 }
 .wh-stats {
   display: grid; grid-template-columns: repeat(3, 1fr);
@@ -8416,7 +8423,11 @@ function renderWeightLineChart(hostEl, entries, opts) {
     grids.push(`<text class="grid-text" x="4" y="${(parseFloat(yy) + 3).toFixed(1)}">${v.toFixed(1)}</text>`);
   }
   const dots = entries.map((e, i) => `<circle class="raw-dot" cx="${x(i).toFixed(1)}" cy="${y(e.kg).toFixed(1)}" r="2.5"/>`).join('');
-  const path = avgs.map((a, i) => (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(a.avg).toFixed(1)).join(' ');
+  // Primary line connects every raw weight so the chart literally joins
+  // the dots the user sees. The 7-day moving avg used to drive this path
+  // but drifted away from individual readings, leaving floating dots.
+  const rawPath = entries.map((e, i) => (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(e.kg).toFixed(1)).join(' ');
+  const avgPath = avgs.map((a, i) => (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(a.avg).toFixed(1)).join(' ');
   let targetLine = '';
   if (opts.target && isFinite(opts.target)) {
     const ty = y(opts.target).toFixed(1);
@@ -8426,7 +8437,8 @@ function renderWeightLineChart(hostEl, entries, opts) {
   // since w === hostW, scaling is 1:1 and glyphs render at intended size.
   hostEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">` +
     grids.join('') + targetLine +
-    `<path class="avg-line" d="${path}"/>` + dots + `</svg>`;
+    `<path class="trend-line" d="${avgPath}"/>` +
+    `<path class="raw-line" d="${rawPath}"/>` + dots + `</svg>`;
 }
 
 // Render the slim side-panel weight section: today's reading + trend delta +

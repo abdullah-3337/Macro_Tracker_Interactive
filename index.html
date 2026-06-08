@@ -1792,6 +1792,32 @@ body.ar .input-row input, body.ar .input-row select {
   outline: none; border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
+/* Generic invalid / error state for any form input. Pair with
+   [aria-invalid="true"] or .input-error on the control itself. */
+.input-row input[aria-invalid="true"],
+.input-row select[aria-invalid="true"],
+.input-row input.input-error,
+.input-row select.input-error,
+input[aria-invalid="true"],
+.input-error {
+  border-color: var(--over) !important;
+  background: var(--error-bg);
+  color: var(--error-fg);
+}
+.input-row input[aria-invalid="true"]:focus,
+.input-row select[aria-invalid="true"]:focus,
+.input-row input.input-error:focus,
+.input-row select.input-error:focus,
+input[aria-invalid="true"]:focus,
+.input-error:focus {
+  box-shadow: 0 0 0 3px var(--error-bg);
+}
+.input-row input[disabled],
+.input-row select[disabled],
+input[disabled] {
+  opacity: 0.55; cursor: not-allowed;
+  background: var(--veil-hi);
+}
 .preview {
   background: var(--accent-soft);
   border: 1px solid var(--line);
@@ -2270,6 +2296,7 @@ body.ar .progress-card .pc-name { font-family: 'IBM Plex Sans Arabic', sans-seri
   border-radius: 3px;
 }
 .fill-netkcal { background: var(--kcal); opacity: 0.7; }
+html[data-theme="dark"] .fill-netkcal { opacity: 1; }
 .fill-kcal { background: var(--kcal); }
 .fill-protein { background: var(--protein); }
 .fill-fat { background: var(--fat); }

@@ -1843,10 +1843,37 @@ body.ar .popup-actions button { font-family: 'IBM Plex Sans Arabic', sans-serif;
   color: var(--ink);
 }
 .btn-cancel:hover { background: var(--highlight); }
+.btn-cancel:active { transform: scale(0.97); }
+.btn-cancel:disabled,
+.btn-cancel[disabled] {
+  opacity: 0.45; cursor: not-allowed; pointer-events: none;
+}
 .btn-add {
   background: var(--ink); color: var(--bg);
 }
 .btn-add:hover { background: var(--accent); color: var(--on-accent); }
+.btn-add:active { transform: scale(0.97); }
+.btn-add:disabled,
+.btn-add[disabled] {
+  opacity: 0.45; cursor: not-allowed; pointer-events: none;
+  background: var(--ink-soft);
+}
+
+/* Shared press / disabled feedback for archetypes that only had hover. */
+.day-btn:active,
+.filter-btn:active,
+.diet-chip:active,
+.add-method-btn:active,
+.fab-add:active { transform: scale(0.97); }
+.day-btn:disabled, .day-btn[disabled],
+.filter-btn:disabled, .filter-btn[disabled],
+.diet-chip:disabled, .diet-chip[disabled],
+.add-method-btn:disabled, .add-method-btn[disabled],
+.fab:disabled, .fab[disabled],
+.fab-add:disabled, .fab-add[disabled] {
+  opacity: 0.45; cursor: not-allowed; pointer-events: none;
+  box-shadow: none;
+}
 
 /* ============ UNIFIED SETTINGS MODAL ============ */
 .settings-modal {

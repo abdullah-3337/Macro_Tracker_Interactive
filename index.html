@@ -1177,7 +1177,7 @@ body.ar .filter-divider {
 
 /* Category sections */
 .category-section {
-  margin-bottom: 26px;
+  margin-bottom: 32px;
   background: var(--paper);
   border: 1px solid var(--line); border-radius: 14px;
   overflow: hidden;
@@ -2258,7 +2258,7 @@ body.ar .panel-header h3 { font-style: normal; }
   padding: 16px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 16px;
   background: var(--bg-grad-a);
   border-bottom: 1px solid var(--line);
 }
@@ -2269,12 +2269,12 @@ body.ar .panel-header h3 { font-style: normal; }
 }
 .progress-card .pc-header {
   display: flex; justify-content: space-between; align-items: baseline;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 .progress-card .pc-name {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--ink-soft);
 }
 body.ar .progress-card .pc-name { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 12px; }
@@ -2498,9 +2498,10 @@ body.ar .activity-section h4 {
   padding: 8px 10px;
   font-size: 16px; font-family: inherit;
   min-width: 0;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .activity-add input::placeholder { color: var(--ink-soft); opacity: 0.6; }
-.activity-add input:focus { outline: none; border-color: var(--accent); }
+.activity-add input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .activity-add #workoutName { flex: 1; }
 .activity-add #workoutKcal { width: 80px; text-align: center; }
 .activity-add #addWorkoutBtn {
@@ -2603,9 +2604,10 @@ body.ar .weight-section h4 {
   padding: 8px 10px;
   font-size: 16px; font-family: inherit;
   min-width: 0; flex: 1;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .weight-add input::placeholder { color: var(--ink-soft); opacity: 0.6; }
-.weight-add input:focus { outline: none; border-color: var(--accent); }
+.weight-add input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .weight-add #weightKg { text-align: center; }
 .weight-add #addWeightBtn {
   background: var(--accent); color: var(--on-accent);

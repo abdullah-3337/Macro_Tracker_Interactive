@@ -475,7 +475,7 @@ html.preload *::before, html.preload *::after {
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg);
   background-image: linear-gradient(180deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 100%);
   background-attachment: fixed;
@@ -588,6 +588,7 @@ body.ar header.cover .row > div:first-child {
   text-align: right;
 }
 header.cover h1 {
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(26px, 4vw, 42px);
   font-weight: 800; font-style: italic;
   letter-spacing: -0.02em;
@@ -689,7 +690,7 @@ body.ar .scheme-card { text-align: right; }
 .trends-modal > h3 {
   padding: 18px 24px;
   background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
-  color: var(--on-grad); font-size: 18px;
+  color: var(--on-grad); font-family: 'Fraunces', Georgia, serif; font-size: 18px;
   font-style: italic; font-weight: 600;
   border-bottom: 3px solid var(--gold);
   flex-shrink: 0;
@@ -771,7 +772,7 @@ body.ar .trend-chart-title {
   flex-shrink: 0;
 }
 .analytics-head h3 {
-  font-size: 17px; font-style: italic; font-weight: 600; color: var(--on-grad);
+  font-family: 'Fraunces', Georgia, serif; font-size: 17px; font-style: italic; font-weight: 600; color: var(--on-grad);
 }
 body.ar .analytics-head h3 { font-style: normal; }
 .analytics-tabs {
@@ -1203,6 +1204,7 @@ html[data-theme="dark"] .category-section {
   gap: 10px; flex-wrap: nowrap;
 }
 .category-header h2 {
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 19px; font-weight: 600; font-style: italic;
   line-height: 1.2; letter-spacing: -0.01em;
 }
@@ -1585,7 +1587,7 @@ body.ar .badge-key-text { font-style: normal; }
   color: var(--on-grad);
   border-bottom: 3px solid var(--gold);
 }
-.popup-header h3 { font-size: 19px; font-style: italic; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
+.popup-header h3 { font-family: 'Fraunces', Georgia, serif; font-size: 19px; font-style: italic; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
 body.ar .popup-header h3 { font-style: normal; }
 .popup-header .per100 {
   font-family: 'JetBrains Mono', monospace;
@@ -2044,6 +2046,7 @@ body.ar .lr-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 
   box-sizing: border-box;
 }
 .add-method-modal h3 {
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 18px; font-weight: 600;
   line-height: 1.2; letter-spacing: -0.01em;
   margin-bottom: 20px;
@@ -2232,7 +2235,7 @@ body.ar .side-panel.active { transform: translateX(0); }
   gap: 12px; flex-shrink: 0;
 }
 .panel-header h3 {
-  font-size: 17px; font-style: italic; font-weight: 600;
+  font-family: 'Fraunces', Georgia, serif; font-size: 17px; font-style: italic; font-weight: 600;
   display: flex; align-items: center; gap: 8px;
 }
 body.ar .panel-header h3 { font-style: normal; }
@@ -2721,7 +2724,7 @@ body.ar .activity-chart-empty { font-style: normal; font-size: 13px; }
   flex-shrink: 0;
 }
 .weight-history-head h3 {
-  margin: 0; font-size: 18px; font-style: italic; font-weight: 600;
+  margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: 18px; font-style: italic; font-weight: 600;
   color: var(--on-grad);
 }
 body.ar .weight-history-head h3 { font-style: normal; }
@@ -3055,7 +3058,7 @@ body.ar .apikey-privacy {
 .ocr-modal h3 {
   padding: 18px 24px;
   background: linear-gradient(to right, var(--grad-a) 0%, var(--grad-b) 100%);
-  color: var(--on-grad); font-size: 18px;
+  color: var(--on-grad); font-family: 'Fraunces', Georgia, serif; font-size: 18px;
   line-height: 1.2; letter-spacing: -0.01em;
   font-style: italic; font-weight: 600;
   border-bottom: 3px solid var(--gold);

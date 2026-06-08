@@ -11219,23 +11219,33 @@ function renderTrendChart(containerId, metric, label, unit, goalValue, data) {
     svg += `<circle cx="${x}" cy="${y}" r="3" fill="var(--${cssVar})" style="fill: var(--${cssVar});"/>`;
   });
 
-  // X-axis labels (every 2nd or 3rd label to avoid crowding).
-  // First label anchors at start, last at end so today's date doesn't
-  // half-overflow past the plot when the locale-formatted string is
-  // wider than the English equivalent (e.g. "5 يونيو" vs "5 Jun").
-  const labelStep = Math.ceil(dates.length / 6);
+  // X-axis labels — pick ~5 evenly-distributed indices. Use Math.round on
+  // a fractional step so the indices never double-up (the previous code
+  // computed an integer labelStep and then *also* force-added lastIdx,
+  // which dropped two labels right next to each other when lastIdx
+  // wasn't a multiple of the step — they collided on the right edge,
+  // especially with the wider Arabic month names). First label anchors
+  // at start, last at end so the end labels stay flush with the plot
+  // regardless of label width / locale.
   const lastIdx = dates.length - 1;
-  dates.forEach((date, idx) => {
-    if (idx % labelStep === 0 || idx === lastIdx) {
-      const x = margin.left + idx * scaleX;
-      const anchor = idx === 0 ? 'start' : (idx === lastIdx ? 'end' : 'middle');
-      svg += `<text x="${x}" y="${svgHeight - margin.bottom + 18}" text-anchor="${anchor}" font-size="10" font-weight="600" fill="var(--ink)" style="fill: var(--ink);">${date}</text>`;
+  const targetLabels = 5;
+  const labelIdxs = new Set();
+  if (lastIdx === 0) {
+    labelIdxs.add(0);
+  } else {
+    for (let k = 0; k < targetLabels; k++) {
+      labelIdxs.add(Math.round((k * lastIdx) / (targetLabels - 1)));
     }
+  }
+  labelIdxs.forEach(idx => {
+    const x = margin.left + idx * scaleX;
+    const anchor = idx === 0 ? 'start' : (idx === lastIdx ? 'end' : 'middle');
+    svg += `<text x="${x}" y="${svgHeight - margin.bottom + 18}" text-anchor="${anchor}" font-size="10" font-weight="600" fill="var(--ink)" style="fill: var(--ink);">${dates[idx]}</text>`;
   });
 
-  // Goal label — sits above goal line on the right; shift left to keep
-  // clear of the now end-anchored last X-axis label.
-  svg += `<text x="${svgWidth - margin.right - 2}" y="${goalY - 4}" text-anchor="end" font-size="9" fill="var(--accent)" style="fill: var(--accent);">${lang === 'ar' ? 'الهدف' : 'goal'}</text>`;
+  // Goal label — anchor at the left edge of the plot so it never fights
+  // the end-anchored rightmost X-axis label.
+  svg += `<text x="${margin.left + 2}" y="${goalY - 4}" text-anchor="start" font-size="9" fill="var(--accent)" style="fill: var(--accent);">${lang === 'ar' ? 'الهدف' : 'goal'}</text>`;
 
   svg += `</svg>`;
 

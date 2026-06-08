@@ -111,8 +111,16 @@
   /* shared, scheme-independent tokens */
   --gold: #c2a878;
   --gold-soft: rgba(212,175,55,0.12);
+  /* Default modal elevation shadow; dark themes override (deeper alpha so
+     the shadow registers against the dark backplate). */
+  --shadow-modal: rgba(0,0,0,0.28);
+  --shadow-modal-soft: rgba(0,0,0,0.12);
   /* Fallbacks; every scheme overrides these with WCAG-checked values. */
   --on-accent: #ffffff;
+}
+html[data-theme="dark"] {
+  --shadow-modal: rgba(0,0,0,0.55);
+  --shadow-modal-soft: rgba(0,0,0,0.30);
 }
 
 /* ---------- DEFAULT (original periwinkle / sage) ---------- */
@@ -867,8 +875,8 @@ body.ar .goals-edit-btn {
 }
 .goal-tile-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--ink);
 }
 body.ar .goal-tile-label {
@@ -1398,6 +1406,7 @@ tbody td.num {
 body.ar tbody td.num { text-align: center; }
 .food-name {
   font-weight: 600; font-size: 14px;
+  line-height: 1.25;
   display: flex; align-items: flex-start; gap: 6px;
 }
 .food-name-text { flex: 1; min-width: 0; }
@@ -1470,9 +1479,9 @@ body.ar .row-del-btn.confirming { font-family: 'IBM Plex Sans Arabic', sans-seri
   display: block;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; font-weight: 500;
-  color: var(--ink-soft);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  margin-top: 3px;
+  color: var(--ink-faint);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  margin-top: 4px;
 }
 body.ar .food-name .alt {
   font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
@@ -1579,7 +1588,7 @@ body.ar .badge-key-text { font-style: normal; }
   max-height: calc(100dvh - 32px);
   overflow-y: auto; overflow-x: hidden;
   border: 1px solid var(--line);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px var(--shadow-modal);
 }
 .popup-header {
   padding: 20px 24px;
@@ -1918,7 +1927,7 @@ body.ar .popup-actions button { font-family: 'IBM Plex Sans Arabic', sans-serif;
   width: min(640px, 94vw);
   max-height: 86vh;
   display: flex; flex-direction: column;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.12);
+  box-shadow: 0 24px 64px var(--shadow-modal), 0 4px 12px var(--shadow-modal-soft);
   overflow: hidden;
 }
 .settings-modal-head {
@@ -2041,7 +2050,7 @@ body.ar .lr-label { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 
   max-height: calc(100dvh - 32px);
   overflow-y: auto; overflow-x: hidden;
   border: 1px solid var(--line);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px var(--shadow-modal);
   padding: 24px;
   box-sizing: border-box;
 }
@@ -2204,7 +2213,7 @@ body.ar .fab-add { font-family: 'IBM Plex Sans Arabic', sans-serif; }
      background strip on the opposite edge. */
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex; flex-direction: column;
-  box-shadow: -8px 0 40px rgba(0,0,0,0.2);
+  box-shadow: -8px 0 40px var(--shadow-modal);
 }
 body.ar .side-panel {
   right: auto; left: 0;
@@ -3220,7 +3229,7 @@ body.ar .ocr-err { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 1
   max-height: calc(100dvh - 32px);
   overflow: hidden;
   border: 1px solid var(--line);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  box-shadow: 0 20px 60px var(--shadow-modal);
   display: flex; flex-direction: column;
 }
 .mt-alert-header {
@@ -3400,13 +3409,13 @@ body.ar .addfood-modal h3 { font-style: normal; }
   padding: 18px 24px 8px; overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-.addfood-form .field { margin-bottom: 14px; }
+.addfood-form .field { margin-bottom: 16px; }
 .addfood-form label {
-  display: block; margin-bottom: 5px;
+  display: block; margin-bottom: 6px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--ink-soft);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink);
 }
 body.ar .addfood-form label {
   font-family: 'IBM Plex Sans Arabic', sans-serif;

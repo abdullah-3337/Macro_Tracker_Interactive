@@ -488,6 +488,38 @@ body.ar {
   }
 }
 
+/* ============ ROTATION LOCK (CSS FALLBACK) ============ */
+/* PWA installs are locked via manifest.orientation:portrait and we attempt
+   screen.orientation.lock() in JS, but browser tabs can't be locked unless
+   the page is in fullscreen. For phones held in landscape we therefore
+   cover the page with a full-screen overlay asking the user to rotate.
+   The (max-width: 900px) clamp keeps tablets / desktop unaffected. */
+@media (orientation: landscape) and (max-width: 900px) {
+  body::before {
+    content: "↻  Rotate your device to portrait";
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 22px;
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: -0.01em;
+  }
+  body.ar::before {
+    content: "↻  يرجى تدوير الجهاز عمودياً";
+    font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+    font-style: normal;
+  }
+}
+
 /* iOS / Safari zoom guard: any input under 16px font-size triggers
    Safari's auto-zoom-on-focus. Force 16px on touch inputs so focus
    never zooms the viewport. */
@@ -8254,7 +8286,12 @@ function runSearchFromInput() {
   const firstVisible = applyFilters();
   _lastSearchQuery = now;
   if (firstVisible && now !== before) {
-    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Align the matched section's top to the viewport top so the section
+    // heading + table header + first matching row are all visible above
+    // the keyboard. `block:'nearest'` was scrolling just enough to bring
+    // the section edge into view, which on iOS left the heading and table
+    // header tucked under the keyboard area.
+    firstVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 searchInput.addEventListener('input', debounce(runSearchFromInput, 400));

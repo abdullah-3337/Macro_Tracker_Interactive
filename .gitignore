@@ -8,3 +8,6 @@
 Screenshot_*.jpg
 Screenshot_*.jpeg
 Screenshot_*.png
+
+# Large design asset exports (Figma/Canvas). Reference only — do not commit.
+*.canvas.json

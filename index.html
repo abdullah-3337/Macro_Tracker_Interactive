@@ -6405,13 +6405,12 @@ function _mtToastHostEl() {
 
 function _mtCloseAlert(result) {
   if (!_mtAlertActive) return;
-  // Pop history first so Android back doesn't leave a dangling state.
-  // mtBackPop runs _doMtCloseAlert via popstate; mark a flag so that
-  // path resolves the current promise too.
-  if (typeof mtBackPop === 'function' && mtBackPop('mtAlert')) {
-    _mtPendingAlertResult = result;
-    return;
-  }
+  // mtBackPop runs the registered dispose (_doMtCloseAlert) SYNCHRONOUSLY
+  // before returning, and dispose reads _mtPendingAlertResult to recover
+  // the result. So stash the result BEFORE calling mtBackPop, otherwise
+  // dispose resolves the promise with undefined on the first invocation.
+  _mtPendingAlertResult = result;
+  if (typeof mtBackPop === 'function' && mtBackPop('mtAlert')) return;
   _doMtCloseAlert(result);
 }
 let _mtPendingAlertResult = undefined;

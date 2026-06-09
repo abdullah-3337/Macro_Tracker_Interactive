@@ -5130,8 +5130,8 @@ body.ar .footer li::before {
           <label class="feat-row"><input type="checkbox" id="kcalSourceToggle"><span class="feat-icon">∑</span><span class="feat-name" data-en="Compute kcal from macros (4P + 9F + 4C)" data-ar="حساب السعرات من الماكروز (4ب + 9د + 4ك)">Compute kcal from macros (4P + 9F + 4C)</span></label>
         </div>
         <div class="feat-help" style="margin-top:8px;"
-             data-en="By default totals use each food's stored kcal (USDA-style: fiber discounted, etc). Enable this to recompute kcal live from P/F/C — useful if your macro goals already assume the Atwater formula."
-             data-ar="افتراضيًا تستخدم الإجماليات السعرات المحفوظة لكل صنف (نمط USDA: الألياف مخفّضة، إلخ). فعّل هذا الخيار لحساب السعرات لحظيًا من ب/د/ك — مفيد إذا كانت أهداف الماكروز عندك مبنية على معادلة أتواتر.">By default totals use each food's stored kcal (USDA-style: fiber discounted, etc). Enable this to recompute kcal live from P/F/C — useful if your macro goals already assume the Atwater formula.</div>
+             data-en="Default ON: totals are computed live from P/F/C via Atwater (4P + 9F + 4C) — worst-case kcal, matches typical macro-calculator assumptions, conservative for weight-loss tracking. Turn OFF to honor each food's stored kcal (USDA-style: fiber discounted, etc)."
+             data-ar="مُفعّل افتراضيًا: تُحسب الإجماليات لحظيًا من ب/د/ك عبر أتواتر (4ب + 9د + 4ك) — أسوأ تقدير للسعرات، يتوافق مع افتراضات حاسبات الماكروز، ومتحفظ عند تتبع خسارة الوزن. عطّله لاحترام السعرات المحفوظة لكل صنف (نمط USDA: الألياف مخفّضة، إلخ).">Default ON: totals are computed live from P/F/C via Atwater (4P + 9F + 4C) — worst-case kcal, matches typical macro-calculator assumptions, conservative for weight-loss tracking. Turn OFF to honor each food's stored kcal (USDA-style: fiber discounted, etc).</div>
       </div>
 
       <!-- WATER TAB -->
@@ -5422,8 +5422,8 @@ body.ar .footer li::before {
         <h4 data-en="Calorie source (stored vs Atwater)" data-ar="مصدر السعرات (محفوظ مقابل أتواتر)">Calorie source (stored vs Atwater)</h4>
         <p data-en="Foods store published kcal (USDA/label-style: fiber is partially discounted, sugar-alcohols counted lighter, etc). Atwater math (4×Protein + 9×Fat + 4×Carbs) doesn't know that — it treats every gram of carb as 4 kcal. So a 130 g cucumber with mostly-fiber carbs reads ~19.5 kcal on the label but ~23.3 kcal via Atwater. Both are correct; they answer different questions."
            data-ar="الأصناف تخزّن السعرات المنشورة (نمط USDA/ملصق المنتج: الألياف مخفّضة جزئياً، الكحوليات السكرية محسوبة أخف، إلخ). معادلة أتواتر (4×بروتين + 9×دهون + 4×كارب) لا تعرف ذلك — تعامل كل جرام كارب كأنه 4 سعرات. فمثلاً خيار 130 جم كاربه معظمه ألياف يظهر بـ 19.5 سعرة على الملصق و ~23.3 سعرة عبر أتواتر. كلاهما صحيح؛ يجيبان على سؤالين مختلفين.">Why kcal numbers can disagree with macro math.</p>
-        <p data-en="If your kcal goal was set by a calculator that assumed Atwater (most online calculators do), turning Settings → Features → “Compute kcal from macros” ON keeps everything on the same scale: totals, subtotals, per-row kcal, FAB, and progress bars all recompute from each item's P/F/C. Leave it OFF to honor each food's published kcal. Storage is never mutated — toggle freely."
-           data-ar="إذا كان هدف السعرات عندك محسوباً بأداة تعتمد على أتواتر (معظم الحاسبات أونلاين تفعل ذلك)، فعّل الإعدادات → المميزات → “حساب السعرات من الماكروز” حتى يبقى كل شيء على نفس المقياس: الإجماليات والمجاميع الفرعية وسعرات كل صف وعدّاد الإجمالي وأشرطة التقدم تُحسب لحظيًا من ب/د/ك لكل صنف. اتركه معطّلاً لاحترام السعرات المنشورة لكل صنف. التخزين لا يتغيّر — التبديل آمن في أي وقت.">Toggle to switch sources.</p>
+        <p data-en="The app defaults to Atwater (Settings → Features → “Compute kcal from macros” ON): it's the worst-case kcal estimate (no fiber discount), aligns with how most macro calculators set goals, and stays conservative for weight-loss planning — any fiber-driven discount becomes upside, not baseline. Switch it OFF if you'd rather honor each food's published kcal. Storage is never mutated; toggle freely."
+           data-ar="التطبيق يستخدم أتواتر افتراضياً (الإعدادات → المميزات → “حساب السعرات من الماكروز” مُفعّل): هذا التقدير هو الأسوأ حالةً للسعرات (بدون خصم الألياف)، يتوافق مع طريقة معظم الحاسبات في وضع الأهداف، ويبقى متحفظاً عند التخطيط لخسارة الوزن — أي خصم بسبب الألياف يصبح مكسبًا إضافيًا، لا أساسًا. عطّله لو تفضّل احترام السعرات المنشورة لكل صنف. التخزين لا يتغيّر؛ التبديل آمن في أي وقت.">Toggle to switch sources.</p>
       </div>
 
       <div class="guide-pane" data-gpane="weight" role="tabpanel">
@@ -6221,10 +6221,12 @@ let goals = lsGet('mt-goals', {kcal:1900, protein:145, fat:65, carbs:215});
 if (!goals || typeof goals !== 'object') goals = {kcal:1900, protein:145, fat:65, carbs:215};
 let dayItems = lsGet('mt-day', []);
 if (!Array.isArray(dayItems)) dayItems = [];
-// Calorie source: 'stored' uses each food's published kcal (default);
-// 'computed' derives kcal live from macros via Atwater (4P + 9F + 4C).
-let kcalSource = lsGet('mt-kcal-source', 'stored');
-if (kcalSource !== 'computed') kcalSource = 'stored';
+// Calorie source: 'computed' derives kcal live from macros via Atwater
+// (4P + 9F + 4C) — the default, since it's the worst-case (no fiber
+// discount) estimate and matches the assumptions of typical macro
+// calculators. 'stored' honors each food's published kcal instead.
+let kcalSource = lsGet('mt-kcal-source', 'computed');
+if (kcalSource !== 'stored') kcalSource = 'computed';
 function effectiveItemKcal(it) {
   if (kcalSource === 'computed') {
     return fmt((+it.p || 0) * 4 + (+it.f || 0) * 9 + (+it.c || 0) * 4);

@@ -2415,6 +2415,18 @@ body.ar .selected-table td.num { text-align: center; }
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease; font-family: inherit;
 }
 .edit-row-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.skip-btn {
+  background: transparent; border: 1px solid var(--line);
+  color: var(--ink-soft); padding: 3px 9px;
+  font-size: 11px; cursor: pointer; border-radius: 2px;
+  font-family: inherit;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.skip-btn:hover { background: var(--ink-soft); color: var(--paper); border-color: var(--ink-soft); }
+.skip-btn.restore { border-color: var(--accent); color: var(--accent); }
+.skip-btn.restore:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+tr.dayitem-disabled td:not(.row-actions) { opacity: 0.45; text-decoration: line-through; text-decoration-thickness: 1px; }
+tr.dayitem-disabled td.row-actions { opacity: 0.9; }
 
 /* ============ SEARCH EMPTY STATE ============ */
 .search-empty {
@@ -3063,7 +3075,10 @@ body.ar .db-empty-sub { font-family: 'IBM Plex Sans Arabic', sans-serif; font-si
   background: var(--bg); color: var(--ink);
   font-family: 'JetBrains Mono', monospace;
   font-size: 16px;
+  -webkit-text-security: disc;
+  text-security: disc;
 }
+.apikey-input:focus { -webkit-text-security: none; text-security: none; }
 .apikey-input.saved { border-color: var(--accent); background: var(--accent-soft); }
 .apikey-status {
   font-family: 'JetBrains Mono', monospace;
@@ -5144,7 +5159,7 @@ body.ar .footer li::before {
       <div class="settings-pane" data-pane="apikey" role="tabpanel">
         <div class="settings-pane-label" data-en="Gemini API key (for 📷 photo extraction)" data-ar="مفتاح Gemini API (لاستخراج البيانات من الصور 📷)">Gemini API key (for 📷 photo extraction)</div>
         <div class="apikey-row">
-          <input type="password" class="apikey-input" id="apiKeyInput" placeholder="AIzaSy...">
+          <input type="text" class="apikey-input" id="apiKeyInput" placeholder="AIzaSy..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore>
           <button class="dt-btn primary" id="saveApiKeyBtn" data-en="Save" data-ar="حفظ">Save</button>
           <button class="dt-btn warn" id="clearApiKeyBtn" data-en="Clear" data-ar="مسح">Clear</button>
         </div>
@@ -7764,18 +7779,22 @@ document.getElementById('addBtn').addEventListener('click', () => {
 // progress bars, the selected-items table, goal status indicators.
 function renderTotals() {
   const totals = dayItems.reduce((acc, it) => {
+    if (it.disabled) return acc;
     acc.p += it.p; acc.f += it.f; acc.c += it.c; acc.kcal += it.kcal;
     return acc;
   }, {p:0, f:0, c:0, kcal:0});
 
   const totalBurned = getTotalBurned();
   const netKcal = totals.kcal - totalBurned;
+  const activeCount = dayItems.reduce((n, it) => n + (it.disabled ? 0 : 1), 0);
+  const totalCount  = dayItems.length;
+  const countText   = (activeCount !== totalCount) ? `${activeCount}/${totalCount}` : `${totalCount}`;
 
   // Floating action button
-  document.getElementById('fabCount').textContent = dayItems.length;
+  document.getElementById('fabCount').textContent = countText;
   document.getElementById('fabKcal').textContent = fmt(totals.kcal);
   document.getElementById('fabGoal').textContent = goals.kcal;
-  document.getElementById('itemCount').textContent = dayItems.length;
+  document.getElementById('itemCount').textContent = countText;
 
   // Progress cards
   updateProgress('netkcal', netKcal, goals.kcal);
@@ -7808,20 +7827,26 @@ function renderTotals() {
       const m = MEAL_ORDER.indexOf(it.meal) >= 0 ? it.meal : 'unsorted';
       (buckets[m] = buckets[m] || []).push({ it, idx });
     });
-    const removeText = lang === 'ar' ? 'حذف' : 'Remove';
-    const editText   = lang === 'ar' ? 'تعديل' : 'Edit';
-    const subText    = lang === 'ar' ? 'مجموع' : 'Subtotal';
+    const removeText  = lang === 'ar' ? 'حذف'   : 'Remove';
+    const editText    = lang === 'ar' ? 'تعديل' : 'Edit';
+    const skipText    = lang === 'ar' ? 'تخطّي' : 'Skip';
+    const restoreText = lang === 'ar' ? 'إرجاع' : 'Use';
+    const subText     = lang === 'ar' ? 'مجموع' : 'Subtotal';
     let html = '';
     MEAL_ORDER.forEach(meal => {
       const arr = buckets[meal];
       if (!arr || !arr.length) return;
       const sub = arr.reduce((a, x) => {
+        if (x.it.disabled) return a;
         a.p += x.it.p; a.f += x.it.f; a.c += x.it.c; a.kcal += x.it.kcal; return a;
       }, { p:0, f:0, c:0, kcal:0 });
       html += `<tr class="meal-group-header"><td colspan="7">${MEAL_LABELS[meal]}</td></tr>`;
       html += arr.map(({ it, idx }) => {
         const f = getDB(it.id);
-        return `<tr>
+        const disabledCls = it.disabled ? ' class="dayitem-disabled"' : '';
+        const skipLabel = it.disabled ? restoreText : skipText;
+        const skipCls   = it.disabled ? 'skip-btn restore' : 'skip-btn';
+        return `<tr${disabledCls}>
           <td>${escapeHtml(f ? f[lang] : it.id)}</td>
           <td class="num">${it.grams} g</td>
           <td class="num col-protein">${it.p}</td>
@@ -7830,6 +7855,7 @@ function renderTotals() {
           <td class="num">${it.kcal}</td>
           <td class="row-actions">
             <button class="edit-row-btn" data-edit-idx="${idx}">${editText}</button>
+            <button class="${skipCls}" data-skip-idx="${idx}">${skipLabel}</button>
             <button class="remove-btn" data-idx="${idx}">${removeText}</button>
           </td>
         </tr>`;
@@ -7899,7 +7925,16 @@ function removeItem(idx) {
   saveDayState();
   renderTotals();
 }
-// Event delegation: one listener handles every Remove and Edit button,
+// Soft-delete toggle: flip the disabled flag so the row stays visible but is
+// excluded from totals, subtotals, and counts. Lets the user A/B what to eat.
+function toggleSkipItem(idx) {
+  const it = dayItems[idx];
+  if (!it) return;
+  it.disabled = !it.disabled;
+  saveDayState();
+  renderTotals();
+}
+// Event delegation: one listener handles every Remove, Skip, and Edit button,
 // even after re-render.
 (function attachDayItemDelegation() {
   const body = document.getElementById('selectedBody');
@@ -7912,6 +7947,12 @@ function removeItem(idx) {
         const rowEl = rm.closest('tr');
         fadeAndRemove(rowEl, () => removeItem(idx));
       }
+      return;
+    }
+    const sk = e.target.closest('.skip-btn');
+    if (sk) {
+      const idx = parseInt(sk.dataset.skipIdx, 10);
+      if (!isNaN(idx)) toggleSkipItem(idx);
       return;
     }
     const ed = e.target.closest('.edit-row-btn');
@@ -7927,7 +7968,10 @@ function removeItem(idx) {
 // Persist dayItems to localStorage and update the day header text.
 function saveDayState() {
   lsSet('mt-day', JSON.stringify(dayItems));
-  document.getElementById('dayInfo').textContent = `📅 ${todayStr()} · ${dayItems.length} ${lang === 'ar' ? 'صنف' : 'items'}`;
+  const activeCount = dayItems.reduce((n, it) => n + (it.disabled ? 0 : 1), 0);
+  const totalCount  = dayItems.length;
+  const countText   = (activeCount !== totalCount) ? `${activeCount}/${totalCount}` : `${totalCount}`;
+  document.getElementById('dayInfo').textContent = `📅 ${todayStr()} · ${countText} ${lang === 'ar' ? 'صنف' : 'items'}`;
 }
 
 // ============ DAY CONTROLS ============
@@ -7955,13 +7999,16 @@ document.getElementById('saveDayBtn').addEventListener('click', () => {
     showToast(lang === 'ar' ? 'اليوم فاضي. اختر أكل أول' : 'Nothing to save yet. Add some items first.', { kind: 'warn' });
     return;
   }
-  const totals = dayItems.reduce((acc, it) => {
+  // Save-day commits the user's final picks: drop soft-deleted (disabled) items
+  // so saved totals match what was actually eaten and analytics stay accurate.
+  const itemsToSave = dayItems.filter(it => !it.disabled);
+  const totals = itemsToSave.reduce((acc, it) => {
     acc.p += it.p; acc.f += it.f; acc.c += it.c; acc.kcal += it.kcal;
     return acc;
   }, {p:0, f:0, c:0, kcal:0});
   savedDays.unshift({
     date: new Date().toISOString(),
-    items: JSON.parse(JSON.stringify(dayItems)),
+    items: JSON.parse(JSON.stringify(itemsToSave)),
     totals: {p:fmt(totals.p), f:fmt(totals.f), c:fmt(totals.c), kcal:fmt(totals.kcal)},
     goals: JSON.parse(JSON.stringify(goals))
   });
@@ -9494,7 +9541,7 @@ async function saveCurrentDayAsTemplate() {
       en: lang === 'ar' ? trimmedName : trimmedName,
       ar: lang === 'ar' ? trimmedName : trimmedName
     },
-    items: dayItems.map(item => ({
+    items: dayItems.filter(it => !it.disabled).map(item => ({
       foodId: item.id,
       grams: item.grams || 100
     }))

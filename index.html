@@ -5407,6 +5407,8 @@ body.ar .footer li::before {
            data-ar="المنتقي يتذكر آخر اختيار عند الإضافات المتتالية السريعة — سجل الإفطار بأكمله دون إعادة اختيار التصنيف لكل صنف.">Sticky across adds.</p>
         <p data-en="You can also save the entire current day as a Meal Template (side panel → 💾 Save as template) and restore it on a future day in one tap."
            data-ar="يمكنك أيضاً حفظ اليوم بأكمله كقالب وجبة (اللوحة الجانبية → 💾 احفظ كقالب) واسترجاعه في يوم آخر بنقرة واحدة.">Templates.</p>
+        <p data-en="Each day-item row has three actions: ✎ Edit (change grams / macros), ⊘ Skip (soft-delete — row stays visible but is excluded from totals, subtotals, FAB, and progress bars), and Remove (delete the row entirely). Use Skip to A/B test what to eat without losing the entry. Tap Use to bring a skipped item back. The item counter shows active/total when any are skipped (e.g. 5/7). Save Day and Save as Template drop skipped items so saved snapshots reflect what was actually eaten."
+           data-ar="كل صف من أصناف اليوم له ثلاثة أزرار: ✎ تعديل (تغيير الجرامات/الماكروز)، ⊘ تخطّي (حذف ناعم — الصف يبقى ظاهراً لكن يُستبعد من الإجماليات والمجاميع الفرعية وعدّاد الإجمالي وأشرطة التقدم)، وحذف (إزالة الصف نهائياً). استخدم تخطّي لتجرب ماذا تأكل دون فقدان الإدخال. اضغط إرجاع لإعادة صنف متخطّى. عدّاد الأصناف يعرض النشط/الإجمالي عند وجود صنف متخطّى (مثلاً 5/7). حفظ اليوم وحفظ القالب يتجاهلان الأصناف المتخطّاة حتى تعكس اللقطات المحفوظة ما أُكل فعلاً.">Skip / Use (soft delete).</p>
       </div>
 
       <div class="guide-pane" data-gpane="goals" role="tabpanel">
@@ -5417,6 +5419,11 @@ body.ar .footer li::before {
            data-ar="نموذج الحساب يستخدم صيغة Mifflin-St Jeor (الأدق للسكان عموماً). لو تعرف نسبة الدهون عندك، يتحول لـ Katch-McArdle (أدق عند معرفة الكتلة العضلية).">BMR formulas.</p>
         <p data-en="Pick activity level (sedentary → very active), goal (aggressive cut → bulk), and macro split (high-protein cut, balanced, moderate carb, bulk). The preview shows kcal/macros live; Apply writes to your goals."
            data-ar="اختر مستوى النشاط (خامل → نشط جداً)، والهدف (تنشيف قوي → ضخامة)، وتوزيع الماكروز (تنشيف غني بالبروتين، متوازن، كارب متوسط، ضخامة). المعاينة تعرض النتيجة مباشرة؛ التطبيق يكتبها في أهدافك.">Live preview.</p>
+        <h4 data-en="Calorie source (stored vs Atwater)" data-ar="مصدر السعرات (محفوظ مقابل أتواتر)">Calorie source (stored vs Atwater)</h4>
+        <p data-en="Foods store published kcal (USDA/label-style: fiber is partially discounted, sugar-alcohols counted lighter, etc). Atwater math (4×Protein + 9×Fat + 4×Carbs) doesn't know that — it treats every gram of carb as 4 kcal. So a 130 g cucumber with mostly-fiber carbs reads ~19.5 kcal on the label but ~23.3 kcal via Atwater. Both are correct; they answer different questions."
+           data-ar="الأصناف تخزّن السعرات المنشورة (نمط USDA/ملصق المنتج: الألياف مخفّضة جزئياً، الكحوليات السكرية محسوبة أخف، إلخ). معادلة أتواتر (4×بروتين + 9×دهون + 4×كارب) لا تعرف ذلك — تعامل كل جرام كارب كأنه 4 سعرات. فمثلاً خيار 130 جم كاربه معظمه ألياف يظهر بـ 19.5 سعرة على الملصق و ~23.3 سعرة عبر أتواتر. كلاهما صحيح؛ يجيبان على سؤالين مختلفين.">Why kcal numbers can disagree with macro math.</p>
+        <p data-en="If your kcal goal was set by a calculator that assumed Atwater (most online calculators do), turning Settings → Features → “Compute kcal from macros” ON keeps everything on the same scale: totals, subtotals, per-row kcal, FAB, and progress bars all recompute from each item's P/F/C. Leave it OFF to honor each food's published kcal. Storage is never mutated — toggle freely."
+           data-ar="إذا كان هدف السعرات عندك محسوباً بأداة تعتمد على أتواتر (معظم الحاسبات أونلاين تفعل ذلك)، فعّل الإعدادات → المميزات → “حساب السعرات من الماكروز” حتى يبقى كل شيء على نفس المقياس: الإجماليات والمجاميع الفرعية وسعرات كل صف وعدّاد الإجمالي وأشرطة التقدم تُحسب لحظيًا من ب/د/ك لكل صنف. اتركه معطّلاً لاحترام السعرات المنشورة لكل صنف. التخزين لا يتغيّر — التبديل آمن في أي وقت.">Toggle to switch sources.</p>
       </div>
 
       <div class="guide-pane" data-gpane="weight" role="tabpanel">

@@ -5124,6 +5124,14 @@ body.ar .footer li::before {
           <label class="feat-row"><input type="checkbox" data-feat="mealTemplates"><span class="feat-icon">💾</span><span class="feat-name" data-en="Meal templates" data-ar="قوالب الوجبات">Meal templates</span></label>
           <label class="feat-row"><input type="checkbox" data-feat="weight"><span class="feat-icon">⚖</span><span class="feat-name" data-en="Weight log" data-ar="سجل الوزن">Weight log</span></label>
         </div>
+
+        <div class="settings-pane-label" data-en="Calorie source" data-ar="مصدر السعرات" style="margin-top:20px;">Calorie source</div>
+        <div class="feat-grid">
+          <label class="feat-row"><input type="checkbox" id="kcalSourceToggle"><span class="feat-icon">∑</span><span class="feat-name" data-en="Compute kcal from macros (4P + 9F + 4C)" data-ar="حساب السعرات من الماكروز (4ب + 9د + 4ك)">Compute kcal from macros (4P + 9F + 4C)</span></label>
+        </div>
+        <div class="feat-help" style="margin-top:8px;"
+             data-en="By default totals use each food's stored kcal (USDA-style: fiber discounted, etc). Enable this to recompute kcal live from P/F/C — useful if your macro goals already assume the Atwater formula."
+             data-ar="افتراضيًا تستخدم الإجماليات السعرات المحفوظة لكل صنف (نمط USDA: الألياف مخفّضة، إلخ). فعّل هذا الخيار لحساب السعرات لحظيًا من ب/د/ك — مفيد إذا كانت أهداف الماكروز عندك مبنية على معادلة أتواتر.">By default totals use each food's stored kcal (USDA-style: fiber discounted, etc). Enable this to recompute kcal live from P/F/C — useful if your macro goals already assume the Atwater formula.</div>
       </div>
 
       <!-- WATER TAB -->
@@ -6206,6 +6214,16 @@ let goals = lsGet('mt-goals', {kcal:1900, protein:145, fat:65, carbs:215});
 if (!goals || typeof goals !== 'object') goals = {kcal:1900, protein:145, fat:65, carbs:215};
 let dayItems = lsGet('mt-day', []);
 if (!Array.isArray(dayItems)) dayItems = [];
+// Calorie source: 'stored' uses each food's published kcal (default);
+// 'computed' derives kcal live from macros via Atwater (4P + 9F + 4C).
+let kcalSource = lsGet('mt-kcal-source', 'stored');
+if (kcalSource !== 'computed') kcalSource = 'stored';
+function effectiveItemKcal(it) {
+  if (kcalSource === 'computed') {
+    return fmt((+it.p || 0) * 4 + (+it.f || 0) * 9 + (+it.c || 0) * 4);
+  }
+  return it.kcal;
+}
 let workouts = lsGet('mt-workouts', []);
 if (!Array.isArray(workouts)) workouts = [];
 let savedDays = lsGet('mt-saved', []);
@@ -7780,7 +7798,7 @@ document.getElementById('addBtn').addEventListener('click', () => {
 function renderTotals() {
   const totals = dayItems.reduce((acc, it) => {
     if (it.disabled) return acc;
-    acc.p += it.p; acc.f += it.f; acc.c += it.c; acc.kcal += it.kcal;
+    acc.p += it.p; acc.f += it.f; acc.c += it.c; acc.kcal += effectiveItemKcal(it);
     return acc;
   }, {p:0, f:0, c:0, kcal:0});
 
@@ -7838,7 +7856,7 @@ function renderTotals() {
       if (!arr || !arr.length) return;
       const sub = arr.reduce((a, x) => {
         if (x.it.disabled) return a;
-        a.p += x.it.p; a.f += x.it.f; a.c += x.it.c; a.kcal += x.it.kcal; return a;
+        a.p += x.it.p; a.f += x.it.f; a.c += x.it.c; a.kcal += effectiveItemKcal(x.it); return a;
       }, { p:0, f:0, c:0, kcal:0 });
       html += `<tr class="meal-group-header"><td colspan="7">${MEAL_LABELS[meal]}</td></tr>`;
       html += arr.map(({ it, idx }) => {
@@ -7852,7 +7870,7 @@ function renderTotals() {
           <td class="num col-protein">${it.p}</td>
           <td class="num col-fat">${it.f}</td>
           <td class="num col-carb">${it.c}</td>
-          <td class="num">${it.kcal}</td>
+          <td class="num">${effectiveItemKcal(it)}</td>
           <td class="row-actions">
             <button class="edit-row-btn" data-edit-idx="${idx}">${editText}</button>
             <button class="${skipCls}" data-skip-idx="${idx}">${skipLabel}</button>
@@ -8003,7 +8021,7 @@ document.getElementById('saveDayBtn').addEventListener('click', () => {
   // so saved totals match what was actually eaten and analytics stay accurate.
   const itemsToSave = dayItems.filter(it => !it.disabled);
   const totals = itemsToSave.reduce((acc, it) => {
-    acc.p += it.p; acc.f += it.f; acc.c += it.c; acc.kcal += it.kcal;
+    acc.p += it.p; acc.f += it.f; acc.c += it.c; acc.kcal += effectiveItemKcal(it);
     return acc;
   }, {p:0, f:0, c:0, kcal:0});
   savedDays.unshift({
@@ -8514,6 +8532,17 @@ document.querySelectorAll('input[type="checkbox"][data-feat]').forEach(cb => {
   });
 });
 syncFeatureCheckboxes();
+
+(function wireKcalSourceToggle() {
+  const cb = document.getElementById('kcalSourceToggle');
+  if (!cb) return;
+  cb.checked = (kcalSource === 'computed');
+  cb.addEventListener('change', () => {
+    kcalSource = cb.checked ? 'computed' : 'stored';
+    lsSet('mt-kcal-source', JSON.stringify(kcalSource));
+    renderTotals();
+  });
+})();
 
 // ============ WEIGHT LOG ============
 // Body-weight tracking with a 7-day moving-average sparkline. Single entry per
@@ -10740,6 +10769,7 @@ function buildBackupObject() {
       dietFilters: Array.from(dietFilters),
       displayModes: displayModes,
       smartSort: smartSortState,
+      kcalSource: kcalSource,
       notifEnabled: localStorage.getItem('mt-notif-enabled') || '0',
       notifTime: localStorage.getItem('mt-notif-time') || '20:00'
       // NOTE: mt-gemini-key is intentionally excluded. Backups are often
@@ -10962,6 +10992,12 @@ document.getElementById('importJsonInput').addEventListener('change', e => {
           if (typeof payload.smartSort[k] === 'string') smartSortState[k] = payload.smartSort[k];
         });
         lsSet('mt-smart-sort', JSON.stringify(smartSortState));
+      }
+      if (payload.kcalSource === 'stored' || payload.kcalSource === 'computed') {
+        kcalSource = payload.kcalSource;
+        lsSet('mt-kcal-source', JSON.stringify(kcalSource));
+        const ksCb = document.getElementById('kcalSourceToggle');
+        if (ksCb) ksCb.checked = (kcalSource === 'computed');
       }
       if (payload.notifEnabled === '0' || payload.notifEnabled === '1') {
         localStorage.setItem('mt-notif-enabled', payload.notifEnabled);
